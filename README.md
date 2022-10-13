@@ -5,8 +5,8 @@ Bologna.
 
 ## Authors
 
-- P. Ceroni
-- G. Crestanello
-- F. Grisendi
-- M. Girolimetto
-- S. Volpe
+- P. Ceroni;
+- G. Crestanello;
+- F. Grisendi;
+- M. Girolimetto;
+- S. Volpe.
