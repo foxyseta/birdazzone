@@ -8,9 +8,9 @@ import (
 
 func main() {
   r := gin.Default()
-  r.GET("/ping", func(c *gin.Context) {
+  r.GET("/", func(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{
-      "message": "pong",
+      "message": "Welcome to Birdazzone API!",
     })
   })
   r.Run()
