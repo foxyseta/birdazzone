@@ -1,7 +1,7 @@
 # Birdazzone
 
-Software Engineering (90106) project for the academic year 2022/23 at the University of
-Bologna.
+Software Engineering (90106) project for the academic year 2022/23 at the
+University of Bologna.
 
 ## Authors
 
