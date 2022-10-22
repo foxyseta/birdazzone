@@ -2,9 +2,28 @@ package main
 
 import (
   "net/http"
+  "os"
 
   "github.com/gin-gonic/gin"
 )
+
+const EnvHost = "HOST"
+const EnvPort = "PORT"
+const FallbackHost = "0.0.0.0"
+const FallbackPort = "8080"
+
+func lookupEnvWithFallback(key string, fallback string) (string) {
+  val, ok := os.LookupEnv(key)
+  if ok {
+    return val
+  }
+  return fallback
+}
+
+func address() (string) {
+  return lookupEnvWithFallback(EnvHost, FallbackHost) + ":" +
+         lookupEnvWithFallback(EnvPort, FallbackPort)
+}
 
 func main() {
   r := gin.Default()
@@ -13,5 +32,5 @@ func main() {
       "message": "Welcome to Birdazzone API!",
     })
   })
-  r.Run()
+  r.Run(address())
 }

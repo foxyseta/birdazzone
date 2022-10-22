@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.16-alpine
+FROM golang:alpine
 
 WORKDIR /app
 
@@ -12,6 +12,8 @@ COPY *.go ./
 
 RUN go build -o /birdazzone-api
 
+ENV HOST 0.0.0.0
+ENV PORT 8080
 EXPOSE 8080
 
 CMD [ "/birdazzone-api" ]
