@@ -1,31 +1,4 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
-stages:
-- build
-- test
-- deploy
-- review
-- dast
-- staging
-- canary
-- production
-- incremental rollout 10%
-- incremental rollout 25%
-- incremental rollout 50%
-- incremental rollout 100%
-- performance
-- cleanup
-sast:
-  stage: test
-include:
-- template: Auto-DevOps.gitlab-ci.yml
-
-sonarqube-check:
+code-quality:
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -40,4 +13,39 @@ sonarqube-check:
     - sonar-scanner
   allow_failure: true
   only:
-    - main # or the name of your main branch
+    - main
+
+build:
+image: docker:20.10.16
+services:
+  - docker:20.10.16-dind
+  stages:
+    - build
+    - test
+    - release
+    - deploy
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  build:
+    stage: build
+    script:
+      - docker build --pull -t $CONTAINER_TEST_IMAGE .
+      - docker push $CONTAINER_TEST_IMAGE
+  test:
+    stage: test
+    script:
+      - docker pull $CONTAINER_TEST_IMAGE
+      - docker run $CONTAINER_TEST_IMAGE "go test"
+  release-image:
+    stage: release
+    script:
+      - docker pull $CONTAINER_TEST_IMAGE
+      - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+      - docker push $CONTAINER_RELEASE_IMAGE
+    only:
+      - main
