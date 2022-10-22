@@ -1,0 +1,14 @@
+services:
+  backend:
+    build: birdazzone-api
+    environment:
+      - PORT=8080
+    ports:
+      - 8080:8080
+    restart: always
+  frontend:
+    build: birdazzone-web
+    depends_on:
+      - backend
+    ports:
+      - 8000:80

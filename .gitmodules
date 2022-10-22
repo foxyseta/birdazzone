@@ -1,0 +1,6 @@
+[submodule "birdazzone-api"]
+	path = birdazzone-api
+	url = git@git.hjkl.gq:team13/birdazzone-api
+[submodule "birdazzone-web"]
+	path = birdazzone-web
+	url = git@git.hjkl.gq:team13/birdazzone-web
