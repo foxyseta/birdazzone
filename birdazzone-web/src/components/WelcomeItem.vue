@@ -1,8 +1,8 @@
 <template>
   <div class="item">
-    <i>
+    <em>
       <slot name="icon"></slot>
-    </i>
+    </em>
     <div class="details">
       <h3>
         <slot name="heading"></slot>
@@ -46,7 +46,7 @@ h3 {
     padding: 0.4rem 0 1rem calc(var(--section-gap) / 2);
   }
 
-  i {
+  em {
     top: calc(50% - 25px);
     left: -26px;
     position: absolute;
