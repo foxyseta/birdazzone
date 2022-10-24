@@ -24,7 +24,7 @@ docker_build:
   image: docker:20
   stage: build
   variables:
-    CI_REGISTRY: mattia1
+    CI_REGISTRY: mattia1.docker.io
     CI_REGISTRY_USER: mattia1
     CI_REGISTRY_PASSWORD: dckr_pat_-veYzQnLpjqwPClct2ieCad_jt0
     TAG: "$CI_REGISTRY/birdazzone-api"
