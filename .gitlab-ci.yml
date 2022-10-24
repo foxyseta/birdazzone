@@ -24,11 +24,13 @@ docker_build:
   image: docker:20
   stage: build
   variables:
-    TAG: "$CI_REGISTRY_IMAGE/birdazzone-api"
-  #before_script:
-  #  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    CI_REGISTRY: mattia1
+    CI_REGISTRY_USER: mattia1
+    CI_REGISTRY_PASSWORD: dckr_pat_-veYzQnLpjqwPClct2ieCad_jt0
+    TAG: "$CI_REGISTRY/birdazzone-api"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - export
     - docker pull $TAG:latest || true
     - docker build --cache-from $TAG:latest --tag $TAG:latest .
     - docker push $TAG:latest 
