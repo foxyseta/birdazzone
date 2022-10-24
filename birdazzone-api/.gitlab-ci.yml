@@ -31,5 +31,5 @@ docker_build:
     - export
     - docker pull $TAG:latest || true
     - docker build --cache-from $TAG:latest --tag $TAG:latest .
-    - docker push $TAG:latest
+    - docker push $TAG:latest 
 
