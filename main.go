@@ -24,7 +24,6 @@ const EnvHost = "HOST"
 const EnvPort = "PORT"
 const FallbackHost = "0.0.0.0"
 const FallbackPort = "8080"
-const BasePath = "/api/v1"
 
 func lookupEnvWithFallback(key string, fallback string) string {
 	val, ok := os.LookupEnv(key)
@@ -42,7 +41,9 @@ func address() string {
 func main() {
 	r := gin.Default()
 
-	r.GET(BasePath+"/hello", helloWorld)
+	v1 := r.Group("/api/v1")
+
+	v1.GET("/hello", helloWorld)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
