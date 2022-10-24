@@ -11,6 +11,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -63,4 +64,5 @@ func staticMessage(c *gin.Context, msg string) {
 // @Router      /hello [get]
 func helloWorld(ctx *gin.Context) {
 	staticMessage(ctx, "Hi! You've successfully connected to Birdazzone API.")
+	fmt.Println("HELLO")
 }
