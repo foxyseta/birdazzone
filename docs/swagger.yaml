@@ -1,0 +1,23 @@
+basePath: /api/v1
+host: localhost:8080
+info:
+  contact: {}
+  description: API implementation for the Software Engineering (90106) project for
+    the academic year 2022/23 at the University of Bologna.
+  license:
+    name: GNU AFFERO GENERAL PUBLIC LICENSE
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  title: Birdazzone API
+  version: "0.1"
+paths:
+  /hello:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Test your connection to birdazzone API
+      tags:
+      - test
+swagger: "2.0"
