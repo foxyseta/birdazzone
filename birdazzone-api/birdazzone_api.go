@@ -32,5 +32,10 @@ func main() {
       "message": "Welcome to Birdazzone API!",
     })
   })
+  r.GET("/hello", func(c *gin.Context) {
+    c.JSON(http.StatusOK, gin.H{
+      "message": "Hello, Bird!",
+    })
+  })
   r.Run(address())
 }
