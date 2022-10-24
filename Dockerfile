@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY go.mod ./
 COPY go.sum ./
-COPY docs/*
+COPY docs/*.go ./
 RUN go mod download
 
 COPY *.go ./
