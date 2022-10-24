@@ -23,8 +23,6 @@ stages:
 docker_build:
   image: docker:20
   stage: build
-  services: 
-    - docker:20-dind
   variables:
     TAG: "$CI_REGISTRY_IMAGE/birdazzone-api"
   before_script:
