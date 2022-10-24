@@ -23,14 +23,13 @@ stages:
 docker_build:
   image: docker:20
   stage: build
+  services: 
+    - docker:20-dind
   variables:
-    IMAGE_NAME: "test"
-    TAG: "${CI_REGISTRY_NAME}/${IMAGE_NAME}"
+    TAG: "$CI_REGISTRY_IMAGE/birdazzone-api"
   before_script:
-    - echo ${CI_REGISTRY_USER}
-    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - export
     - docker pull $TAG:latest || true
     - docker build --cache-from $TAG:latest --tag $TAG:latest .
     - docker push $TAG:latest
