@@ -30,6 +30,7 @@ docker_build:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
+    - export
     - docker pull $TAG:latest || true
     - docker build --cache-from $TAG:latest --tag $TAG:latest .
     - docker push $TAG:latest
