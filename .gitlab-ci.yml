@@ -2,25 +2,25 @@ stages:
   - test
   - build
 
-#sonarqube-check:
-#  stage: test
-#  image: 
-#    name: sonarsource/sonar-scanner-cli:latest
-###    entrypoint: [""]
-#  variables:
-#    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
-#    GIT_DEPTH: "0"
-#  cache:
-#    key: "${CI_JOB_NAME}"
-#    paths:
-#      - .sonar/cache
-#  script: 
-#    - sonar-scanner
-#  allow_failure: true
-#  only:
-#    - main
+sonarqube-check:
+  stage: test
+  image: 
+    name: sonarsource/sonar-scanner-cli:latest
+  entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    GIT_DEPTH: "0"
+  cache:
+    key: "${CI_JOB_NAME}"
+  paths:
+    - .sonar/cache
+  script: 
+    - sonar-scanner
+  allow_failure: true
+  only:
+   - develop
 
-docker_build:
+docker_build_main:
   image: docker:20
   stage: build
   variables:
@@ -34,4 +34,23 @@ docker_build:
     - docker pull $TAG:latest || true
     - docker build --cache-from $TAG:latest --tag $TAG:latest .
     - docker push $TAG:latest 
+  only:
+    - main
+
+docker_build_develop:
+  image: docker:20
+  stage: build
+  variables:
+    CI_REGISTRY: mattia1
+    CI_REGISTRY_USER: mattia1
+    CI_REGISTRY_PASSWORD: dckr_pat_-veYzQnLpjqwPClct2ieCad_jt0
+    TAG: "$CI_REGISTRY/birdazzone-api"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD 
+  script:
+    - docker pull $TAG:dev || true
+    - docker build --cache-from $TAG:dev --tag $TAG:dev .
+    - docker push $TAG:dev 
+  only:
+    - develop
 
