@@ -19,7 +19,7 @@ sonarqube-check:
     - sonar-scanner
   allow_failure: true
   only:
-    - main
+    - develop
 
 docker_build:
   image: docker:20
