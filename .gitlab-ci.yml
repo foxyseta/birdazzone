@@ -35,8 +35,11 @@ docker_build:
   script: 
     - docker pull $TAG || true
     - docker build --cache-from $TAG --tag $TAG .
-    - docker push $TAG
+    - ($CI_COMMIT_BRANCH == "develop" || CI_COMMIT_BRANCH == "main") && docker push $TAG
   only:
+    - merge_requests
     - develop
     - main
+  rules:
+    - if: '[-v $CI_MERGE_REQUEST_TARGET_BRANCH_NAME ] || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
 
