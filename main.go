@@ -52,7 +52,7 @@ func main() {
 	v1.GET("/hello", helloWorld)
 
 	//test twitter API
-	v1.GET("/test/:query", testTwitter)
+	v1.GET("/twitter/:query", testTwitter)
 
 	//swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -82,15 +82,10 @@ func helloWorld(ctx *gin.Context) {
 // @Produce     json
 // @Param       query	path	string	true	"Query to search"
 // @Success     200
-// @Router      /test/{query} [get]
+// @Router      /twitter/{query} [get]
 func testTwitter(ctx *gin.Context) {
-	query := ctx.Param("query")
-	test(ctx, query)
+	q := ctx.Param("query")
 
-}
-
-//TWITTER TEST
-func test(ctx *gin.Context, q string) {
 	tweet := &twitter.Tweet{
 		Authorizer: authorize{
 			Token: BearerToken,
@@ -98,9 +93,11 @@ func test(ctx *gin.Context, q string) {
 		Client: http.DefaultClient,
 		Host:   "https://api.twitter.com",
 	}
+	//optional fields for twitter search
 	fieldOpts := twitter.TweetFieldOptions{
 		TweetFields: []twitter.TweetField{twitter.TweetFieldCreatedAt, twitter.TweetFieldLanguage, twitter.TweetFieldGeo},
 	}
+	//research options
 	searchOpts := twitter.TweetRecentSearchOptions{}
 
 	recentSearch, err := tweet.RecentSearch(context.Background(), q, searchOpts, fieldOpts)
@@ -111,8 +108,9 @@ func test(ctx *gin.Context, q string) {
 	case err != nil:
 		fmt.Println(err)
 	default:
-		sendTweetQuery(ctx, recentSearch)
+		returnTweetQuery(ctx, recentSearch)
 	}
+
 }
 
 type authorize struct {
@@ -130,14 +128,13 @@ func printTweetError(tweetErr *twitter.TweetErrorResponse) {
 	}
 	fmt.Println(string(enc))
 }
-func sendTweetQuery(c *gin.Context, recentSearch *twitter.TweetRecentSearch) {
+func returnTweetQuery(c *gin.Context, recentSearch *twitter.TweetRecentSearch) {
 	send, _ := json.Marshal(recentSearch.LookUps)
 	var v interface{}
 	json.Unmarshal(send, &v)
 	data := v.(map[string]interface{})
 
 	c.JSON(http.StatusOK, gin.H{
-		"code":   http.StatusOK,
 		"tweets": data,
 	})
 }
