@@ -131,13 +131,10 @@ func printTweetError(tweetErr *twitter.TweetErrorResponse) {
 	fmt.Println(string(enc))
 }
 func sendTweetQuery(c *gin.Context, recentSearch *twitter.TweetRecentSearch) {
-
 	send, _ := json.Marshal(recentSearch.LookUps)
-	fmt.Println(string(send))
-	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
-		"message": string(send),
-	})
+	var v interface{}
+	json.Unmarshal(send, &v)
+	data := v.(map[string]interface{})
 
-	//c.JSON(http.StatusOK, send)
+	c.JSON(http.StatusOK, data)
 }
