@@ -20,7 +20,7 @@ paths:
       summary: Test your connection to birdazzone API
       tags:
       - test
-  /test/{query}:
+  /twitter/{query}:
     get:
       parameters:
       - description: Query to search

@@ -36,7 +36,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/test/{query}": {
+        "/twitter/{query}": {
             "get": {
                 "produces": [
                     "application/json"
