@@ -26,7 +26,7 @@ docker_build:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - DOCKER_UPLOAD=$($CI_COMMIT_REF_NAME == "develop" || $CI_COMMIT_REF_NAME == "main") 
+    - DOCKER_UPLOAD=$([[ $CI_COMMIT_REF_NAME == "develop" ]] || [[ $CI_COMMIT_REF_NAME == "main" ]]) 
     - TAG=$CI_REGISTRY_IMAGE:$(([[ $DOCKER_UPLOAD == "true" ]] && (echo $CI_COMMIT_REF_NAME)) || echo develop)'
     - echo $DOCKER_UPLOAD
     - echo $TAG
