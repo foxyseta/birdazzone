@@ -14,7 +14,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -92,14 +91,9 @@ func testTwitter(ctx *gin.Context) {
 
 //TWITTER TEST
 func test(ctx *gin.Context, q string) {
-	//TODO: fix error here (flag redefined:token, happens only if flags are declared with identical names)
-	token := flag.String("token", BearerToken, "twitter API token")
-	query := flag.String("query", q, "twitter query")
-	flag.Parse()
-
 	tweet := &twitter.Tweet{
 		Authorizer: authorize{
-			Token: *token,
+			Token: BearerToken,
 		},
 		Client: http.DefaultClient,
 		Host:   "https://api.twitter.com",
@@ -109,7 +103,7 @@ func test(ctx *gin.Context, q string) {
 	}
 	searchOpts := twitter.TweetRecentSearchOptions{}
 
-	recentSearch, err := tweet.RecentSearch(context.Background(), *query, searchOpts, fieldOpts)
+	recentSearch, err := tweet.RecentSearch(context.Background(), q, searchOpts, fieldOpts)
 	var tweetErr *twitter.TweetErrorResponse
 	switch {
 	case errors.As(err, &tweetErr):
