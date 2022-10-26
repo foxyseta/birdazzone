@@ -40,6 +40,4 @@ docker_build:
     - merge_requests
     - develop
     - main
-  rules:
-    - if: '[-v $CI_MERGE_REQUEST_TARGET_BRANCH_NAME ] || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
-
+  
