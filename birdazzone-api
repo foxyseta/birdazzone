@@ -59,9 +59,12 @@ func testTwitter(ctx *gin.Context) {
 	//optional fields for twitter search
 	fieldOpts := twitter.TweetFieldOptions{
 		TweetFields: []twitter.TweetField{twitter.TweetFieldCreatedAt, twitter.TweetFieldLanguage, twitter.TweetFieldGeo},
+		PlaceFields: []twitter.PlaceField{twitter.PlaceFieldCountry},
 	}
 	//research options
-	searchOpts := twitter.TweetRecentSearchOptions{}
+	searchOpts := twitter.TweetRecentSearchOptions{
+		MaxResult: 10,
+	}
 
 	recentSearch, err := tweet.RecentSearch(context.Background(), q, searchOpts, fieldOpts)
 	var tweetErr *twitter.TweetErrorResponse
