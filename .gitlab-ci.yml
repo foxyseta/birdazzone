@@ -25,7 +25,7 @@ docker_build:
   stage: build
   variables:
     CACHE_TAG: "$CI_REGISTRY_IMAGE:$CI_DEFAULT_BRANCH"
-    TAG: "$CI_REGISTRY_IMAGE:$CI_CURRENT_BRANCH"
+    TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH"
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script: 
