@@ -29,6 +29,7 @@ docker_build:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script: 
+    - echo $DOCKER_UPLOAD
     - docker pull $TAG || true
     - docker build --cache-from $TAG --tag $TAG .
     - $DOCKER_UPLOAD && docker push $TAG
