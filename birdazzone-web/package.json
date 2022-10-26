@@ -13,7 +13,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
   "engines": {
-    "node": "16.x",
+    "node": "19.x",
     "yarn": "1.x"
   },
   "dependencies": {
