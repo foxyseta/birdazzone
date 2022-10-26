@@ -25,14 +25,12 @@ docker_build:
   stage: build
   variables:
     CACHE_TAG: "$CI_REGISTRY_IMAGE:$CI_DEFAULT_BRANCH"
-    TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH"
+    TAG: "$CI_REGISTRY_IMAGE:$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script: 
     - docker pull $CACHE_TAG || true
     - docker build --cache-from $CACHE_TAG --tag $TAG .
-    - docker push $TAG
+    - ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main") && docker push $TAG
   only:
     - merge_requests
-    - develop
-    - main
