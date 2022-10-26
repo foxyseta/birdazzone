@@ -1,4 +1,10 @@
+stages:
+  - test
+  - build
+
+
 sonarqube-check:
+  stage: test
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -13,4 +19,19 @@ sonarqube-check:
     - sonar-scanner
   allow_failure: true
   only:
+    - main
+
+docker_build:
+  image: docker:20
+  stage: build
+  variables:
+    TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script: 
+    - docker pull $TAG || true
+    - docker build --cache-from $TAG --tag $TAG .
+    - docker push $TAG
+  only:
+    - develop
     - main
