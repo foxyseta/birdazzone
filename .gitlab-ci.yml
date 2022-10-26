@@ -23,13 +23,13 @@ sonarqube-check:
 docker_build:
   image: docker:20
   stage: build
-  variables:
-    DOCKER_UPLOAD: $($CI_COMMIT_BRANCH == "develop" && $CI_COMMIT_BRANCH == "main")
-    TAG: '$CI_REGISTRY_IMAGE:$(([[ $DOCKER_UPLOAD == "true" ]] && (echo $CI_COMMIT_BRANCH)) || echo develop)'
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  script: 
+  script:
+    - DOCKER_UPLOAD=$($CI_COMMIT_REF_NAME == "develop" || $CI_COMMIT_REF_NAME == "main") 
+    - TAG=$CI_REGISTRY_IMAGE:$(([[ $DOCKER_UPLOAD == "true" ]] && (echo $CI_COMMIT_REF_NAME)) || echo develop)'
     - echo $DOCKER_UPLOAD
+    - echo $TAG
     - docker pull $TAG || true
     - docker build --cache-from $TAG --tag $TAG .
     - $DOCKER_UPLOAD && docker push $TAG
