@@ -2,6 +2,11 @@ stages:
   - test
   - build
 
+test:
+  stage: test
+  script:
+    - echo "Hello, Uccello!"
+
 sonarqube-check:
   stage: test
   image: 
