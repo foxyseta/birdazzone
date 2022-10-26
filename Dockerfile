@@ -11,6 +11,9 @@ RUN go mod download
 
 COPY *.go ./
 
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN swag init
+
 RUN go build -o /birdazzone-api
 
 ENV HOST 0.0.0.0
