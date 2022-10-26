@@ -99,7 +99,7 @@ func test(ctx *gin.Context, q string) {
 		Host:   "https://api.twitter.com",
 	}
 	fieldOpts := twitter.TweetFieldOptions{
-		TweetFields: []twitter.TweetField{twitter.TweetFieldCreatedAt, twitter.TweetFieldConversationID, twitter.TweetFieldLanguage},
+		TweetFields: []twitter.TweetField{twitter.TweetFieldCreatedAt, twitter.TweetFieldLanguage, twitter.TweetFieldGeo},
 	}
 	searchOpts := twitter.TweetRecentSearchOptions{}
 
@@ -136,5 +136,8 @@ func sendTweetQuery(c *gin.Context, recentSearch *twitter.TweetRecentSearch) {
 	json.Unmarshal(send, &v)
 	data := v.(map[string]interface{})
 
-	c.JSON(http.StatusOK, data)
+	c.JSON(http.StatusOK, gin.H{
+		"code":   http.StatusOK,
+		"tweets": data,
+	})
 }
