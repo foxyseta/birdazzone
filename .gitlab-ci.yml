@@ -23,18 +23,16 @@ sonarqube-check:
 docker_build:
   image: docker:20
   stage: build
+  variables:
+    CACHE_TAG: "$CI_REGISTRY_IMAGE:$CI_DEFAULT_BRANCH"
+    TAG: "$CI_REGISTRY_IMAGE:$CI_CURRENT_BRANCH"
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  script:
-    - DOCKER_UPLOAD=[[ "$CI_COMMIT_REF_NAME" == "develop" ]] || [[ "$CI_COMMIT_REF_NAME" == "main" ]]
-    - echo $DOCKER_UPLOAD
-    - TAG=$CI_REGISTRY_IMAGE:$(([[ $DOCKER_UPLOAD == "true" ]] && (echo $CI_COMMIT_REF_NAME)) || echo develop)'
-    - echo $TAG
-    - docker pull $TAG || true
-    - docker build --cache-from $TAG --tag $TAG .
-    - $DOCKER_UPLOAD && docker push $TAG
+  script: 
+    - docker pull $CACHE_TAG || true
+    - docker build --cache-from $CACHE_TAG --tag $TAG .
+    - docker push $TAG
   only:
     - merge_requests
     - develop
     - main
-  
