@@ -11,15 +11,10 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
 	"net/http"
 	"os"
 
 	_ "git.hjkl.gq/team13/birdazzone-api/docs"
-	twitter "github.com/g8rswimmer/go-twitter"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -29,8 +24,6 @@ const EnvHost = "HOST"
 const EnvPort = "PORT"
 const FallbackHost = "0.0.0.0"
 const FallbackPort = "8080"
-
-const BearerToken = "AAAAAAAAAAAAAAAAAAAAAE4higEAAAAAIAkazaLrT4LHjJx2XFPsdVzEPe8%3DE7HE9wBq5B5b0m4F8uGmcslObTmQFccb9gppULjUwTNBGj1Td3"
 
 func lookupEnvWithFallback(key string, fallback string) string {
 	val, ok := os.LookupEnv(key)
@@ -51,8 +44,11 @@ func main() {
 	v1 := r.Group("/api/v1")
 	v1.GET("/hello", helloWorld)
 
-	//test twitter API
-	v1.GET("/twitter/:query", testTwitter)
+	//twitter interaction API
+	twttr := v1.Group("/twitter")
+	twttr.GET("/ghigliottina", helloWorld) //TODO
+	twttr.GET("/reazione", helloWorld)     //TODO
+	twttr.GET("/:query", testTwitter)      //TODO: remove after /ghigliottina /reazione
 
 	//swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -74,67 +70,4 @@ func staticMessage(c *gin.Context, msg string) {
 func helloWorld(ctx *gin.Context) {
 	staticMessage(ctx, "Hi! You've successfully connected to Birdazzone API.")
 
-}
-
-// testTwitter godoc
-// @Summary     Test Twitter API
-// @Tags        test
-// @Produce     json
-// @Param       query	path	string	true	"Query to search"
-// @Success     200
-// @Router      /twitter/{query} [get]
-func testTwitter(ctx *gin.Context) {
-	q := ctx.Param("query")
-
-	tweet := &twitter.Tweet{
-		Authorizer: authorize{
-			Token: BearerToken,
-		},
-		Client: http.DefaultClient,
-		Host:   "https://api.twitter.com",
-	}
-	//optional fields for twitter search
-	fieldOpts := twitter.TweetFieldOptions{
-		TweetFields: []twitter.TweetField{twitter.TweetFieldCreatedAt, twitter.TweetFieldLanguage, twitter.TweetFieldGeo},
-	}
-	//research options
-	searchOpts := twitter.TweetRecentSearchOptions{}
-
-	recentSearch, err := tweet.RecentSearch(context.Background(), q, searchOpts, fieldOpts)
-	var tweetErr *twitter.TweetErrorResponse
-	switch {
-	case errors.As(err, &tweetErr):
-		printTweetError(tweetErr)
-	case err != nil:
-		fmt.Println(err)
-	default:
-		returnTweetQuery(ctx, recentSearch)
-	}
-
-}
-
-type authorize struct {
-	Token string
-}
-
-func (a authorize) Add(req *http.Request) {
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", a.Token))
-}
-
-func printTweetError(tweetErr *twitter.TweetErrorResponse) {
-	enc, err := json.MarshalIndent(tweetErr, "", "    ")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(enc))
-}
-func returnTweetQuery(c *gin.Context, recentSearch *twitter.TweetRecentSearch) {
-	send, _ := json.Marshal(recentSearch.LookUps)
-	var v interface{}
-	json.Unmarshal(send, &v)
-	data := v.(map[string]interface{})
-
-	c.JSON(http.StatusOK, gin.H{
-		"tweets": data,
-	})
 }
