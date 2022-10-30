@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import HelloBird from './components/HelloBird.vue' 
+  import NavBar from "./components/NavBar.vue"
+  import HelloBird from './components/HelloBird.vue' 
 </script>
 
 <template>
+  <NavBar />
   <HelloBird />
 </template>
