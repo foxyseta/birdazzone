@@ -35,6 +35,31 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/twitter/{query}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test"
+                ],
+                "summary": "Test Twitter API",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Query to search",
+                        "name": "query",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
         }
     }
 }`
