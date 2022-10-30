@@ -3,7 +3,7 @@ stages:
   - test
   - deploy
 
-variables:
+log:
   stage: test
   script:
     - export
@@ -42,7 +42,7 @@ code-quality:
 tests:
   stage: test
   script:
-    - echo "TODO: implement me"
+    - echo "Testing... (WIP)"
   only:
     - merge_request_event
 
