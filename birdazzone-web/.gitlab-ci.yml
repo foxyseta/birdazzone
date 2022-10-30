@@ -1,4 +1,28 @@
-sonarqube-check:
+stages:
+  - build
+  - test
+  - deploy
+
+log:
+  stage: test
+  script:
+    - export
+
+build:
+  image: docker:20
+  stage: build
+  variables:
+    CACHE_TAG: "$CI_REGISTRY_IMAGE:$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script: 
+    - docker pull $CACHE_TAG || true
+    - docker build --cache-from $CACHE_TAG .
+  only:
+    - merge_request_event
+
+code-quality:
+  stage: test
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -13,4 +37,26 @@ sonarqube-check:
     - sonar-scanner
   allow_failure: true
   only:
+   - develop
+
+tests:
+  stage: test
+  script:
+    - echo "Testing... (WIP)"
+  only:
+    - merge_request_event
+
+deploy:
+  image: docker:20
+  stage: deploy
+  variables:
+    TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script: 
+    - docker pull $TAG || true
+    - docker build --cache-from $TAG --tag $TAG .
+    - docker push $TAG
+  only:
+    - develop
     - main
