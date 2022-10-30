@@ -39,12 +39,18 @@ func address() string {
 }
 
 func main() {
+	//gin + API
 	r := gin.Default()
-
 	v1 := r.Group("/api/v1")
-
 	v1.GET("/hello", helloWorld)
 
+	//twitter interaction API
+	twttr := v1.Group("/twitter")
+	twttr.GET("/ghigliottina", helloWorld) //TODO
+	twttr.GET("/reazione", helloWorld)     //TODO
+	twttr.GET("/:query", testTwitter)      //TODO: remove after /ghigliottina /reazione
+
+	//swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.Run(address())
@@ -63,4 +69,5 @@ func staticMessage(c *gin.Context, msg string) {
 // @Router      /hello [get]
 func helloWorld(ctx *gin.Context) {
 	staticMessage(ctx, "Hi! You've successfully connected to Birdazzone API.")
+
 }
