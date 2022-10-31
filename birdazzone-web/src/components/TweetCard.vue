@@ -1,6 +1,5 @@
 <script lang="ts" setup >
 import type { FakeTweet } from '@/api/interfaces/fake-tweet';
-import { defineProps} from 'vue'
 
 const props = defineProps<{tweet: FakeTweet}>()
 </script>
