@@ -34,6 +34,7 @@ tests:
     - go test -coverprofile=coverage.out -json > report.json
   only:
     - merge_requests
+    - develop
 
 code-quality:
   stage: lint
