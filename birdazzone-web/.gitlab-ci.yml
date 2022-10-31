@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - lint
   - deploy
 
 log:
@@ -19,7 +20,16 @@ build:
     - docker pull $CACHE_TAG || true
     - docker build --cache-from $CACHE_TAG .
   only:
+    - merge_requests
+
+tests:
+  image: node:16-alpine
+  stage: test
+  script:
+    - npm run coverage
+  only:
     - merge_request_event
+    - develop
 
 code-quality:
   stage: test
@@ -38,13 +48,6 @@ code-quality:
   allow_failure: true
   only:
    - develop
-
-tests:
-  stage: test
-  script:
-    - echo "Testing... (WIP)"
-  only:
-    - merge_request_event
 
 deploy:
   image: docker:20
