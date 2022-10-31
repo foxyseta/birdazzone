@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - lint
   - deploy
 
 log:
@@ -35,7 +36,7 @@ tests:
     - merge_requests
 
 code-quality:
-  stage: test
+  stage: lint
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -51,7 +52,6 @@ code-quality:
   allow_failure: true
   only:
    - develop
-
 
 deploy:
   image: docker:20
