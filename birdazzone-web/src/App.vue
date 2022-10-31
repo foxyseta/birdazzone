@@ -1,5 +1,4 @@
 <script setup lang="ts">
-<<<<<<< src/App.vue
 import HelloBird from './components/HelloBird.vue'
 import TweetList from './components/TweetList.vue' 
 import NavBar from "./components/NavBar.vue"
