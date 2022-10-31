@@ -1,39 +1,43 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
-	"errors"
-	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 
-	twitter "github.com/g8rswimmer/go-twitter"
 	"github.com/gin-gonic/gin"
 )
 
 const BearerToken = "AAAAAAAAAAAAAAAAAAAAAE4higEAAAAAIAkazaLrT4LHjJx2XFPsdVzEPe8%3DE7HE9wBq5B5b0m4F8uGmcslObTmQFccb9gppULjUwTNBGj1Td3"
 
-type authorize struct {
-	Token string
-}
+func getRequest(query string) *string {
+	max_results := "15"
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", "https://api.twitter.com/2/tweets/search/recent?query="+query+"&max_results="+max_results+"&tweet.fields=public_metrics&expansions=geo.place_id&place.fields=geo,country,country_code&user.fields=username", nil)
+	req.Header.Set("Authorization", "Bearer "+BearerToken)
+	resp, err := client.Do(req)
 
-func (a authorize) Add(req *http.Request) {
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", a.Token))
-}
-
-func printTweetError(tweetErr *twitter.TweetErrorResponse) {
-	enc, err := json.MarshalIndent(tweetErr, "", "    ")
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
+		return nil
 	}
-	fmt.Println(string(enc))
+	//We Read the response body on the line below.
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+		return nil
+	}
+	//Convert the body to type string
+	sb := string(body)
+	//fmt.Println(sb)
+	return &sb
 }
-func returnTweetQuery(c *gin.Context, recentSearch *twitter.TweetRecentSearch) {
-	send, _ := json.Marshal(recentSearch.LookUps)
-	var v interface{}
-	json.Unmarshal(send, &v)
-	data := v.(map[string]interface{})
 
+func returnTweetQuery(c *gin.Context, res string) {
+	var v interface{}
+	json.Unmarshal([]byte(res), &v)
+	data := v.(map[string]interface{})
 	c.JSON(http.StatusOK, gin.H{
 		"tweets": data,
 	})
@@ -48,33 +52,11 @@ func returnTweetQuery(c *gin.Context, recentSearch *twitter.TweetRecentSearch) {
 // @Router      /twitter/{query} [get]
 func testTwitter(ctx *gin.Context) {
 	q := ctx.Param("query")
-
-	tweet := &twitter.Tweet{
-		Authorizer: authorize{
-			Token: BearerToken,
-		},
-		Client: http.DefaultClient,
-		Host:   "https://api.twitter.com",
-	}
-	//optional fields for twitter search
-	fieldOpts := twitter.TweetFieldOptions{
-		TweetFields: []twitter.TweetField{twitter.TweetFieldCreatedAt, twitter.TweetFieldLanguage, twitter.TweetFieldGeo},
-		PlaceFields: []twitter.PlaceField{twitter.PlaceFieldCountry},
-	}
-	//research options
-	searchOpts := twitter.TweetRecentSearchOptions{
-		MaxResult: 10,
-	}
-
-	recentSearch, err := tweet.RecentSearch(context.Background(), q, searchOpts, fieldOpts)
-	var tweetErr *twitter.TweetErrorResponse
-	switch {
-	case errors.As(err, &tweetErr):
-		printTweetError(tweetErr)
-	case err != nil:
-		fmt.Println(err)
-	default:
-		returnTweetQuery(ctx, recentSearch)
+	sb := getRequest(q)
+	if sb != nil {
+		returnTweetQuery(ctx, *sb)
 	}
 
 }
+
+//curl "https://api.twitter.com/2/tweets/search/recent?query=ciao" -H "Authorization: Bearer AAAAAAAAAAAAAAAAAAAAAE4higEAAAAAIAkazaLrT4LHjJx2XFPsdVzEPe8%3DE7HE9wBq5B5b0m4F8uGmcslObTmQFccb9gppULjUwTNBGj1Td3"
