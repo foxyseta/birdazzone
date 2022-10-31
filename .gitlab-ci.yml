@@ -19,7 +19,20 @@ build:
     - docker pull $CACHE_TAG || true
     - docker build --cache-from $CACHE_TAG .
   only:
-    - merge_request_event
+    - merge_requests
+
+tests:
+  image: golang:1.18
+  stage: test
+  artifacts:
+    paths:
+      - coverage.out
+      - report.json
+    expire_in: 1 week
+  script:
+    - go test -coverprofile=coverage.out -json > report.json
+  only:
+    - merge_requests
 
 code-quality:
   stage: test
@@ -39,12 +52,6 @@ code-quality:
   only:
    - develop
 
-tests:
-  stage: test
-  script:
-    - echo "Testing... (WIP)"
-  only:
-    - merge_request_event
 
 deploy:
   image: docker:20
