@@ -33,7 +33,7 @@ tests:
     - develop
 
 code-quality:
-  stage: test
+  stage: lint
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
