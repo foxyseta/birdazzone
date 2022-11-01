@@ -31,7 +31,7 @@ tests:
       - report.json
     expire_in: 1 week
   script:
-    - go test -coverprofile=coverage.out -json > report.json
+    - go test -coverprofile=coverage.out -json > test-report.out
   only:
     - merge_requests
     - develop
