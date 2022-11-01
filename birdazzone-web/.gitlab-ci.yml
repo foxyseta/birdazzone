@@ -25,6 +25,10 @@ build:
 tests:
   image: node:16-alpine
   stage: test
+  artifacts:
+    paths:
+      - coverage/lcov.info
+    expire_in: 1 week
   script:
     - npm i
     - npm run coverage
