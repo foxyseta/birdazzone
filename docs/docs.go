@@ -57,6 +57,12 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "401": {
+                        "description": "Bearer Token Error",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
