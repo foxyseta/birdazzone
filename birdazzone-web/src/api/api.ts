@@ -27,6 +27,7 @@ export class ApiManager {
       return new ApiResponse<T>(responseStatusCode, responseBody)
     }
     else {
+      console.log(response.json)
       const responseError = await response.json()      // error
       return new ApiResponse<T>(responseStatusCode, undefined, responseError)
     }
@@ -54,6 +55,3 @@ export class ApiManager {
     return await this.generalRequest<T>(url, config)
   }
 }
-
-
-

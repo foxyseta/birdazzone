@@ -1,6 +1,6 @@
-// src/test/App.test.ts
-import App from '../src/App.vue'
-import { test, expect } from 'vitest';
-test('first test', () => {
+import App from '/src/App.vue'
+import { test, expect } from 'vitest'
+
+test('App is truthy', () => {
   expect(App).toBeTruthy()
 })
