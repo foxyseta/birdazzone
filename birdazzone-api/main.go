@@ -38,7 +38,7 @@ func address() string {
 		lookupEnvWithFallback(EnvPort, FallbackPort)
 }
 
-func main() {
+func runServer() {
 	//gin + API
 	r := gin.Default()
   r.Use(corsMiddleware())
@@ -56,6 +56,11 @@ func main() {
 
 	r.Run(address())
 }
+
+func main() {
+  runServer()
+}
+
 func staticMessage(c *gin.Context, msg string) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": msg,
