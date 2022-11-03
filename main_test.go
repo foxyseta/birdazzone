@@ -42,3 +42,8 @@ func TestAddress(t *testing.T) {
     t.Fatalf("Negative port number %d", i)
   }
 }
+
+func TestMain(m *testing.M) {
+  runServer()
+  os.Exit(m.Run())
+}
