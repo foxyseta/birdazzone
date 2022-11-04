@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-func TestMain(m *testing.M) {
-	//util.TestWithServer(m)
+// TODO:
+func TestWithServer(m *testing.M) {
 	sttyArgs := syscall.ProcAttr{
 		Dir:   "",
 		Env:   []string{},
@@ -19,6 +19,9 @@ func TestMain(m *testing.M) {
 	pid, err := syscall.ForkExec("/bin/go", []string{"/bin/go", "run", ""}, &sttyArgs)
 	fmt.Println(pid)
 	fmt.Println(err)
+	for i := 0; true; i-- {
+
+	}
 
 	os.Exit(m.Run())
 }

@@ -35,6 +35,5 @@ func main() {
 	r := server.CreateServer()
 	v1 := r.Group("/api/v1")
 	v1.GET("/hello", helloWorld)
-
 	server.Run(r)
 }
