@@ -1,4 +1,4 @@
-package main
+package twitter
 
 import (
 	"encoding/json"
@@ -43,14 +43,14 @@ func returnTweetQuery(c *gin.Context, res string) {
 	})
 }
 
-// testTwitter godoc
+// TestTwitter godoc
 // @Summary     Test Twitter API
 // @Tags        test
 // @Produce     json
 // @Param       query	path	string	true	"Query to search"
 // @Success     200
 // @Router      /twitter/{query} [get]
-func testTwitter(ctx *gin.Context) {
+func TestTwitter(ctx *gin.Context) {
 	q := ctx.Param("query")
 	sb := getRequest(q)
 	if sb != nil {
