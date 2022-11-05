@@ -1,14 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import EreditaView from '../views/EreditaView.vue'
-import CatenaView from '../views/CatenaView.vue'
 import ChessView from '../views/ChessView.vue'
 import TvGamesView from '../views/TvGamesView.vue'
+import TvGameView from '../views/TvGameView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 
-export const EREDITA_PATH = "/games/leredita"
-export const GAMES_PATH = "/games"
-export const CATENA_PATH = "/games/catena"
+export const GAMES_PATH = "/tv-games"
 export const CHESS_PATH = "/chess"
+export const GAME_ID_PATH = "/tv-games/:id"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,7 +14,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'Root',
-      component: EreditaView
+      component: TvGamesView
     },
     {
       path: '/:pathMatch(.*)*',
@@ -28,16 +26,13 @@ const router = createRouter({
       component: TvGamesView
     },
     {
-      path: EREDITA_PATH,
-      component: EreditaView
-    },
-    {
-      path: CATENA_PATH,
-      component: CatenaView
-    },
-    {
       path: CHESS_PATH,
       component: ChessView
+    },
+    {
+      path: GAME_ID_PATH,
+      component: TvGameView,
+      props: true
     },
   ]
 })

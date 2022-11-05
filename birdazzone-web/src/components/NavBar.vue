@@ -35,16 +35,18 @@ const items = ref<NavItem[]>([
       <ul class="my-5 space-y-2">
          <li>
             <div class="my-3" v-for="item in items">
-            <a :href="item.url" class="flex text-white items-center p-2 font-normal rounded-lg">
-              <div v-if="item.active" class="flex items-center" >
-                <img :src="item.icon" class="white-filter icon" /> 
-                <h2 class="ml-3 font-bold text-white">{{ item.title }}</h2>
+            <RouterLink :to="item.url">
+              <div class="flex text-white items-center p-2 font-normal rounded-lg">
+                <div v-if="item.active" class="flex items-center" >
+                  <img :src="item.icon" class="white-filter icon" /> 
+                  <h2 class="ml-3 font-bold text-white">{{ item.title }}</h2>
+                </div>
+                <div v-else class="flex items-center">
+                  <img :src="item.icon" class="gray-filter icon" /> 
+                  <h2 class="ml-3 font-bold text-lgray">{{ item.title }}</h2>
+                </div>
               </div>
-              <div v-else class="flex items-center">
-                <img :src="item.icon" class="gray-filter icon" /> 
-                <h2 class="ml-3 font-bold text-lgray">{{ item.title }}</h2>
-              </div>
-            </a>
+            </RouterLink>
             </div>
          </li>
       </ul>
