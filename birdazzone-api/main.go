@@ -13,7 +13,7 @@ package main
 import (
 	"net/http"
 	"os"
-
+	"strconv"
 	_ "git.hjkl.gq/team13/birdazzone-api/docs"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -50,6 +50,12 @@ func main() {
 	twttr.GET("/ghigliottina", helloWorld) //TODO
 	twttr.GET("/reazione", helloWorld)     //TODO
 	twttr.GET("/:query", testTwitter)      //TODO: remove after /ghigliottina /reazione
+
+  // Tv games
+  games := v1.Group("/tv-games")
+  games.GET("/", getTvGames)
+  games.GET("/:id", getTvGameById)
+
 
 	//swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -89,3 +95,43 @@ func corsMiddleware() gin.HandlerFunc {
         c.Next()
     }
 }
+
+type Game struct {
+  Id int `json:id`
+  Name string `json:name`
+}
+
+// getTvGames godoc
+// @Summary     Get all TV games
+// @Tags        tv-games
+// @Produce     json
+// @Success     200
+// @Router      /tv-games 
+func getTvGames(ctx *gin.Context) {
+  // TODO 
+  games := []Game {Game{Id: 0, Name: "La ghigliottina"}, Game{Id: 1, Name: "L'eredità"}}
+
+  ctx.JSON(http.StatusOK, games)
+}
+
+// getTvGameById godoc
+// @Summary     Get TV game
+// @Tags        tv-games
+// @Produce     json
+// @Success     200
+// @Router      /tv-games/{id} [get] 
+func getTvGameById(ctx *gin.Context) {
+  // TODO 
+  games := []Game {Game{Id: 0, Name: "La ghigliottina"}, Game{Id: 1, Name: "L'eredità"}}
+
+  id := ctx.Param("id")
+  num, err := strconv.Atoi(id)
+
+  if err != nil || num >= len(games) || num < 0{
+    ctx.AbortWithStatus(400)
+    return 
+  }
+
+  ctx.JSON(http.StatusOK, games[num])
+}
+
