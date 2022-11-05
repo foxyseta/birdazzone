@@ -10,15 +10,16 @@ log:
     - export
 
 build:
-  image: docker:20
+  image: jdrouet/docker-with-buildx:stable
   stage: build
   variables:
     CACHE_TAG: "$CI_REGISTRY_IMAGE:$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script: 
+    - docker buildx create --use
     - docker pull $CACHE_TAG || true
-    - docker build --cache-from $CACHE_TAG .
+    - docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --cache-from $CACHE_TAG .
   only:
     - merge_requests
 
@@ -64,8 +65,7 @@ deploy:
   script: 
     - docker buildx create --use
     - docker pull $TAG || true
-    - docker buildx build -platform linux/arm/v7,linux/arm64/v8,linux/amd64  --cache-from $TAG --tag $TAG .
-    - docker push $TAG
+    - docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --push --cache-from $TAG --tag $TAG .
   only:
     - develop
     - main
