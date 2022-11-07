@@ -24,7 +24,6 @@ func InitAPI(v1 *gin.RouterGroup) {
 // @Success     200
 // @Router      /tvgames	[get]
 func getTvGames(ctx *gin.Context) {
-	// TODO
 	games := []Game{{Id: 0, Name: "La ghigliottina"}, {Id: 1, Name: "L'eredità"}}
 
 	ctx.JSON(http.StatusOK, games)
@@ -38,7 +37,6 @@ func getTvGames(ctx *gin.Context) {
 // @Param       id	path	int	true	"ID to search"
 // @Router      /tvgames/{id} [get]
 func getTvGameById(ctx *gin.Context) {
-	// TODO
 	games := []Game{{Id: 0, Name: "La ghigliottina"}, {Id: 1, Name: "L'eredità"}}
 
 	id := ctx.Param("id")
