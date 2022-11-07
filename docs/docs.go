@@ -36,6 +36,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/tvgames": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tvgames"
+                ],
+                "summary": "Get all TV games",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/tvgames/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tvgames"
+                ],
+                "summary": "Get TV game",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID to search",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/twitter/{query}": {
             "get": {
                 "produces": [
