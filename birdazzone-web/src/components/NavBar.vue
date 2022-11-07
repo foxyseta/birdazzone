@@ -28,7 +28,7 @@ const items = ref<NavItem[]>([
   <aside class="w-64 h-screen bg-foreground" aria-label="Sidebar">
     <!-- Title -->
     <div class="py-10 flex flex-col items-center">
-      <img src="/logo.png" />
+      <img src="/logo.png" alt="Birdazzone's logo"/>
       <h1 class="text-lgreen font-black text-xl">BIRDAZZONE</h1>
     </div>
    <div class="overflow-y-auto py-4 px-3 rounded">
@@ -38,11 +38,11 @@ const items = ref<NavItem[]>([
             <RouterLink :to="item.url">
               <div class="flex text-white items-center p-2 font-normal rounded-lg">
                 <div v-if="item.active" class="flex items-center" >
-                  <img :src="item.icon" class="white-filter icon" /> 
+                  <img :src="item.icon" alt="An icon for the current category" class="white-filter icon" /> 
                   <h2 class="ml-3 font-bold text-white">{{ item.title }}</h2>
                 </div>
                 <div v-else class="flex items-center">
-                  <img :src="item.icon" class="gray-filter icon" /> 
+                  <img :src="item.icon" alt="An icon for one of the others categories" class="gray-filter icon" /> 
                   <h2 class="ml-3 font-bold text-lgray">{{ item.title }}</h2>
                 </div>
               </div>
