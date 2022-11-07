@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +21,7 @@ type queryResponse struct {
 func getRequest(query string) queryResponse {
 	max_results := "10"
 	client := &http.Client{}
+	query = url.QueryEscape(query)
 	req, _ := http.NewRequest("GET", "https://api.twitter.com/2/tweets/search/recent?query="+query+"&max_results="+max_results+"&tweet.fields=public_metrics&expansions=geo.place_id&place.fields=geo,country,country_code&user.fields=username", nil)
 	req.Header.Set("Authorization", "Bearer "+BearerToken)
 	resp, err := client.Do(req)
