@@ -8,8 +8,8 @@ import (
 )
 
 type Game struct {
-	Id   int    `json:id`
-	Name string `json:name`
+	Id   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 func InitAPI(v1 *gin.RouterGroup) {
@@ -25,7 +25,7 @@ func InitAPI(v1 *gin.RouterGroup) {
 // @Router      /tvgames	[get]
 func getTvGames(ctx *gin.Context) {
 	// TODO
-	games := []Game{Game{Id: 0, Name: "La ghigliottina"}, Game{Id: 1, Name: "L'eredità"}}
+	games := []Game{{Id: 0, Name: "La ghigliottina"}, {Id: 1, Name: "L'eredità"}}
 
 	ctx.JSON(http.StatusOK, games)
 }
@@ -39,7 +39,7 @@ func getTvGames(ctx *gin.Context) {
 // @Router      /tvgames/{id} [get]
 func getTvGameById(ctx *gin.Context) {
 	// TODO
-	games := []Game{Game{Id: 0, Name: "La ghigliottina"}, Game{Id: 1, Name: "L'eredità"}}
+	games := []Game{{Id: 0, Name: "La ghigliottina"}, {Id: 1, Name: "L'eredità"}}
 
 	id := ctx.Param("id")
 	num, err := strconv.Atoi(id)

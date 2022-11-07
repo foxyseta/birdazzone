@@ -27,7 +27,7 @@ func TestGetTvGameById(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Params = []gin.Param{gin.Param{Key: "id", Value: "0"}}
+	c.Params = []gin.Param{{Key: "id", Value: "0"}}
 	getTvGameById(c)
 	fmt.Printf("%d %s\n", w.Code, w.Body.String())
 	if w.Code != http.StatusOK {
@@ -37,7 +37,7 @@ func TestGetTvGameById(t *testing.T) {
 	//predicted failure (id:-1 should return Code 400)
 	w = httptest.NewRecorder()
 	c, _ = gin.CreateTestContext(w)
-	c.Params = []gin.Param{gin.Param{Key: "id", Value: "-1"}}
+	c.Params = []gin.Param{{Key: "id", Value: "-1"}}
 	getTvGameById(c)
 	fmt.Printf("%d %s\n", w.Code, w.Body.String())
 	if w.Code != http.StatusBadRequest {
