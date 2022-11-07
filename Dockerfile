@@ -9,7 +9,7 @@ COPY go.sum ./
 COPY docs ./docs
 RUN go mod download
 
-COPY * ./
+COPY . ./
 
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN swag init
