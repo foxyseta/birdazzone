@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ApiRepository from '@/api/api-repository';
 import type { TvGame } from '@/api/interfaces/tv-game';
-import { ref, defineProps, onBeforeMount } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import ErrorWidget from '../components/ErrorWidget.vue'
 
 const error = ref<boolean> (false)
