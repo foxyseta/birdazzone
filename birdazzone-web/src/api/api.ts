@@ -21,7 +21,6 @@ export class ApiManager {
     const response = await fetch(url, config)
 
     const responseStatusCode = response.status
-    console.log(response.status)
     if (response.ok) {            // success
       const responseBody = (await response.json()) as T
       return new ApiResponse<T>(responseStatusCode, responseBody)
