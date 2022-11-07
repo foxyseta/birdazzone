@@ -1,27 +1,23 @@
 package util
 
 import (
-	"fmt"
-	"os"
-	"syscall"
-	"testing"
+	"net/http/httptest"
+
+	"github.com/gin-gonic/gin"
 )
 
-// TODO:
-func TestWithServer(m *testing.M) {
-	sttyArgs := syscall.ProcAttr{
-		Dir:   "",
-		Env:   []string{},
-		Files: []uintptr{os.Stdin.Fd(), os.Stdout.Fd(), os.Stderr.Fd()},
-		Sys:   nil,
-	}
+var testingResponseRecorder = httptest.NewRecorder()
+var testingGinContext *gin.Context = nil
 
-	pid, err := syscall.ForkExec("/bin/go", []string{"/bin/go", "run", ""}, &sttyArgs)
-	fmt.Println(pid)
-	fmt.Println(err)
-	for i := 0; true; i-- {
+func init() {
+  gin.SetMode(gin.TestMode)
+  testingGinContext, _ = gin.CreateTestContext(testingResponseRecorder)
+}
 
-	}
+func GetTestingResponseRecorder() *httptest.ResponseRecorder {
+  return testingResponseRecorder
+}
 
-	os.Exit(m.Run())
+func GetTestingGinContext() *gin.Context {
+  return testingGinContext
 }

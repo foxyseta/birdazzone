@@ -1,23 +1,29 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"git.hjkl.gq/team13/birdazzone-api/util"
 )
 
 func TestHello(t *testing.T) {
 	//should test message + Code 200
-	gin.SetMode(gin.TestMode)
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
 
-	helloWorld(c)
-	fmt.Printf("%d %s\n", w.Code, w.Body.String())
-	if w.Code != http.StatusOK {
-		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
+	helloWorld(util.GetTestingGinContext())
+	if util.GetTestingResponseRecorder().Code != http.StatusOK {
+		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK,
+      util.GetTestingResponseRecorder().Code)
+	}
+}
+
+func TestBirdazzoneServer(t *testing.T) {
+	s := birdazzoneServer()
+	if s == nil {
+		t.Fatal("Cannot create server")
+	}
+	routes := s.Routes()
+	if len(routes) == 0 {
+		t.Fatal("No routes")
 	}
 }
