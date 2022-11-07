@@ -34,6 +34,7 @@ tests:
     - go test -coverprofile=coverage.out -json > report.json
   only:
     - merge_requests
+    - develop
 
 code-quality:
   stage: lint
@@ -53,7 +54,7 @@ code-quality:
   only:
    - develop
 
-deploy:
+deploy-develop:
   image: docker:20
   stage: deploy
   variables:
@@ -66,4 +67,17 @@ deploy:
     - docker push $TAG
   only:
     - develop
+
+deploy-main:
+  image: jdrouet/docker-with-buildx:stable
+  stage: deploy
+  variables:
+    TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script: 
+    - docker buildx create --use
+    - docker pull $TAG || true
+    - docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --push --cache-from $TAG --tag $TAG .
+  only:
     - main
