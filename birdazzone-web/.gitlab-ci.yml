@@ -36,7 +36,7 @@ tests:
     - npm i
     - npm run coverage
   only:
-    - merge_request_event
+    - merge_requests
     - develop
 
 code-quality:
