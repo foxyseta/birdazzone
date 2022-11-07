@@ -12,11 +12,10 @@ package main
 
 import (
 	"net/http"
-	"strconv"
-
-	"git.hjkl.gq/team13/birdazzone-api/server"
 
 	_ "git.hjkl.gq/team13/birdazzone-api/docs"
+	"git.hjkl.gq/team13/birdazzone-api/server"
+	"git.hjkl.gq/team13/birdazzone-api/tvgames"
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,46 +36,7 @@ func main() {
 	v1 := r.Group("/api/v1")
 	v1.GET("/hello", helloWorld)
 	// Tv games
-	v1.GET("/tv-games", getTvGames)
-	v1.GET("/tv-games/:id", getTvGameById)
+	tvgames.InitAPI(v1)
+
 	server.Run(r)
-}
-
-type Game struct {
-	Id   int    `json:id`
-	Name string `json:name`
-}
-
-// getTvGames godoc
-// @Summary     Get all TV games
-// @Tags        tv-games
-// @Produce     json
-// @Success     200
-// @Router      /tv-games
-func getTvGames(ctx *gin.Context) {
-	// TODO
-	games := []Game{Game{Id: 0, Name: "La ghigliottina"}, Game{Id: 1, Name: "L'eredità"}}
-
-	ctx.JSON(http.StatusOK, games)
-}
-
-// getTvGameById godoc
-// @Summary     Get TV game
-// @Tags        tv-games
-// @Produce     json
-// @Success     200
-// @Router      /tv-games/{id} [get]
-func getTvGameById(ctx *gin.Context) {
-	// TODO
-	games := []Game{Game{Id: 0, Name: "La ghigliottina"}, Game{Id: 1, Name: "L'eredità"}}
-
-	id := ctx.Param("id")
-	num, err := strconv.Atoi(id)
-
-	if err != nil || num >= len(games) || num < 0 {
-		ctx.AbortWithStatus(400)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, games[num])
 }
