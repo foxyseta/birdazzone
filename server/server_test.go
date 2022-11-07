@@ -1,13 +1,11 @@
 package server
 
 import (
-	"fmt"
 	"net"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
-	"syscall"
 	"testing"
 )
 
@@ -71,20 +69,4 @@ func TestRun(t *testing.T) {
 	if resp.StatusCode != 200 {
 		t.Fatalf("Status Code: got %d instead of 200", resp.StatusCode)
 	}
-}
-
-func TestMain(m *testing.M) {
-	//util.TestWithServer(m)
-	sttyArgs := syscall.ProcAttr{
-		Dir:   "",
-		Env:   []string{},
-		Files: []uintptr{os.Stdin.Fd(), os.Stdout.Fd(), os.Stderr.Fd()},
-		Sys:   nil,
-	}
-
-	pid, err := syscall.ForkExec("/bin/go", []string{"/bin/go", "run", ""}, &sttyArgs)
-	fmt.Println(pid)
-	fmt.Println(err)
-
-	os.Exit(m.Run())
 }
