@@ -104,7 +104,7 @@ type Game struct {
 // @Tags        tv-games
 // @Produce     json
 // @Success     200
-// @Router      /tv-games
+// @Router      /tv-games [get]
 func getTvGames(ctx *gin.Context) {
 	// TODO
 	games := []Game{Game{Id: 0, Name: "La ghigliottina"}, Game{Id: 1, Name: "L'eredità"}}
@@ -117,6 +117,7 @@ func getTvGames(ctx *gin.Context) {
 // @Tags        tv-games
 // @Produce     json
 // @Success     200
+// @Param       id	path	int	true	"ID to search"
 // @Router      /tv-games/{id} [get]
 func getTvGameById(ctx *gin.Context) {
 	// TODO
