@@ -25,6 +25,7 @@ func TestGetTvGameById(t *testing.T) {
 
 	//id:0 should return something + Code 200
 	gin.SetMode(gin.TestMode)
+
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Params = []gin.Param{{Key: "id", Value: "0"}}
