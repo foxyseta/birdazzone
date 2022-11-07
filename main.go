@@ -39,4 +39,51 @@ func main() {
 	tvgames.InitAPI(v1)
 
 	server.Run(r)
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
+
+type Game struct {
+	Id   int    `json:id`
+	Name string `json:name`
+}
+
+// getTvGames godoc
+// @Summary     Get all TV games
+// @Tags        tv-games
+// @Produce     json
+// @Success     200
+// @Router      /tv-games [get]
+func getTvGames(ctx *gin.Context) {
+	// TODO
+	games := []Game{Game{Id: 0, Name: "La ghigliottina"}, Game{Id: 1, Name: "L'eredità"}}
+
+	ctx.JSON(http.StatusOK, games)
+}
+
+// getTvGameById godoc
+// @Summary     Get TV game
+// @Tags        tv-games
+// @Produce     json
+// @Success     200
+// @Param       id	path	int	true	"ID to search"
+// @Router      /tv-games/{id} [get]
+func getTvGameById(ctx *gin.Context) {
+	// TODO
+	games := []Game{Game{Id: 0, Name: "La ghigliottina"}, Game{Id: 1, Name: "L'eredità"}}
+
+	id := ctx.Param("id")
+	num, err := strconv.Atoi(id)
+
+	if err != nil || num >= len(games) || num < 0 {
+		ctx.AbortWithStatus(400)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, games[num])
 }
