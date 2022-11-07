@@ -23,7 +23,7 @@ export default class ApiRepository {
     ApiManager.get<TvGame>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID, id))
 
   /// Takes a string in input containing placeholders in the form of {n}, where
-  /// n is a number > 0. Then replace all the occurence of the {n} pattern with 
+  /// n is a number >= 0. Then replace all the occurence of the {n} pattern with 
   /// the n-th word of args field. For example:
   ///
   /// stringFormat("Hello {0} {1}", "wonderful", "world") = "Hello wonderful world"
