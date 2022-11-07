@@ -18,7 +18,7 @@ func TestReturnTweetQuery(t *testing.T) {
 	returnTweetQuery(c, `{"text":"TEST STRING","user":"@myusername"}`)
 	fmt.Printf("%d %s\n", w.Code, w.Body.String())
 	if w.Code != http.StatusOK {
-		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
+		t.Fatalf("Expected to get status %d but instead got %d", http.StatusOK, w.Code)
 	}
 }
 

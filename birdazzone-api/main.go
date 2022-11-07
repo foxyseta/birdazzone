@@ -31,12 +31,15 @@ func helloWorld(ctx *gin.Context) {
 	})
 }
 
-func main() {
+func birdazzoneServer() *gin.Engine {
 	r := server.CreateServer()
 	v1 := r.Group("/api/v1")
 	v1.GET("/hello", helloWorld)
 	// Tv games
 	tvgames.InitAPI(v1)
+  return r
+}
 
-	server.Run(r)
+func main() {
+	server.Run(birdazzoneServer())
 }

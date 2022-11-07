@@ -16,6 +16,7 @@ func TestLookupEnvWithFallbackFailure(t *testing.T) {
 		t.Fatal("Wrong variable value")
 	}
 }
+
 func TestLookupEnvWithFallbackSuccess(t *testing.T) {
 	const VarName = "FOOD"
 	const VarValue = "PIZZA"
