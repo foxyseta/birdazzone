@@ -48,7 +48,7 @@ func TestCorsMiddleware(t *testing.T) {
   }
   var err error
   testingGinContext.Request, err = http.NewRequest("OPTIONS", "https://api.twitter.com/", nil)
-  if err == nil {
+  if err != nil {
     t.Fatal("Unable to create request")
   }
   corsMiddleware(testingGinContext)
