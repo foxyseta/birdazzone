@@ -2,7 +2,6 @@ package server
 
 import (
 	"net"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -58,15 +57,5 @@ func TestCreate(t *testing.T) {
 	}
 	if docs.Path != "/swagger/*any" {
 		t.Fatalf("Path is %s and should be /swagger/*any", docs.Path)
-	}
-}
-
-func TestRun(t *testing.T) {
-	resp, err := http.Get("http://" + address() + "/swagger/index.html")
-	if err != nil {
-		t.Fatalf("HTTP Error: %s", err.Error())
-	}
-	if resp.StatusCode != 200 {
-		t.Fatalf("Status Code: got %d instead of 200", resp.StatusCode)
 	}
 }
