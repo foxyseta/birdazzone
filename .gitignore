@@ -20,5 +20,8 @@ vendor/
 # Go workspace file
 go.work
 
+# Binary
+birdazzone-api
+
 # Test report file
 report.json

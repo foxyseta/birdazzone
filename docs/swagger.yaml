@@ -20,6 +20,32 @@ paths:
       summary: Test your connection to birdazzone API
       tags:
       - test
+  /tvgames:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get all TV games
+      tags:
+      - tvgames
+  /tvgames/{id}:
+    get:
+      parameters:
+      - description: ID to search
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get TV game
+      tags:
+      - tvgames
   /twitter/{query}:
     get:
       parameters:
