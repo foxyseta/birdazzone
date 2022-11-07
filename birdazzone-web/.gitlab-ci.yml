@@ -10,18 +10,15 @@ log:
     - export
 
 build:
-  image: jdrouet/docker-with-buildx:stable
+  image: docker:20
   stage: build
   variables:
     CACHE_TAG: "$CI_REGISTRY_IMAGE:$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script: 
-    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    - docker buildx create --driver docker-container --use
-    - docker buildx inspect --bootstrap
     - docker pull $CACHE_TAG || true
-    - docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --cache-from $CACHE_TAG .
+    - docker build --cache-from $CACHE_TAG .
   only:
     - merge_requests
 
@@ -36,7 +33,7 @@ tests:
     - npm i
     - npm run coverage
   only:
-    - merge_request_event
+    - merge_requests
     - develop
 
 code-quality:
@@ -57,7 +54,21 @@ code-quality:
   only:
    - develop
 
-deploy:
+deploy-develop:
+  image: docker:20
+  stage: deploy
+  variables:
+    TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script: 
+    - docker pull $TAG || true
+    - docker build --cache-from $TAG --tag $TAG .
+    - docker push $TAG
+  only:
+    - develop
+
+deploy-main:
   image: jdrouet/docker-with-buildx:stable
   stage: deploy
   variables:
@@ -71,5 +82,4 @@ deploy:
     - docker pull $TAG || true
     - docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --push --cache-from $TAG --tag $TAG .
   only:
-    - develop
     - main
