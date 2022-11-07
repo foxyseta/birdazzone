@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - lint
   - deploy
 
 log:
@@ -9,20 +10,37 @@ log:
     - export
 
 build:
-  image: docker:20
+  image: jdrouet/docker-with-buildx:stable
   stage: build
   variables:
     CACHE_TAG: "$CI_REGISTRY_IMAGE:$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script: 
+    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    - docker buildx create --driver docker-container --use
+    - docker buildx inspect --bootstrap
     - docker pull $CACHE_TAG || true
-    - docker build --cache-from $CACHE_TAG .
+    - docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --cache-from $CACHE_TAG .
+  only:
+    - merge_requests
+
+tests:
+  image: node:16-alpine
+  stage: test
+  artifacts:
+    paths:
+      - coverage/lcov.info
+    expire_in: 1 week
+  script:
+    - npm i
+    - npm run coverage
   only:
     - merge_request_event
+    - develop
 
 code-quality:
-  stage: test
+  stage: lint
   image: 
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -39,24 +57,19 @@ code-quality:
   only:
    - develop
 
-tests:
-  stage: test
-  script:
-    - echo "Testing... (WIP)"
-  only:
-    - merge_request_event
-
 deploy:
-  image: docker:20
+  image: jdrouet/docker-with-buildx:stable
   stage: deploy
   variables:
     TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_BRANCH"
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script: 
+    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    - docker buildx create --driver docker-container --use
+    - docker buildx inspect --bootstrap
     - docker pull $TAG || true
-    - docker build --cache-from $TAG --tag $TAG .
-    - docker push $TAG
+    - docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --push --cache-from $TAG --tag $TAG .
   only:
     - develop
     - main
