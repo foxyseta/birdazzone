@@ -8,10 +8,11 @@ import (
 
 var testingResponseRecorder = httptest.NewRecorder()
 var testingGinContext *gin.Context = nil
+var testingGinEngine *gin.Engine = nil
 
 func init() {
   gin.SetMode(gin.TestMode)
-  testingGinContext, _ = gin.CreateTestContext(testingResponseRecorder)
+  testingGinContext, testingGinEngine = gin.CreateTestContext(testingResponseRecorder)
 }
 
 func GetTestingResponseRecorder() *httptest.ResponseRecorder {
@@ -20,4 +21,8 @@ func GetTestingResponseRecorder() *httptest.ResponseRecorder {
 
 func GetTestingGinContext() *gin.Context {
   return testingGinContext
+}
+
+func GetTestingGinEngine() *gin.Engine {
+  return testingGinEngine
 }

@@ -19,4 +19,10 @@ func TestInit(t *testing.T) {
   if GetTestingGinContext() != testingGinContext {
     t.Fatalf("Wrong GetTestingGinContext")
   }
+  if testingGinEngine == nil {
+    t.Fatal("testingGinEngine is nil")
+  }
+  if GetTestingGinEngine() != testingGinEngine {
+    t.Fatalf("Wrong GetTestingGinEngine")
+  }
 }
