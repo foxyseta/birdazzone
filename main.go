@@ -37,7 +37,6 @@ func birdazzoneServer() *gin.Engine {
 	v1 := r.Group("/api/v1")
 	v1.GET("/hello", helloWorld)
 	v1.GET("/twitter/:query", twitter.TestTwitter)
-
 	tvgames.InitAPI(v1)
 	return r
 }
