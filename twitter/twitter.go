@@ -18,13 +18,18 @@ type queryResponse struct {
 	Status string
 }
 
+type UIDLookup struct {
+	Data struct {
+		ID       string `json:"id"`
+		Name     string `json:"name"`
+		Username string `json:"username"`
+	} `json:"data"`
+}
+
 func getTweetsQuery(query string) queryResponse {
 	max_results := "10"
-	client := &http.Client{}
 	query = url.QueryEscape(query)
-	req, _ := http.NewRequest("GET", "https://api.twitter.com/2/tweets/search/recent?query="+query+"&max_results="+max_results+"&tweet.fields=public_metrics&expansions=geo.place_id&place.fields=geo,country,country_code&user.fields=username", nil)
-	req.Header.Set("Authorization", "Bearer "+BearerToken)
-	resp, err := client.Do(req)
+	resp, err := getRequest("https://api.twitter.com/2/tweets/search/recent?query=" + query + "&max_results=" + max_results + "&tweet.fields=public_metrics&expansions=geo.place_id&place.fields=geo,country,country_code&user.fields=username")
 
 	if err != nil {
 		log.Fatalln(err)
@@ -43,6 +48,39 @@ func getTweetsQuery(query string) queryResponse {
 	sb := string(body)
 
 	return queryResponse{&sb, resp.StatusCode, resp.Status}
+}
+
+func getUser(username string) *UIDLookup {
+
+	username = url.QueryEscape(username)
+	resp, err := getRequest("https://api.twitter.com/2/users/by/username/" + username)
+
+	if err != nil {
+		log.Fatalln(err)
+		return nil
+	}
+	if resp.StatusCode != 200 {
+		return nil
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+		return nil
+	}
+	var uid UIDLookup
+	err = json.Unmarshal([]byte(string(body)), &uid)
+	if err != nil {
+		panic(err)
+	}
+	return &uid
+}
+
+func getRequest(url string) (*http.Response, error) {
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set("Authorization", "Bearer "+BearerToken)
+	resp, err := client.Do(req)
+	return resp, err
 }
 
 func returnTweetQuery(c *gin.Context, res queryResponse) {
