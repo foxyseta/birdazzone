@@ -16,6 +16,7 @@ import (
 	_ "git.hjkl.gq/team13/birdazzone-api/docs"
 	"git.hjkl.gq/team13/birdazzone-api/server"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames"
+	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,8 +36,10 @@ func birdazzoneServer() *gin.Engine {
 	r := server.CreateServer()
 	v1 := r.Group("/api/v1")
 	v1.GET("/hello", helloWorld)
+	v1.GET("/twitter/:query", twitter.TestTwitter)
+
 	tvgames.InitAPI(v1)
-  return r
+	return r
 }
 
 func main() {
