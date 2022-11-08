@@ -148,8 +148,8 @@ func getGhigliottinaSolution() string {
 	}
 	for i := 0; i < tweets.Meta.ResultCount; i++ {
 		if strings.Contains(tweets.Data[i].Text, "La #parola della #ghigliottina de #leredita di oggi è:") {
-			m := regexp.MustCompile(`è:\s([A-Z]|[a-z])+`)
-			return strings.Trim(m.FindString(tweets.Data[i].Text), "è: ")
+			m := regexp.MustCompile(`La #parola della #ghigliottina de #leredita di oggi è:\s([A-Z]|[a-z])+`)
+			return strings.Trim(m.FindString(tweets.Data[i].Text), "La #parola della #ghigliottina de #leredita di oggi è: ")
 		}
 	}
 	return ""
