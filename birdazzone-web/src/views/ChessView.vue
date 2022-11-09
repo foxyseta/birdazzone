@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  import guesserListItem from '@/components/guesserListItem.vue';
+</script>
 <template>
-  <h1> chess </h1>
+  <main>
+    <h1> chess </h1>
+    <guesserListItem />
+  </main>
 </template>
