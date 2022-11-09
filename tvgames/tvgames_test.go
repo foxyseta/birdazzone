@@ -36,7 +36,7 @@ func TestGetTvGameById(t *testing.T) {
 
 func TestInitAPI(t *testing.T) {
 	v1 := util.GetTestingGinEngine().Group("/api/v1")
-	InitAPI(v1)
+	TvGamesGroup(v1)
 
 	//test on /tvgames
 	req, err := http.NewRequest(http.MethodGet, "/api/v1/tvgames", nil)
