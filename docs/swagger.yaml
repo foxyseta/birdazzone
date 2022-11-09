@@ -10,6 +10,26 @@ info:
   title: Birdazzone API
   version: "0.1"
 paths:
+  /{game}/solution:
+    get:
+      parameters:
+      - description: Game to search
+        in: path
+        name: game
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: param GAME not found
+          schema:
+            type: string
+      summary: Retrieve game's solution
+      tags:
+      - games
   /hello:
     get:
       produces:
