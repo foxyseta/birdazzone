@@ -4,17 +4,13 @@ import (
 	"net/http"
 	"strconv"
 
+	"git.hjkl.gq/team13/birdazzone-api/model"
 	"github.com/gin-gonic/gin"
 )
 
-type Game struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-func InitAPI(v1 *gin.RouterGroup) {
-	v1.GET("/tvgames", getTvGames)
-	v1.GET("/tvgames/:id", getTvGameById)
+func TvGamesGroup(group *gin.RouterGroup) {
+	group.GET("/", getTvGames)
+	group.GET("/:id", getTvGameById)
 }
 
 // getTvGames godoc
@@ -24,7 +20,10 @@ func InitAPI(v1 *gin.RouterGroup) {
 // @Success     200
 // @Router      /tvgames	[get]
 func getTvGames(ctx *gin.Context) {
-	games := []Game{{Id: 0, Name: "La ghigliottina"}, {Id: 1, Name: "L'eredità"}}
+	games := []model.Game{
+		{Id: 0, Name: "La ghigliottina"},
+		{Id: 1, Name: "L'eredità"},
+	}
 
 	ctx.JSON(http.StatusOK, games)
 }
@@ -37,7 +36,10 @@ func getTvGames(ctx *gin.Context) {
 // @Param       id	path	int	true	"ID to search"
 // @Router      /tvgames/{id} [get]
 func getTvGameById(ctx *gin.Context) {
-	games := []Game{{Id: 0, Name: "La ghigliottina"}, {Id: 1, Name: "L'eredità"}}
+	games := []model.Game{
+		{Id: 0, Name: "La ghigliottina"},
+		{Id: 1, Name: "L'eredità"},
+	}
 
 	id := ctx.Param("id")
 	num, err := strconv.Atoi(id)
