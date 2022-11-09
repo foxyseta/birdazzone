@@ -1,8 +1,23 @@
 package model
 
-type Page struct {
+type PageQuery struct {
 	Length int `json:"username" minimum:"1" example:"5"`
 	Index  int `json:"index" minimum:"1" example:"5"`
+}
+
+type Page[T any] struct {
+	Entries       []T `json:"entries"`
+	NumberOfPages int `json:"number_of_pages" minimum:"1"`
+}
+
+type BooleanChart struct {
+	Positives int `json:"positives" minimum:"0" example:"209"`
+	Negatives int `json:"negatives" minimum:"0" example:"318"`
+}
+
+type ChartEntry struct {
+	Value             string `json:"value" example:"parola"`
+	AbsoluteFrequency int    `json:"absolute_frequency" minimum:"0" example:"34"`
 }
 
 type Game struct {
