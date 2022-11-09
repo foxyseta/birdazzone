@@ -9,18 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const BearerToken =
-  "AAAAAAAAAAAAAAAAAAAAAE4higEAAAAAIAkazaLrT4LHjJx2XFPsdVzEPe8%3DE7HE9wBq5B5b0m4F8uGmcslObTmQFccb9gppULjUwTNBGj1Td3"
+const BearerToken = "AAAAAAAAAAAAAAAAAAAAAE4higEAAAAAIAkazaLrT4LHjJx2XFPsdVzEPe8%3DE7HE9wBq5B5b0m4F8uGmcslObTmQFccb9gppULjUwTNBGj1Td3"
 
 func getRequest(query string) *string {
 	maxResults := "10"
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET",
-    "https://api.twitter.com/2/tweets/search/recent?query="+query+"&max_results=" +
-    maxResults +
-    "&tweet.fields=public_metrics&expansions=geo.place_id&place.fields=geo,country,country_code&user.fields=username",
-    nil)
-	req.Header.Set("Authorization", "Bearer " + BearerToken)
+		"https://api.twitter.com/2/tweets/search/recent?query="+query+"&max_results="+
+			maxResults+
+			"&tweet.fields=public_metrics&expansions=geo.place_id&place.fields=geo,country,country_code&user.fields=username",
+		nil)
+	req.Header.Set("Authorization", "Bearer "+BearerToken)
 	resp, err := client.Do(req)
 
 	if err != nil {

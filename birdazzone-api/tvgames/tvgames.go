@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"git.hjkl.gq/team13/birdazzone-api/model"
+	"github.com/gin-gonic/gin"
 )
 
 func TvGamesGroup(group *gin.RouterGroup) {
@@ -21,9 +21,9 @@ func TvGamesGroup(group *gin.RouterGroup) {
 // @Router      /tvgames	[get]
 func getTvGames(ctx *gin.Context) {
 	games := []model.Game{
-    {Id: 0, Name: "La ghigliottina"},
-    {Id: 1, Name: "L'eredità"},
-  }
+		{Id: 0, Name: "La ghigliottina"},
+		{Id: 1, Name: "L'eredità"},
+	}
 
 	ctx.JSON(http.StatusOK, games)
 }
@@ -37,9 +37,9 @@ func getTvGames(ctx *gin.Context) {
 // @Router      /tvgames/{id} [get]
 func getTvGameById(ctx *gin.Context) {
 	games := []model.Game{
-    {Id: 0, Name: "La ghigliottina"},
-    {Id: 1, Name: "L'eredità"},
-  }
+		{Id: 0, Name: "La ghigliottina"},
+		{Id: 1, Name: "L'eredità"},
+	}
 
 	id := ctx.Param("id")
 	num, err := strconv.Atoi(id)
