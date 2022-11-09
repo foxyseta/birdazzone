@@ -20,6 +20,8 @@ type ChartEntry struct {
 	AbsoluteFrequency int    `json:"absolute_frequency" minimum:"0" example:"34"`
 }
 
+type Chart []ChartEntry
+
 type Game struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
