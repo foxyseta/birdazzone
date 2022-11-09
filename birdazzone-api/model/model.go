@@ -1,5 +1,10 @@
 package model
 
+type Page struct {
+  Length int `json:"username" minimum:"1" example:"5"`
+  Index int `json:"index" minimum:"1" example:"5"`
+}
+
 type User struct {
   Username string `json:"username" example:"mariorossi"`
   Name string `json:"name" example:"Mario Rossi"`
@@ -7,9 +12,9 @@ type User struct {
 }
 
 type Metrics struct {
-  LikeCount int `json:"like_count" example:"122"`
-  ReplyCount int `json:"reply_count" example:"42"`
-  RetweetCount int `json:"retweet_count" example:"15"`
+  LikeCount int `json:"like_count" minimum:"0" example:"122"`
+  ReplyCount int `json:"reply_count" minimum:"0" example:"42"`
+  RetweetCount int `json:"retweet_count" minimum:"0" example:"15"`
 }
 
 type Tweet struct {
