@@ -7,7 +7,6 @@ import (
 	"git.hjkl.gq/team13/birdazzone-api/util"
 )
 
-
 func TestGetRequest(t *testing.T) {
 	res := getRequest("kalulu")
 	if res == nil {
@@ -18,9 +17,9 @@ func TestGetRequest(t *testing.T) {
 func TestReturnTweetQuery(t *testing.T) {
 	//should return a json + Code 200
 	returnTweetQuery(util.GetTestingGinContext(),
-    `{"text":"TEST STRING","user":"@myusername"}`)
+		`{"text":"TEST STRING","user":"@myusername"}`)
 	if util.GetTestingResponseRecorder().Code != http.StatusOK {
 		t.Fatalf("Expected to get status %d but instead got %d", http.StatusOK,
-      util.GetTestingResponseRecorder().Code)
+			util.GetTestingResponseRecorder().Code)
 	}
 }

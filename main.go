@@ -36,14 +36,14 @@ func helloGroup(group *gin.RouterGroup) {
 }
 
 func v1Group(group *gin.RouterGroup) {
-  helloGroup(group.Group("/hello"))
+	helloGroup(group.Group("/hello"))
 	tvgames.TvGamesGroup(group.Group("/tvgames"))
 }
 
 func birdazzoneServer() *gin.Engine {
 	r := server.CreateServer()
 	v1Group(r.Group("/api/v1"))
-  return r
+	return r
 }
 
 func main() {

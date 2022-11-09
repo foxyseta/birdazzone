@@ -13,7 +13,7 @@ func TestHello(t *testing.T) {
 	helloWorld(util.GetTestingGinContext())
 	if util.GetTestingResponseRecorder().Code != http.StatusOK {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK,
-      util.GetTestingResponseRecorder().Code)
+			util.GetTestingResponseRecorder().Code)
 	}
 }
 
