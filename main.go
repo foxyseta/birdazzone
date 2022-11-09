@@ -16,7 +16,6 @@ import (
 	_ "git.hjkl.gq/team13/birdazzone-api/docs"
 	"git.hjkl.gq/team13/birdazzone-api/server"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames"
-	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,12 +31,18 @@ func helloWorld(ctx *gin.Context) {
 	})
 }
 
+func helloGroup(group *gin.RouterGroup) {
+	group.GET("/", helloWorld)
+}
+
+func v1Group(group *gin.RouterGroup) {
+	helloGroup(group.Group("/hello"))
+	tvgames.TvGamesGroup(group.Group("/tvgames"))
+}
+
 func birdazzoneServer() *gin.Engine {
 	r := server.CreateServer()
-	v1 := r.Group("/api/v1")
-	v1.GET("/hello", helloWorld)
-	tvgames.InitAPI(v1)
-	twitter.InitAPI(v1)
+	v1Group(r.Group("/api/v1"))
 	return r
 }
 

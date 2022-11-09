@@ -53,5 +53,4 @@ func GameSolution(ctx *gin.Context) {
 
 func InitAPI(v1 *gin.RouterGroup) {
 	v1.GET("/:game/solution", GameSolution)
-
 }
