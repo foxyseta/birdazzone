@@ -107,6 +107,37 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/{game}/solution": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Retrieve game's solution",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game to search",
+                        "name": "game",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "param GAME not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     }
 }`
