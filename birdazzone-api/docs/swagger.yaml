@@ -46,20 +46,4 @@ paths:
       summary: Get TV game
       tags:
       - tvgames
-  /twitter/{query}:
-    get:
-      parameters:
-      - description: Query to search
-        in: path
-        name: query
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-      summary: Test Twitter API
-      tags:
-      - test
 swagger: "2.0"

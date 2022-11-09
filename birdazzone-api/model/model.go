@@ -5,6 +5,11 @@ type Page struct {
   Index int `json:"index" minimum:"1" example:"5"`
 }
 
+type Game struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type User struct {
   Username string `json:"username" example:"mariorossi"`
   Name string `json:"name" example:"Mario Rossi"`
