@@ -1,7 +1,7 @@
 package util
 
 import (
-  "fmt"
+	"fmt"
 	"net/http/httptest"
 	"strconv"
 	"time"
@@ -53,17 +53,17 @@ func IdToObject[T any](ctx *gin.Context, data map[int]T) (T, error) {
 
 	if err != nil {
 		ctx.AbortWithStatus(400)
-    var result T
+		var result T
 		return result, err
 	}
 
-  value, ok := data[key]
+	value, ok := data[key]
 
-  if !ok {
-    ctx.AbortWithStatus(404)
-    var result T
-    return result, fmt.Errorf("Object not found using key %d", key)
-  }
+	if !ok {
+		ctx.AbortWithStatus(404)
+		var result T
+		return result, fmt.Errorf("Object not found using key %d", key)
+	}
 
-  return value, err
+	return value, err
 }

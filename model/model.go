@@ -1,9 +1,9 @@
 package model
 
 import (
-  "fmt"
+	"fmt"
 
-  "git.hjkl.gq/team13/birdazzone-api/twitter"
+	"git.hjkl.gq/team13/birdazzone-api/twitter"
 )
 
 const nilRepresentation = "<nil>"
@@ -14,15 +14,15 @@ type PageQuery struct {
 }
 
 func (pg *PageQuery) String() string {
-  if pg == nil {
-    return nilRepresentation
-  }
-  return fmt.Sprintf("page #%d", pg.Index)
+	if pg == nil {
+		return nilRepresentation
+	}
+	return fmt.Sprintf("page #%d", pg.Index)
 }
 
 type Page[T any] struct {
 	Entries       []*T `json:"entries"`
-	NumberOfPages int `json:"number_of_pages" minimum:"1"`
+	NumberOfPages int  `json:"number_of_pages" minimum:"1"`
 }
 
 type BooleanChart struct {
@@ -31,10 +31,10 @@ type BooleanChart struct {
 }
 
 func (bc *BooleanChart) String() string {
-  if bc == nil {
-    return nilRepresentation
-  }
-  return fmt.Sprintf("[%d VS %d]", bc.Positives, bc.Negatives)
+	if bc == nil {
+		return nilRepresentation
+	}
+	return fmt.Sprintf("[%d VS %d]", bc.Positives, bc.Negatives)
 }
 
 type ChartEntry struct {
@@ -43,25 +43,25 @@ type ChartEntry struct {
 }
 
 func (ce *ChartEntry) String() string {
-  if ce == nil {
-    return nilRepresentation
-  }
-  return fmt.Sprintf("(%s: %d)", ce.Value, ce.AbsoluteFrequency)
+	if ce == nil {
+		return nilRepresentation
+	}
+	return fmt.Sprintf("(%s: %d)", ce.Value, ce.AbsoluteFrequency)
 }
 
 type Chart []ChartEntry
 
 type Game struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-  Hashtag string `json:"hashtag"`
+	Id      int    `json:"id"`
+	Name    string `json:"name"`
+	Hashtag string `json:"hashtag"`
 }
 
 func (g *Game) String() string {
-  if g == nil {
-    return nilRepresentation
-  }
-  return fmt.Sprintf("#%d (%s #%s)", g.Id, g.Name, g.Hashtag)
+	if g == nil {
+		return nilRepresentation
+	}
+	return fmt.Sprintf("#%d (%s #%s)", g.Id, g.Name, g.Hashtag)
 }
 
 type User struct {
@@ -71,14 +71,14 @@ type User struct {
 }
 
 func makeUser(user twitter.UIDLookup) User {
-  return User{Username: user.Data.Username, Name: user.Data.Name, ProfileImageUrl: ""}
+	return User{Username: user.Data.Username, Name: user.Data.Name, ProfileImageUrl: ""}
 }
 
 func (u *User) String() string {
-  if u == nil {
-    return nilRepresentation
-  }
-  return fmt.Sprintf("%s (%s)", u.Name, u.Username)
+	if u == nil {
+		return nilRepresentation
+	}
+	return fmt.Sprintf("%s (%s)", u.Name, u.Username)
 }
 
 type Metrics struct {
@@ -88,10 +88,10 @@ type Metrics struct {
 }
 
 func (m *Metrics) String() string {
-  if m == nil {
-    return nilRepresentation
-  }
-  return fmt.Sprintf("(Likes: %d, Replies: %d, Retweets: %d)" , m.LikeCount, m.ReplyCount, m.RetweetCount)
+	if m == nil {
+		return nilRepresentation
+	}
+	return fmt.Sprintf("(Likes: %d, Replies: %d, Retweets: %d)", m.LikeCount, m.ReplyCount, m.RetweetCount)
 }
 
 type Tweet struct {
@@ -102,8 +102,8 @@ type Tweet struct {
 }
 
 func (t *Tweet) String() string {
-  if t == nil {
-    return nilRepresentation
-  }
-  return fmt.Sprintf("\"%s\"\n%s, %s\n%s" , t.Text, &t.Author, t.CreatedAt, &t.Metrics)
+	if t == nil {
+		return nilRepresentation
+	}
+	return fmt.Sprintf("\"%s\"\n%s, %s\n%s", t.Text, &t.Author, t.CreatedAt, &t.Metrics)
 }
