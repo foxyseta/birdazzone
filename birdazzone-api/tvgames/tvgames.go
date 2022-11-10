@@ -31,7 +31,7 @@ var gameTrackers = []GameTracker{
 
 var gameTrackersById = map[int]*GameTracker{}
 
-var games []*model.Game
+var games []model.Game
 
 var gamesById = map[int]*model.Game{}
 
@@ -67,12 +67,12 @@ func getTvGameById(ctx *gin.Context) {
 
 // gameSolution godoc
 // @Summary     Retrieve game's solution
-// @Tags        games
+// @Tags        tvgames
 // @Produce     json
 // @Param       game	path	string	true	"Game to search"
 // @Success     200
 // @Failure     404	{string}	string  "param GAME not found"
-// @Router      /{game}/solution [get]
+// @Router      /tvgames/{id}/solution [get]
 func gameSolution(ctx *gin.Context) {
   gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
@@ -90,11 +90,11 @@ func gameSolution(ctx *gin.Context) {
 }
 
 func init() {
-  games = make([]*model.Game, len(gameTrackers))
+  games = make([]model.Game, len(gameTrackers))
   i := 0
-  for k, v := range gameTrackersById {
-    gameTrackersById[k] = v
-    games[i] = &v.Game
+  for k, v := range gameTrackers {
+    gameTrackersById[k] = &v
+    games[i] = v.Game
     gamesById[k] = &v.Game
     i += 1
   }
