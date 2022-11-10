@@ -12,7 +12,7 @@ func TestGetUser(t *testing.T) {
 }
 
 func TestGetTweetsFromUser(t *testing.T) {
-	tweets := GetTweetsFromUser("1499992669480755204", "")
+	tweets := GetTweetsFromUser("1499992669480755204", 10, "")
 	if tweets == nil {
 		t.Fatal("Error in GetTweetsFromUser")
 	}

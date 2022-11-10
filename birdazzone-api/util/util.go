@@ -15,9 +15,16 @@ var testingResponseRecorder = httptest.NewRecorder()
 var testingGinContext *gin.Context = nil
 var testingGinEngine *gin.Engine = nil
 
-func init() {
-	gin.SetMode(gin.TestMode)
-	testingGinContext, testingGinEngine = gin.CreateTestContext(testingResponseRecorder)
+type Pair[T any, U any] struct {
+	First  T
+	Second U
+}
+
+func (p *Pair[T, U]) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("(%T, %T)", p.First, p.Second)
 }
 
 func GetTestingResponseRecorder() *httptest.ResponseRecorder {
@@ -83,4 +90,9 @@ func QueryParamToPositiveInt(ctx *gin.Context, paramName string, defaultValue st
 		return 0, newError
 	}
 	return value, nil
+}
+
+func init() {
+	gin.SetMode(gin.TestMode)
+	testingGinContext, testingGinEngine = gin.CreateTestContext(testingResponseRecorder)
 }

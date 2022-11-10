@@ -16,7 +16,7 @@ func Solution() string {
 	}
 	dt := time.Now()
 	x := util.TimeFormat(dt)
-	tweets := twitter.GetTweetsFromUser(user.Data.ID, "?max_results=20&start_time="+x+"&exclude=replies")
+	tweets := twitter.GetTweetsFromUser(user.Data.ID, 20, x)
 	if tweets == nil {
 		return "ERR_TWEETS"
 	}

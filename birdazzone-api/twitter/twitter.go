@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
+	"strconv"
+
+	"git.hjkl.gq/team13/birdazzone-api/util"
 )
 
+const BaseUrl = "https://api.twitter.com/2/"
 const BearerToken = "AAAAAAAAAAAAAAAAAAAAAE4higEAAAAAIAkazaLrT4LHjJx2XFPsdVzEPe8%3DE7HE9wBq5B5b0m4F8uGmcslObTmQFccb9gppULjUwTNBGj1Td3"
 
 // Basic user profile data
@@ -36,68 +39,92 @@ type ProfileTweets struct {
 	} `json:"meta"`
 }
 
-func getRequest(url string) (*http.Response, error) {
-	client := &http.Client{}
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("Authorization", "Bearer "+BearerToken)
-	resp, err := client.Do(req)
-	return resp, err
+func toCompleteUrl(partialUrl string) string {
+	return BaseUrl + partialUrl
 }
 
-func GetUser(username string) *UIDLookup {
-	username = url.QueryEscape(username)
-	resp, err := getRequest("https://api.twitter.com/2/users/by/username/" +
-		username + "?user.fields=id,name,username,profile_image_url")
-
-	if err != nil {
-		log.Fatalln(err)
-		return nil
+func getRequest(
+	urlTemplate string,
+	pathParams []any,
+	queryParams ...util.Pair[string, string],
+) []byte {
+	if pathParams == nil {
+		pathParams = []any{}
 	}
-	if resp.StatusCode != 200 {
+	client := &http.Client{}
+
+	// path parameters
+	for i := range pathParams {
+		pathParams[i] = url.PathEscape(fmt.Sprint(pathParams[i]))
+	}
+	req, _ := http.NewRequest("GET", fmt.Sprintf(urlTemplate, pathParams...), nil)
+	req.Header.Set("Authorization", "Bearer "+BearerToken)
+
+	// query parameters
+	if queryParams != nil {
+		for _, queryParam := range queryParams {
+			req.URL.Query().Add(
+				url.QueryEscape(queryParam.First),
+				url.QueryEscape(queryParam.Second),
+			)
+		}
+	}
+
+	resp, err := client.Do(req)
+	if err != nil || resp.StatusCode != 200 {
 		return nil
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln(err)
 		return nil
 	}
+	return []byte(string(body))
+}
+
+func GetUser(username string) *UIDLookup {
+	res := getRequest("https://api.twitter.com/2/users/by/username/%s",
+		[]any{username},
+		util.Pair[string, string]{
+			First:  "user.fields",
+			Second: "id,name,username,profile_image_url",
+		},
+	)
 	var uid UIDLookup
-	err = json.Unmarshal([]byte(string(body)), &uid)
+	err := json.Unmarshal(res, &uid)
 	if err != nil {
-		panic(err)
+		return nil
 	}
 	return &uid
 }
 
-func getTweets(templateUrl string, id string, params string) *ProfileTweets {
-	id = url.QueryEscape(id)
-	resp, err := getRequest(fmt.Sprintf(templateUrl, id, params))
-
-	if err != nil {
-		log.Fatalln(err)
-		return nil
-	}
-	if resp.StatusCode != 200 {
-		return nil
-	}
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln(err)
-		return nil
-	}
+func getTweets(
+	urlTemplate string,
+	pathParams []any,
+	queryParams ...util.Pair[string, string],
+) *ProfileTweets {
+	res := getRequest(urlTemplate, pathParams, queryParams...)
 	var tweets ProfileTweets
-	err = json.Unmarshal([]byte(string(body)), &tweets)
+	err := json.Unmarshal(res, &tweets)
 	if err != nil {
-		panic(err)
+		return nil
 	}
-
 	return &tweets
 }
 
-func GetTweetsFromUser(id string, params string) *ProfileTweets {
-	return getTweets("https://api.twitter.com/2/users/%s/tweets/%s", id, params)
+func GetTweetsFromUser(id string, maxResults int, startTime string) *ProfileTweets {
+	return getTweets(
+		"https://api.twitter.com/2/users/%s/tweets",
+		[]any{id},
+		util.Pair[string, string]{First: "max_results", Second: strconv.Itoa(maxResults)},
+		util.Pair[string, string]{First: "start_time", Second: startTime},
+		util.Pair[string, string]{First: "exclude", Second: "replies"},
+	)
 }
 
-func GetTweetsFromHashtag(id string, params string) *ProfileTweets {
-	return getTweets("https://api.twitter.com/2/tweets/search/recent/%s", id, params)
+func GetTweetsFromHashtag(hashtag string, startTime string) *ProfileTweets {
+	return getTweets(
+		"https://api.twitter.com/2/tweets/search/recent/%s",
+		[]any{hashtag},
+		util.Pair[string, string]{First: "start_time", Second: startTime},
+	)
 }
