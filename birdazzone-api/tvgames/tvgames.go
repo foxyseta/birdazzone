@@ -3,6 +3,7 @@ package tvgames
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/ghigliottina"
@@ -27,7 +28,7 @@ func (gt *GameTracker) String() string {
 }
 
 var gameTrackers = []GameTracker{
-	{model.Game{Id: 0, Name: "Ghigliottina", Hashtag: "leredita"}, ghigliottina.Solution},
+	{model.Game{Id: 0, Name: "Ghigliottina", Hashtag: "ghigliottina"}, ghigliottina.Solution},
 }
 
 var gameTrackersById = map[int]*GameTracker{}
@@ -97,14 +98,30 @@ func gameSolution(ctx *gin.Context) {
 // @Tags        tvgames
 // @Produce     json
 // @Param       id path string true "Game to query"
+// @Param       pageIndex query int false "Number of the page to query" minimum(1) default(1)
+// @Param       pageLength query int false "Length of the page to query" minimum(1) default(10)
 // @Success     200 {object} model.Page[model.Tweet]
+// @Failure     400	{string}	string  "integer parsing error (pageIndex)"
+// @Failure     400	{string}	string  "pageIndex < 1"
+// @Failure     400	{string}	string  "integer parsing error (pageLength)"
+// @Failure     400	{string}	string  "pageLength < 1"
 // @Failure     404	{string}	string  "game id not found"
 // @Router      /tvgames/{id}/attempts [get]
 func gameAttempts(ctx *gin.Context) {
+	// game tracker
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
 		return
 	}
+	// page query
+	var pageIndex, pageLength int
+	pageIndex, err = strconv.Atoi(ctx.DefaultQuery("pageIndex", "1"))
+	pageLength, err = strconv.Atoi(ctx.DefaultQuery("pageLength", "1"))
+	if err != nil {
+		return
+	}
+	//tweets
+	print(pageIndex, pageLength)
 	tweets := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
 	if tweets != nil {
 		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
