@@ -10,12 +10,6 @@ import (
 
 const BearerToken = "AAAAAAAAAAAAAAAAAAAAAE4higEAAAAAIAkazaLrT4LHjJx2XFPsdVzEPe8%3DE7HE9wBq5B5b0m4F8uGmcslObTmQFccb9gppULjUwTNBGj1Td3"
 
-type QueryResponse struct {
-	Body   *string
-	Code   int
-	Status string
-}
-
 // Basic user profile data
 type UIDLookup struct {
 	Data struct {

@@ -2,6 +2,8 @@ package model
 
 import "fmt"
 
+const nilRepresentation = "<nil>"
+
 type PageQuery struct {
 	Length int `json:"username" minimum:"1" example:"5"`
 	Index  int `json:"index" minimum:"1" example:"5"`
@@ -9,7 +11,7 @@ type PageQuery struct {
 
 func (pg *PageQuery) String() string {
   if pg == nil {
-    return "<nil>"
+    return nilRepresentation
   }
   return fmt.Sprintf("page #%d", pg.Index)
 }
@@ -26,7 +28,7 @@ type BooleanChart struct {
 
 func (bc *BooleanChart) String() string {
   if bc == nil {
-    return "<nil>"
+    return nilRepresentation
   }
   return fmt.Sprintf("[%d VS %d]", bc.Positives, bc.Negatives)
 }
@@ -38,7 +40,7 @@ type ChartEntry struct {
 
 func (ce *ChartEntry) String() string {
   if ce == nil {
-    return "<nil>"
+    return nilRepresentation
   }
   return fmt.Sprintf("(%s: %d)", ce.Value, ce.AbsoluteFrequency)
 }
@@ -53,7 +55,7 @@ type Game struct {
 
 func (g *Game) String() string {
   if g == nil {
-    return "<nil>"
+    return nilRepresentation
   }
   return fmt.Sprintf("#%d (%s #%s)", g.Id, g.Name, g.Hashtag)
 }
@@ -66,7 +68,7 @@ type User struct {
 
 func (u *User) String() string {
   if u == nil {
-    return "<nil>"
+    return nilRepresentation
   }
   return fmt.Sprintf("%s (%s)", u.Name, u.Username)
 }
@@ -79,7 +81,7 @@ type Metrics struct {
 
 func (m *Metrics) String() string {
   if m == nil {
-    return "<nil>"
+    return nilRepresentation
   }
   return fmt.Sprintf("(Likes: %d, Replies: %d, Retweets: %d)" , m.LikeCount, m.ReplyCount, m.RetweetCount)
 }
@@ -93,7 +95,7 @@ type Tweet struct {
 
 func (t *Tweet) String() string {
   if t == nil {
-    return "<nil>"
+    return nilRepresentation
   }
   return fmt.Sprintf("\"%s\"\n%s, %s\n%s" , t.Text, &t.Author, t.CreatedAt, &t.Metrics)
 }

@@ -1,6 +1,7 @@
 package util
 
 import (
+  "fmt"
 	"net/http/httptest"
 	"strconv"
 	"time"
@@ -45,4 +46,24 @@ func TimeFormat(dt time.Time) string {
 	}
 	x += strconv.Itoa(dt.Day()) + "T18:55:00Z"
 	return x
+}
+
+func IdToObject[T any](ctx *gin.Context, data map[int]T) (T, error) {
+	key, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		ctx.AbortWithStatus(400)
+    var result T
+		return result, err
+	}
+
+  value, ok := data[key]
+
+  if !ok {
+    ctx.AbortWithStatus(404)
+    var result T
+    return result, fmt.Errorf("Object not found using key %d", key)
+  }
+
+  return value, err
 }

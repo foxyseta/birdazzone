@@ -3,10 +3,10 @@ package tvgames
 import (
   "fmt"
 	"net/http"
-	"strconv"
 
   "git.hjkl.gq/team13/birdazzone-api/tvgames/ghigliottina"
 	"git.hjkl.gq/team13/birdazzone-api/model"
+	"git.hjkl.gq/team13/birdazzone-api/util"
 	"github.com/gin-gonic/gin"
   "github.com/swaggo/swag/example/celler/httputil"
 )
@@ -59,7 +59,7 @@ func getTvGames(ctx *gin.Context) {
 // @Param       id	path	int	true	"ID to search"
 // @Router      /tvgames/{id} [get]
 func getTvGameById(ctx *gin.Context) {
-  game, err := idToObject(ctx, gamesById)
+  game, err := util.IdToObject(ctx, gamesById)
   if err == nil {
 	  ctx.JSON(http.StatusOK, game)
   }
@@ -74,7 +74,7 @@ func getTvGameById(ctx *gin.Context) {
 // @Failure     404	{string}	string  "param GAME not found"
 // @Router      /{game}/solution [get]
 func gameSolution(ctx *gin.Context) {
-  gameTracker, err := idToObject(ctx, gameTrackersById)
+  gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
     return
   }
@@ -87,26 +87,6 @@ func gameSolution(ctx *gin.Context) {
     httputil.NewError(ctx, http.StatusInternalServerError,
       fmt.Errorf("Missing solution getter for %T", gameTracker))
   }
-}
-
-func idToObject[T any](ctx *gin.Context, data map[int]T) (T, error) {
-	key, err := strconv.Atoi(ctx.Param("id"))
-
-	if err != nil {
-		ctx.AbortWithStatus(400)
-    var result T
-		return result, err
-	}
-
-  value, ok := data[key]
-
-  if !ok {
-    ctx.AbortWithStatus(404)
-    var result T
-    return result, fmt.Errorf("Object not found using key %d", key)
-  }
-
-  return value, err
 }
 
 func init() {
