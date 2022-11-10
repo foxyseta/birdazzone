@@ -10,26 +10,6 @@ info:
   title: Birdazzone API
   version: "0.1"
 paths:
-  /{game}/solution:
-    get:
-      parameters:
-      - description: Game to search
-        in: path
-        name: game
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "404":
-          description: param GAME not found
-          schema:
-            type: string
-      summary: Retrieve game's solution
-      tags:
-      - games
   /hello:
     get:
       produces:
@@ -66,12 +46,12 @@ paths:
       summary: Get TV game
       tags:
       - tvgames
-  /twitter/{query}:
+  /tvgames/{id}/solution:
     get:
       parameters:
-      - description: Query to search
+      - description: Game to search
         in: path
-        name: query
+        name: game
         required: true
         type: string
       produces:
@@ -79,11 +59,11 @@ paths:
       responses:
         "200":
           description: OK
-        "401":
-          description: Bearer Token Error
+        "404":
+          description: param GAME not found
           schema:
             type: string
-      summary: Test Twitter API
+      summary: Retrieve game's solution
       tags:
-      - test
+      - tvgames
 swagger: "2.0"

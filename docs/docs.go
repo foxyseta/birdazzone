@@ -77,44 +77,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/twitter/{query}": {
+        "/tvgames/{id}/solution": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "test"
-                ],
-                "summary": "Test Twitter API",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Query to search",
-                        "name": "query",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Bearer Token Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/{game}/solution": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "games"
+                    "tvgames"
                 ],
                 "summary": "Retrieve game's solution",
                 "parameters": [
