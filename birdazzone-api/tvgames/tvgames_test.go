@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetTvGames(t *testing.T) {
-  // should return all games + Code 200
+	// should return all games + Code 200
 	getTvGames(util.GetTestingGinContext())
 	if util.GetTestingResponseRecorder().Code != http.StatusOK {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, util.GetTestingResponseRecorder().Code)
@@ -25,18 +25,18 @@ func TestGetTvGameById(t *testing.T) {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, util.GetTestingResponseRecorder().Code)
 	}
 	// predicted failure (id: -1 should return Code 400)
-   w := httptest.NewRecorder()
-   c, _ := gin.CreateTestContext(w)
-   c.Params = []gin.Param{{Key: "id", Value: "-1"}}
-   getTvGameById(c)
-   if w.Code != http.StatusBadRequest {
-           t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusBadRequest, w.Code)
-  }
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Params = []gin.Param{{Key: "id", Value: "-1"}}
+	getTvGameById(c)
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusNotFound, w.Code)
+	}
 }
 
 func TestInitAPI(t *testing.T) {
 	v1 := util.GetTestingGinEngine().Group("/api/v1")
-	InitAPI(v1)
+	TvGamesGroup(v1)
 
 	//test on /tvgames
 	req, err := http.NewRequest(http.MethodGet, "/api/v1/tvgames", nil)
@@ -46,7 +46,7 @@ func TestInitAPI(t *testing.T) {
 	util.GetTestingGinEngine().ServeHTTP(util.GetTestingResponseRecorder(), req)
 	if util.GetTestingResponseRecorder().Code != http.StatusOK {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK,
-      util.GetTestingResponseRecorder().Code)
+			util.GetTestingResponseRecorder().Code)
 	}
 
 	//test on /tvgames/:id
@@ -57,6 +57,6 @@ func TestInitAPI(t *testing.T) {
 	util.GetTestingGinEngine().ServeHTTP(util.GetTestingResponseRecorder(), req)
 	if util.GetTestingResponseRecorder().Code != http.StatusOK {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK,
-      util.GetTestingResponseRecorder().Code)
+			util.GetTestingResponseRecorder().Code)
 	}
 }

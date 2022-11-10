@@ -77,20 +77,20 @@ const docTemplate = `{
                 }
             }
         },
-        "/twitter/{query}": {
+        "/tvgames/{id}/solution": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "test"
+                    "tvgames"
                 ],
-                "summary": "Test Twitter API",
+                "summary": "Retrieve game's solution",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Query to search",
-                        "name": "query",
+                        "description": "Game to search",
+                        "name": "game",
                         "in": "path",
                         "required": true
                     }
@@ -98,6 +98,12 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "404": {
+                        "description": "param GAME not found",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
