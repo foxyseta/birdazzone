@@ -29,8 +29,8 @@ func TestGetTvGameById(t *testing.T) {
 	c, _ := gin.CreateTestContext(w)
 	c.Params = []gin.Param{{Key: "id", Value: "-1"}}
 	getTvGameById(c)
-	if w.Code != http.StatusBadRequest {
-		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusBadRequest, w.Code)
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusNotFound, w.Code)
 	}
 }
 
