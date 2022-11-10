@@ -7,6 +7,7 @@ import (
   "git.hjkl.gq/team13/birdazzone-api/tvgames/ghigliottina"
 	"git.hjkl.gq/team13/birdazzone-api/model"
 	"git.hjkl.gq/team13/birdazzone-api/util"
+	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"github.com/gin-gonic/gin"
   "github.com/swaggo/swag/example/celler/httputil"
 )
@@ -39,13 +40,15 @@ func TvGamesGroup(group *gin.RouterGroup) {
 	group.GET("/", getTvGames)
 	group.GET("/:id", getTvGameById)
 	group.GET("/:id/solution", gameSolution)
+	group.GET("/:id/attempts", gameAttempts)
+	group.GET("/:id/attempts/stats", gameAttemptsStats)
 }
 
 // getTvGames godoc
 // @Summary     Get all TV games
 // @Tags        tvgames
 // @Produce     json
-// @Success     200
+// @Success     200 {array} model.Game
 // @Router      /tvgames	[get]
 func getTvGames(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, games)
@@ -55,7 +58,7 @@ func getTvGames(ctx *gin.Context) {
 // @Summary     Get TV game
 // @Tags        tvgames
 // @Produce     json
-// @Success     200
+// @Success     200 {object} model.Game
 // @Param       id	path	int	true	"ID to search"
 // @Router      /tvgames/{id} [get]
 func getTvGameById(ctx *gin.Context) {
@@ -69,9 +72,9 @@ func getTvGameById(ctx *gin.Context) {
 // @Summary     Retrieve game's solution
 // @Tags        tvgames
 // @Produce     json
-// @Param       game	path	string	true	"Game to search"
-// @Success     200
-// @Failure     404	{string}	string  "param GAME not found"
+// @Param       id	path	string	true	"Game to query"
+// @Success     200 {string} string
+// @Failure     404	{string}	string  "game id not found"
 // @Router      /tvgames/{id}/solution [get]
 func gameSolution(ctx *gin.Context) {
   gameTracker, err := util.IdToObject(ctx, gameTrackersById)
@@ -86,6 +89,72 @@ func gameSolution(ctx *gin.Context) {
 	} else {
     httputil.NewError(ctx, http.StatusInternalServerError,
       fmt.Errorf("Missing solution getter for %T", gameTracker))
+  }
+}
+
+// gameAttempts godoc
+// @Summary     Retrieve game's attempts
+// @Tags        tvgames
+// @Produce     json
+// @Param       id path string true "Game to query"
+// @Success     200 {object} model.Page[model.Tweet]
+// @Failure     404	{string}	string  "game id not found"
+// @Router      /tvgames/{id}/attempts [get]
+func gameAttempts(ctx *gin.Context) {
+  gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	if err != nil {
+    return
+  }
+	tweets := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
+  if tweets != nil {
+    ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
+	} else {
+    httputil.NewError(ctx, http.StatusInternalServerError,
+      fmt.Errorf("Missing tweets"))
+  }
+}
+
+// gameAttempts godoc
+// @Summary     Retrieve game's attempts' frequencies
+// @Tags        tvgames
+// @Produce     json
+// @Param       id path string true "Game to query"
+// @Success     200 {object} model.Chart
+// @Failure     404	{string}	string  "game id not found"
+// @Router      /tvgames/{id}/attempts/stats [get]
+func gameAttemptsStats(ctx *gin.Context) {
+  gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	if err != nil {
+    return
+  }
+	tweets := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
+  if tweets != nil {
+    ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
+	} else {
+    httputil.NewError(ctx, http.StatusInternalServerError,
+      fmt.Errorf("Missing tweets"))
+  }
+}
+
+// gameAttempts godoc
+// @Summary     Retrieve game's number of successes and failures
+// @Tags        tvgames
+// @Produce     json
+// @Param       id path string true "Game to query"
+// @Success     200 {object} model.BooleanChart
+// @Failure     404	{string}	string  "game id not found"
+// @Router      /tvgames/{id}/results [get]
+func gameResults(ctx *gin.Context) {
+  gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	if err != nil {
+    return
+  }
+	tweets := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
+  if tweets != nil {
+    ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
+	} else {
+    httputil.NewError(ctx, http.StatusInternalServerError,
+      fmt.Errorf("Missing tweets"))
   }
 }
 

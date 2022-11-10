@@ -1,4 +1,84 @@
 basePath: /api/v1
+definitions:
+  model.BooleanChart:
+    properties:
+      negatives:
+        example: 318
+        minimum: 0
+        type: integer
+      positives:
+        example: 209
+        minimum: 0
+        type: integer
+    type: object
+  model.ChartEntry:
+    properties:
+      absolute_frequency:
+        example: 34
+        minimum: 0
+        type: integer
+      value:
+        example: parola
+        type: string
+    type: object
+  model.Game:
+    properties:
+      hashtag:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.Metrics:
+    properties:
+      like_count:
+        example: 122
+        minimum: 0
+        type: integer
+      reply_count:
+        example: 42
+        minimum: 0
+        type: integer
+      retweet_count:
+        example: 15
+        minimum: 0
+        type: integer
+    type: object
+  model.Page-model_Tweet:
+    properties:
+      entries:
+        items:
+          $ref: '#/definitions/model.Tweet'
+        type: array
+      number_of_pages:
+        minimum: 1
+        type: integer
+    type: object
+  model.Tweet:
+    properties:
+      author:
+        $ref: '#/definitions/model.User'
+      created_at:
+        format: date-time
+        type: string
+      metrics:
+        $ref: '#/definitions/model.Metrics'
+      text:
+        example: Hello, world!
+        type: string
+    type: object
+  model.User:
+    properties:
+      name:
+        example: Mario Rossi
+        type: string
+      profile_image_url:
+        type: string
+      username:
+        example: mariorossi
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -27,6 +107,10 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Game'
+            type: array
       summary: Get all TV games
       tags:
       - tvgames
@@ -43,15 +127,17 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/model.Game'
       summary: Get TV game
       tags:
       - tvgames
-  /tvgames/{id}/solution:
+  /tvgames/{id}/attempts:
     get:
       parameters:
-      - description: Game to search
+      - description: Game to query
         in: path
-        name: game
+        name: id
         required: true
         type: string
       produces:
@@ -59,8 +145,78 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/model.Page-model_Tweet'
         "404":
-          description: param GAME not found
+          description: game id not found
+          schema:
+            type: string
+      summary: Retrieve game's attempts
+      tags:
+      - tvgames
+  /tvgames/{id}/attempts/stats:
+    get:
+      parameters:
+      - description: Game to query
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.ChartEntry'
+            type: array
+        "404":
+          description: game id not found
+          schema:
+            type: string
+      summary: Retrieve game's attempts' frequencies
+      tags:
+      - tvgames
+  /tvgames/{id}/results:
+    get:
+      parameters:
+      - description: Game to query
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.BooleanChart'
+        "404":
+          description: game id not found
+          schema:
+            type: string
+      summary: Retrieve game's number of successes and failures
+      tags:
+      - tvgames
+  /tvgames/{id}/solution:
+    get:
+      parameters:
+      - description: Game to query
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: game id not found
           schema:
             type: string
       summary: Retrieve game's solution

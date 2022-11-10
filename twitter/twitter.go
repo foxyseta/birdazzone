@@ -2,6 +2,7 @@ package twitter
 
 import (
 	"encoding/json"
+  "fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -66,9 +67,9 @@ func GetUser(username string) *UIDLookup {
 	return &uid
 }
 
-func GetTweetsFromUser(ID string, params string) *ProfileTweets {
-	ID = url.QueryEscape(ID)
-	resp, err := getRequest("https://api.twitter.com/2/users/" + ID + "/tweets" + params)
+func getTweets(templateUrl string, id string, params string) *ProfileTweets {
+	id = url.QueryEscape(id)
+	resp, err := getRequest(fmt.Sprintf(templateUrl, id, params))
 
 	if err != nil {
 		log.Fatalln(err)
@@ -89,4 +90,12 @@ func GetTweetsFromUser(ID string, params string) *ProfileTweets {
 	}
 
 	return &tweets
+}
+
+func GetTweetsFromUser(id string, params string) *ProfileTweets {
+	return getTweets("https://api.twitter.com/2/users/%s/tweets/%s", id, params)
+}
+
+func GetTweetsFromHashtag(id string, params string) *ProfileTweets {
+	return getTweets("https://api.twitter.com/2/tweets/search/recent/%s", id, params)
 }
