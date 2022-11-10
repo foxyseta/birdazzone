@@ -1,4 +1,5 @@
 export interface TvGame {
-  Id: number
-  Name: string
+  id: number
+  name: string
+  hashtag: string
 }

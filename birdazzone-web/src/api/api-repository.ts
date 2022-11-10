@@ -7,8 +7,8 @@ export default class ApiRepository {
   private static readonly _BASE_URL = "http://localhost:8080/api/v1"
   private static readonly _HELLO = "/hello"
   private static readonly _TWITTER = "/twitter/{0}"
-  private static readonly _TV_GAMES = "/tv-games"
-  private static readonly _TV_GAMES_ID = "/tv-games/{0}"
+  private static readonly _TV_GAMES = "/tvgames"
+  private static readonly _TV_GAMES_ID = "/tvgames/{0}"
 
   public static readonly getHelloBird = (): Promise<ApiResponse<HelloBird>> =>
     ApiManager.get<HelloBird>(this._BASE_URL + this._HELLO)

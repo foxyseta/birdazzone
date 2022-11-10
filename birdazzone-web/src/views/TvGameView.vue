@@ -27,7 +27,7 @@ onBeforeMount(fetchGame)
   </div>
   <div v-else class="w-full flex flex-col justify-start items-center">
     <div class="rounded-lg text-white bg-lgreen py-3 px-9 m-3">
-      {{game?.Name.toUpperCase()}}
+      {{game?.name.toUpperCase()}}
     </div>
   </div>
 </template>
