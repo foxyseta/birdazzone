@@ -23,8 +23,8 @@ func (pg *PageQuery) String() string {
 
 // @Description A subsequence of the search results
 type Page[T any] struct {
-	Entries       []*T `json:"entries"`
-	NumberOfPages int  `json:"number_of_pages" minimum:"1"`
+	Entries       []T `json:"entries"`
+	NumberOfPages int `json:"number_of_pages" minimum:"1"`
 }
 
 // @Description A pair made of one positive counter and one negative counter

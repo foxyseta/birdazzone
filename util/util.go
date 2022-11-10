@@ -39,7 +39,7 @@ func GetTestingGinEngine() *gin.Engine {
 	return testingGinEngine
 }
 
-func TimeFormat(dt time.Time) string {
+func LastGameDate(dt time.Time) string {
 	// before 7PM returns yesterday's solution
 	if dt.Hour() < 19 {
 		dt = dt.AddDate(0, 0, -1)
