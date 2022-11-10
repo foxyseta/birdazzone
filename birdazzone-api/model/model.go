@@ -1,6 +1,10 @@
 package model
 
-import "fmt"
+import (
+  "fmt"
+
+  "git.hjkl.gq/team13/birdazzone-api/twitter"
+)
 
 const nilRepresentation = "<nil>"
 
@@ -17,7 +21,7 @@ func (pg *PageQuery) String() string {
 }
 
 type Page[T any] struct {
-	Entries       []T `json:"entries"`
+	Entries       []*T `json:"entries"`
 	NumberOfPages int `json:"number_of_pages" minimum:"1"`
 }
 
@@ -64,6 +68,10 @@ type User struct {
 	Username        string `json:"username" example:"mariorossi"`
 	Name            string `json:"name" example:"Mario Rossi"`
 	ProfileImageUrl string `json:"profile_image_url"`
+}
+
+func makeUser(user twitter.UIDLookup) User {
+  return User{Username: user.Data.Username, Name: user.Data.Name, ProfileImageUrl: ""}
 }
 
 func (u *User) String() string {
