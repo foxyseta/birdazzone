@@ -2,7 +2,6 @@ package twitter
 
 import (
 	"testing"
-
 )
 
 func TestGetUser(t *testing.T) {

@@ -2,7 +2,7 @@ package twitter
 
 import (
 	"encoding/json"
-  "fmt"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"

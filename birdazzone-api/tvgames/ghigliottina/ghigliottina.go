@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-  "git.hjkl.gq/team13/birdazzone-api/twitter"
-  "git.hjkl.gq/team13/birdazzone-api/util"
+	"git.hjkl.gq/team13/birdazzone-api/twitter"
+	"git.hjkl.gq/team13/birdazzone-api/util"
 )
 
 func Solution() string {
