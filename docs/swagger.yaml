@@ -46,12 +46,12 @@ paths:
       summary: Get TV game
       tags:
       - tvgames
-  /twitter/{query}:
+  /tvgames/{id}/solution:
     get:
       parameters:
-      - description: Query to search
+      - description: Game to search
         in: path
-        name: query
+        name: game
         required: true
         type: string
       produces:
@@ -59,7 +59,11 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Test Twitter API
+        "404":
+          description: param GAME not found
+          schema:
+            type: string
+      summary: Retrieve game's solution
       tags:
-      - test
+      - tvgames
 swagger: "2.0"
