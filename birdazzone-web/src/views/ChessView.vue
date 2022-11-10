@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import guesserListItem from '@/components/guesserListItem.vue';
+  import ereditaGuesserList from '@/components/ereditaGuesserList.vue';
 </script>
 <template>
-  <main class="w-screen">
+  <main>
     <h1> chess </h1>
-    <guesserListItem />
+    <ereditaGuesserList />
   </main>
 </template>
