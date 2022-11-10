@@ -1,6 +1,7 @@
 basePath: /api/v1
 definitions:
   model.BooleanChart:
+    description: A pair made of one positive counter and one negative counter
     properties:
       negatives:
         example: 318
@@ -12,6 +13,7 @@ definitions:
         type: integer
     type: object
   model.ChartEntry:
+    description: A possible value inside a chart, alongside its absolute frequency
     properties:
       absolute_frequency:
         example: 34
@@ -31,6 +33,7 @@ definitions:
         type: string
     type: object
   model.Metrics:
+    description: Useful metrics describing a single Tweet
     properties:
       like_count:
         example: 122
@@ -56,6 +59,7 @@ definitions:
         type: integer
     type: object
   model.Tweet:
+    description: A post published on Twitter
     properties:
       author:
         $ref: '#/definitions/model.User'
@@ -69,6 +73,7 @@ definitions:
         type: string
     type: object
   model.User:
+    description: A Twitter user
     properties:
       name:
         example: Mario Rossi
@@ -140,6 +145,18 @@ paths:
         name: id
         required: true
         type: string
+      - default: 1
+        description: Number of the page to query
+        in: query
+        minimum: 1
+        name: pageIndex
+        type: integer
+      - default: 10
+        description: Length of the page to query
+        in: query
+        minimum: 1
+        name: pageLength
+        type: integer
       produces:
       - application/json
       responses:
@@ -147,6 +164,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.Page-model_Tweet'
+        "400":
+          description: pageLength < 1
+          schema:
+            type: string
         "404":
           description: game id not found
           schema:
@@ -168,6 +189,7 @@ paths:
         "200":
           description: OK
           schema:
+            description: A chart as a sequence of entries
             items:
               $ref: '#/definitions/model.ChartEntry'
             type: array

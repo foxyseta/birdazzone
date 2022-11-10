@@ -14,9 +14,10 @@ const BearerToken = "AAAAAAAAAAAAAAAAAAAAAE4higEAAAAAIAkazaLrT4LHjJx2XFPsdVzEPe8
 // Basic user profile data
 type UIDLookup struct {
 	Data struct {
-		ID       string `json:"id"`
-		Name     string `json:"name"`
-		Username string `json:"username"`
+		ID              string `json:"id"`
+		Name            string `json:"name"`
+		Username        string `json:"username"`
+		ProfileImageUrl string `json:"profile_image_url"`
 	} `json:"data"`
 }
 
@@ -45,7 +46,8 @@ func getRequest(url string) (*http.Response, error) {
 
 func GetUser(username string) *UIDLookup {
 	username = url.QueryEscape(username)
-	resp, err := getRequest("https://api.twitter.com/2/users/by/username/" + username)
+	resp, err := getRequest("https://api.twitter.com/2/users/by/username/" +
+		username + "?user.fields=id,name,username,profile_image_url")
 
 	if err != nil {
 		log.Fatalln(err)
