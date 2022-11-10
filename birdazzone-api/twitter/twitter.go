@@ -47,7 +47,7 @@ func getRequest(
 	urlTemplate string,
 	pathParams []any,
 	queryParams ...util.Pair[string, string],
-) []byte {
+) ([]byte, error) {
 	if pathParams == nil {
 		pathParams = []any{}
 	}
@@ -71,47 +71,56 @@ func getRequest(
 	}
 
 	resp, err := client.Do(req)
-	if err != nil || resp.StatusCode != 200 {
-		return nil
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("From Twitter API: %s", resp.Status)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return []byte(string(body))
+	return []byte(string(body)), nil
 }
 
-func GetUser(username string) *UIDLookup {
-	res := getRequest("https://api.twitter.com/2/users/by/username/%s",
+func GetUser(username string) (*UIDLookup, error) {
+	res, err := getRequest("https://api.twitter.com/2/users/by/username/%s",
 		[]any{username},
 		util.Pair[string, string]{
 			First:  "user.fields",
 			Second: "id,name,username,profile_image_url",
 		},
 	)
-	var uid UIDLookup
-	err := json.Unmarshal(res, &uid)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return &uid
+	var uid UIDLookup
+	err = json.Unmarshal(res, &uid)
+	if err != nil {
+		return nil, err
+	}
+	return &uid, nil
 }
 
 func getTweets(
 	urlTemplate string,
 	pathParams []any,
 	queryParams ...util.Pair[string, string],
-) *ProfileTweets {
-	res := getRequest(urlTemplate, pathParams, queryParams...)
-	var tweets ProfileTweets
-	err := json.Unmarshal(res, &tweets)
+) (*ProfileTweets, error) {
+	res, err := getRequest(urlTemplate, pathParams, queryParams...)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return &tweets
+	var tweets ProfileTweets
+	err = json.Unmarshal(res, &tweets)
+	if err != nil {
+		return nil, err
+	}
+	return &tweets, nil
 }
 
-func GetTweetsFromUser(id string, maxResults int, startTime string) *ProfileTweets {
+func GetTweetsFromUser(id string, maxResults int, startTime string) (*ProfileTweets, error) {
 	return getTweets(
 		"https://api.twitter.com/2/users/%s/tweets",
 		[]any{id},
@@ -121,7 +130,7 @@ func GetTweetsFromUser(id string, maxResults int, startTime string) *ProfileTwee
 	)
 }
 
-func GetTweetsFromHashtag(hashtag string, startTime string) *ProfileTweets {
+func GetTweetsFromHashtag(hashtag string, startTime string) (*ProfileTweets, error) {
 	return getTweets(
 		"https://api.twitter.com/2/tweets/search/recent/%s",
 		[]any{hashtag},

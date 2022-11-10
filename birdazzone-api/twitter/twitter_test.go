@@ -5,15 +5,15 @@ import (
 )
 
 func TestGetUser(t *testing.T) {
-	uid := GetUser("quizzettone")
-	if uid == nil {
+	_, err := GetUser("quizzettone")
+	if err != nil {
 		t.Fatal("Error in GetUser")
 	}
 }
 
 func TestGetTweetsFromUser(t *testing.T) {
-	tweets := GetTweetsFromUser("1499992669480755204", 10, "")
-	if tweets == nil {
+	_, err := GetTweetsFromUser("1499992669480755204", 10, "")
+	if err != nil {
 		t.Fatal("Error in GetTweetsFromUser")
 	}
 }

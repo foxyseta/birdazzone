@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/ghigliottina"
@@ -13,7 +14,7 @@ import (
 	"github.com/swaggo/swag/example/celler/httputil"
 )
 
-type GameSolutionGetter func() string
+type GameSolutionGetter func() (string, error)
 
 type GameTracker struct {
 	Game     model.Game
@@ -84,9 +85,12 @@ func gameSolution(ctx *gin.Context) {
 	}
 	solution := gameTracker.Solution
 	if solution != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"solution": gameTracker.Solution(),
-		})
+		s, err := gameTracker.Solution()
+		if err == nil {
+			ctx.JSON(http.StatusOK, gin.H{"solution": s})
+		} else {
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
+		}
 	} else {
 		httputil.NewError(ctx, http.StatusInternalServerError,
 			fmt.Errorf("Missing solution getter for %T", gameTracker))
@@ -121,13 +125,13 @@ func gameAttempts(ctx *gin.Context) {
 		return
 	}
 	//tweets
-	print(pageIndex, pageLength)
-	tweets := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
-	if tweets != nil {
-		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
+	tweets, err := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, util.LastGameDate(time.Now()))
+	// TODO
+	print(tweets, pageIndex, pageLength)
+	if err != nil {
+		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{Entries: []model.Tweet{}, NumberOfPages: 1})
 	} else {
-		httputil.NewError(ctx, http.StatusInternalServerError,
-			fmt.Errorf("Missing tweets"))
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
 	}
 }
 
@@ -144,12 +148,12 @@ func gameAttemptsStats(ctx *gin.Context) {
 	if err != nil {
 		return
 	}
-	tweets := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
-	if tweets != nil {
+	tweets, err := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
+	print(tweets)
+	if err == nil {
 		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
 	} else {
-		httputil.NewError(ctx, http.StatusInternalServerError,
-			fmt.Errorf("Missing tweets"))
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
 	}
 }
 
@@ -166,12 +170,12 @@ func gameResults(ctx *gin.Context) {
 	if err != nil {
 		return
 	}
-	tweets := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
-	if tweets != nil {
+	tweets, err := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
+	print(tweets)
+	if err == nil {
 		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
 	} else {
-		httputil.NewError(ctx, http.StatusInternalServerError,
-			fmt.Errorf("Missing tweets"))
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
 	}
 }
 
