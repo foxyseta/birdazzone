@@ -2,7 +2,7 @@
   import guesserListItem from '@/components/guesserListItem.vue';
 </script>
 <template>
-  <main>
+  <main class="w-screen">
     <h1> chess </h1>
     <guesserListItem />
   </main>
