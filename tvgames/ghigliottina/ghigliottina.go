@@ -1,31 +1,44 @@
 package ghigliottina
 
 import (
+	"errors"
 	"regexp"
 	"strings"
 	"time"
 
-  "git.hjkl.gq/team13/birdazzone-api/twitter"
-  "git.hjkl.gq/team13/birdazzone-api/util"
+	"git.hjkl.gq/team13/birdazzone-api/model"
+	"git.hjkl.gq/team13/birdazzone-api/tvgames/gametracker"
+	"git.hjkl.gq/team13/birdazzone-api/twitter"
+	"git.hjkl.gq/team13/birdazzone-api/util"
 )
 
-func Solution() string {
-	user := twitter.GetUser("quizzettone")
-	if user == nil {
-		return "ERR_USER"
+var ghigliottinaTracker = gametracker.GameTracker{
+	Game:     model.Game{Id: 0, Name: "Ghigliottina", Hashtag: "ghigliottina"},
+	Query:    "#ghigliottina -from:quizzettone -is:retweet",
+	Solution: solution,
+}
+
+func GetGhigliottinaTracker() gametracker.GameTracker {
+	return ghigliottinaTracker
+}
+
+func solution() (string, error) {
+	user, err := twitter.GetUser("quizzettone")
+	if err != nil {
+		return "", err
 	}
 	dt := time.Now()
-	x := util.TimeFormat(dt)
-	tweets := twitter.GetTweetsFromUser(user.Data.ID, "?max_results=20&start_time="+x+"&exclude=replies")
-	if tweets == nil {
-		return "ERR_TWEETS"
+	x := util.LastGameDate(dt)
+	tweets, err := twitter.GetTweetsFromUser(user.Data.ID, 20, x)
+	if err != nil {
+		return "", err
 	}
 	for i := 0; i < tweets.Meta.ResultCount; i++ {
 		if strings.Contains(tweets.Data[i].Text, "La #parola della #ghigliottina de #leredita di oggi è:") {
 			m := regexp.MustCompile(`La #parola della #ghigliottina de #leredita di oggi è:\s([A-Z]|[a-z])+`)
 			a := strings.ToLower(strings.Trim(m.FindString(tweets.Data[i].Text), "La #parola della #ghigliottina de #leredita di oggi è: "))
-			return a
+			return a, nil
 		}
 	}
-	return ""
+	return "", errors.New("Couldn't find Ghigliottina solution")
 }

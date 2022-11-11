@@ -1,36 +1,25 @@
 package tvgames
 
 import (
-  "fmt"
+	"fmt"
 	"net/http"
+	"strconv"
+	"time"
 
-  "git.hjkl.gq/team13/birdazzone-api/tvgames/ghigliottina"
 	"git.hjkl.gq/team13/birdazzone-api/model"
-	"git.hjkl.gq/team13/birdazzone-api/util"
+	"git.hjkl.gq/team13/birdazzone-api/tvgames/gametracker"
+	"git.hjkl.gq/team13/birdazzone-api/tvgames/ghigliottina"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
+	"git.hjkl.gq/team13/birdazzone-api/util"
 	"github.com/gin-gonic/gin"
-  "github.com/swaggo/swag/example/celler/httputil"
+	"github.com/swaggo/swag/example/celler/httputil"
 )
 
-type GameSolutionGetter func() string
-
-type GameTracker struct {
-  Game model.Game
-  Solution GameSolutionGetter
+var gameTrackers = []gametracker.GameTracker{
+	ghigliottina.GetGhigliottinaTracker(),
 }
 
-func (gt *GameTracker) String() string {
-  if gt == nil {
-    return "<nil>"
-  }
-  return gt.Game.String()
-}
-
-var gameTrackers = []GameTracker{
-  { model.Game{Id: 0, Name: "Ghigliottina", Hashtag: "leredita"}, ghigliottina.Solution },
-}
-
-var gameTrackersById = map[int]*GameTracker{}
+var gameTrackersById = map[int]*gametracker.GameTracker{}
 
 var games []model.Game
 
@@ -62,10 +51,10 @@ func getTvGames(ctx *gin.Context) {
 // @Param       id	path	int	true	"ID to search"
 // @Router      /tvgames/{id} [get]
 func getTvGameById(ctx *gin.Context) {
-  game, err := util.IdToObject(ctx, gamesById)
-  if err == nil {
-	  ctx.JSON(http.StatusOK, game)
-  }
+	game, err := util.IdToObject(ctx, gamesById)
+	if err == nil {
+		ctx.JSON(http.StatusOK, game)
+	}
 }
 
 // gameSolution godoc
@@ -77,19 +66,38 @@ func getTvGameById(ctx *gin.Context) {
 // @Failure     404	{string}	string  "game id not found"
 // @Router      /tvgames/{id}/solution [get]
 func gameSolution(ctx *gin.Context) {
-  gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
-    return
-  }
-  solution := gameTracker.Solution
-  if solution != nil {
-    ctx.JSON(http.StatusOK, gin.H{
-      "solution": gameTracker.Solution(),
-    })
+		return
+	}
+	solution := gameTracker.Solution
+	if solution != nil {
+		s, err := gameTracker.Solution()
+		if err == nil {
+			ctx.JSON(http.StatusOK, gin.H{"solution": s})
+		} else {
+			httputil.NewError(ctx, http.StatusInternalServerError, err)
+		}
 	} else {
-    httputil.NewError(ctx, http.StatusInternalServerError,
-      fmt.Errorf("Missing solution getter for %T", gameTracker))
-  }
+		httputil.NewError(ctx, http.StatusInternalServerError,
+			fmt.Errorf("Missing solution getter for %T", gameTracker))
+	}
+}
+
+func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, error) {
+	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	if err != nil {
+		return nil, err
+	}
+	query := gameTracker.Query
+	if successesOnly {
+		solution, err := gameTracker.Solution()
+		if err != nil {
+			return nil, err
+		}
+		query += " " + solution
+	}
+	return twitter.GetTweetsFromHashtag(query, util.LastGameDate(time.Now()))
 }
 
 // gameAttempts godoc
@@ -97,21 +105,40 @@ func gameSolution(ctx *gin.Context) {
 // @Tags        tvgames
 // @Produce     json
 // @Param       id path string true "Game to query"
+// @Param       pageIndex query int false "Number of the page to query" minimum(1) default(1)
+// @Param       pageLength query int false "Length of the page to query" minimum(1) default(10)
 // @Success     200 {object} model.Page[model.Tweet]
+// @Failure     400	{string}	string  "integer parsing error (pageIndex)"
+// @Failure     400	{string}	string  "pageIndex < 1"
+// @Failure     400	{string}	string  "integer parsing error (pageLength)"
+// @Failure     400	{string}	string  "pageLength < 1"
 // @Failure     404	{string}	string  "game id not found"
 // @Router      /tvgames/{id}/attempts [get]
 func gameAttempts(ctx *gin.Context) {
-  gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	var pageIndex, pageLength int
+	pageIndex, err := strconv.Atoi(ctx.DefaultQuery("pageIndex", "1"))
+	pageLength, err = strconv.Atoi(ctx.DefaultQuery("pageLength", "1"))
 	if err != nil {
-    return
-  }
-	tweets := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
-  if tweets != nil {
-    ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
-	} else {
-    httputil.NewError(ctx, http.StatusInternalServerError,
-      fmt.Errorf("Missing tweets"))
-  }
+		return
+	}
+	result, err := getAttempts(ctx, true)
+	if err == nil {
+		tweets := result.Data
+		util.Reverse(&tweets)
+		usersById := make(map[string]twitter.Profile, len(result.Includes.Users))
+		for _, user := range result.Includes.Users {
+			usersById[user.ID] = user
+		}
+		n := len(tweets)
+		from := util.Max(0, util.Min(pageLength*(pageIndex-1), n-1))
+		res := make([]model.Tweet, util.Min(from+pageLength, n)-from)
+		for i := range res {
+			tweet := tweets[from+i]
+			res[i] = model.MakeTweet(tweet, usersById[tweet.AuthorId])
+		}
+		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{Entries: res, NumberOfPages: (n + pageLength - 1) / pageLength})
+	}
+	httputil.NewError(ctx, http.StatusInternalServerError, err)
 }
 
 // gameAttempts godoc
@@ -123,17 +150,17 @@ func gameAttempts(ctx *gin.Context) {
 // @Failure     404	{string}	string  "game id not found"
 // @Router      /tvgames/{id}/attempts/stats [get]
 func gameAttemptsStats(ctx *gin.Context) {
-  gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
-    return
-  }
-	tweets := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
-  if tweets != nil {
-    ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
+		return
+	}
+	tweets, err := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
+	print(tweets)
+	if err == nil {
+		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
 	} else {
-    httputil.NewError(ctx, http.StatusInternalServerError,
-      fmt.Errorf("Missing tweets"))
-  }
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+	}
 }
 
 // gameAttempts godoc
@@ -145,26 +172,26 @@ func gameAttemptsStats(ctx *gin.Context) {
 // @Failure     404	{string}	string  "game id not found"
 // @Router      /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
-  gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
-    return
-  }
-	tweets := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
-  if tweets != nil {
-    ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
+		return
+	}
+	tweets, err := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
+	print(tweets)
+	if err == nil {
+		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
 	} else {
-    httputil.NewError(ctx, http.StatusInternalServerError,
-      fmt.Errorf("Missing tweets"))
-  }
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+	}
 }
 
 func init() {
-  games = make([]model.Game, len(gameTrackers))
-  i := 0
-  for k, v := range gameTrackers {
-    gameTrackersById[k] = &v
-    games[i] = v.Game
-    gamesById[k] = &v.Game
-    i += 1
-  }
+	games = make([]model.Game, len(gameTrackers))
+	i := 0
+	for k, v := range gameTrackers {
+		gameTrackersById[k] = &v
+		games[i] = v.Game
+		gamesById[k] = &v.Game
+		i += 1
+	}
 }
