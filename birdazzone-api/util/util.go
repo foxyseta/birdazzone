@@ -66,9 +66,9 @@ func GetTestingGinEngine() *gin.Engine {
 	return testingGinEngine
 }
 
-func LastGameDate(dt time.Time) string {
-	// before 7PM returns yesterday's solution
-	if dt.Hour() < 19 {
+func LastInstantAtGivenTime(dt time.Time, hours int) string {
+	// before <hours> returns yesterday's solution
+	if dt.Hour() < hours {
 		dt = dt.AddDate(0, 0, -1)
 	}
 	// time format YYYY-MM-DDTHH:MM:SSZ (ISO 8601/RFC 3339 UTC TIMEZONE)
@@ -80,7 +80,7 @@ func LastGameDate(dt time.Time) string {
 	if dt.Day() < 10 {
 		x += "0"
 	}
-	x += strconv.Itoa(dt.Day()) + "T17:55:00Z"
+	x += strconv.Itoa(dt.Day()) + fmt.Sprintf("T%d:00:00Z", hours)
 	return x
 }
 
