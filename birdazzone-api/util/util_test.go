@@ -41,12 +41,12 @@ func TestInit(t *testing.T) {
 func TestTimeFormat(t *testing.T) {
 	tm := time.Date(2022, time.September, 10, 18, 59, 00, 00, time.UTC)
 	x := LastGameDate(tm)
-	if x != "2022-09-09T17:55:00Z" {
+	if x != "2022-09-09T17:30:00Z" {
 		t.Fatal("Error in formatting time #1")
 	}
 	tm = time.Date(2022, time.December, 01, 10, 19, 01, 00, time.UTC)
 	x = LastGameDate(tm)
-	if x != "2022-11-30T17:55:00Z" {
+	if x != "2022-11-30T17:30:00Z" {
 		t.Fatal("Error in formatting time #2")
 	}
 }
