@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
@@ -31,6 +32,7 @@ func TvGamesGroup(group *gin.RouterGroup) {
 	group.GET("/:id/solution", gameSolution)
 	group.GET("/:id/attempts", gameAttempts)
 	group.GET("/:id/attempts/stats", gameAttemptsStats)
+	group.GET("/:id/results", gameResults)
 }
 
 // getTvGames godoc
@@ -97,7 +99,7 @@ func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, 
 		}
 		query += " " + solution
 	}
-	return twitter.GetTweetsFromHashtag(query, util.LastGameDate(time.Now()))
+	return twitter.GetTweetsFromHashtag(query, util.LastInstantAtGivenTime(time.Now(), 18))
 }
 
 // gameAttempts godoc
@@ -122,23 +124,24 @@ func gameAttempts(ctx *gin.Context) {
 		return
 	}
 	result, err := getAttempts(ctx, true)
-	if err == nil {
-		tweets := result.Data
-		util.Reverse(&tweets)
-		usersById := make(map[string]twitter.Profile, len(result.Includes.Users))
-		for _, user := range result.Includes.Users {
-			usersById[user.ID] = user
-		}
-		n := len(tweets)
-		from := util.Max(0, util.Min(pageLength*(pageIndex-1), n-1))
-		res := make([]model.Tweet, util.Min(from+pageLength, n)-from)
-		for i := range res {
-			tweet := tweets[from+i]
-			res[i] = model.MakeTweet(tweet, usersById[tweet.AuthorId])
-		}
-		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{Entries: res, NumberOfPages: (n + pageLength - 1) / pageLength})
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		return
 	}
-	httputil.NewError(ctx, http.StatusInternalServerError, err)
+	tweets := result.Data
+	util.Reverse(&tweets)
+	usersById := make(map[string]twitter.Profile, len(result.Includes.Users))
+	for _, user := range result.Includes.Users {
+		usersById[user.ID] = user
+	}
+	n := len(tweets)
+	from := util.Max(0, util.Min(pageLength*(pageIndex-1), n-1))
+	res := make([]model.Tweet, util.Min(from+pageLength, n)-from)
+	for i := range res {
+		tweet := tweets[from+i]
+		res[i] = model.MakeTweet(tweet, usersById[tweet.AuthorId])
+	}
+	ctx.JSON(http.StatusOK, model.Page[model.Tweet]{Entries: res, NumberOfPages: (n + pageLength - 1) / pageLength})
 }
 
 // gameAttempts godoc
@@ -173,16 +176,30 @@ func gameAttemptsStats(ctx *gin.Context) {
 // @Router      /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
-	if err != nil {
-		return
-	}
-	tweets, err := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
-	print(tweets)
 	if err == nil {
-		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
-	} else {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		result, err := getAttempts(ctx, false)
+		if err == nil {
+			tweets := result.Data
+			solution, err := gameTracker.Solution()
+			if err == nil {
+				successes := 0
+				for _, tweet := range tweets {
+					if strings.Contains(strings.ToLower(tweet.Text), solution) {
+						successes++
+					}
+				}
+				ctx.JSON(
+					http.StatusOK,
+					model.BooleanChart{
+						Positives: successes,
+						Negatives: len(tweets) - successes,
+					},
+				)
+				return
+			}
+		}
 	}
+	httputil.NewError(ctx, http.StatusInternalServerError, err)
 }
 
 func init() {

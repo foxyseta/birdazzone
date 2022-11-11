@@ -15,7 +15,7 @@ func TestGetUser(t *testing.T) {
 }
 
 func TestGetTweetsFromUser(t *testing.T) {
-	_, err := GetTweetsFromUser("1499992669480755204", 10, util.LastGameDate(time.Now()))
+	_, err := GetTweetsFromUser("1499992669480755204", 10, util.LastInstantAtGivenTime(time.Now(), 22))
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -88,7 +88,7 @@ func getRequest(
 		}
 		req.URL.RawQuery = q.Encode()
 	}
-	println(req.URL.String())
+	// println(req.URL.String())
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -155,6 +155,7 @@ func GetTweetsFromHashtag(query string, startTime string) (*ProfileTweets, error
 		[]any{},
 		util.Pair[string, string]{First: "query", Second: query},
 		util.Pair[string, string]{First: "start_time", Second: startTime},
+		util.Pair[string, string]{First: "max_results", Second: "100"},
 		util.Pair[string, string]{First: "tweet.fields", Second: "author_id,created_at,public_metrics,text"},
 		util.Pair[string, string]{First: "expansions", Second: "author_id"},
 		util.Pair[string, string]{First: "user.fields", Second: "id,name,profile_image_url,username"},
