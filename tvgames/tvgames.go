@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
+	"git.hjkl.gq/team13/birdazzone-api/tvgames/gametracker"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/ghigliottina"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
@@ -14,25 +15,11 @@ import (
 	"github.com/swaggo/swag/example/celler/httputil"
 )
 
-type GameSolutionGetter func() (string, error)
-
-type GameTracker struct {
-	Game     model.Game
-	Solution GameSolutionGetter
+var gameTrackers = []gametracker.GameTracker{
+	ghigliottina.GetGhigliottinaTracker(),
 }
 
-func (gt *GameTracker) String() string {
-	if gt == nil {
-		return "<nil>"
-	}
-	return gt.Game.String()
-}
-
-var gameTrackers = []GameTracker{
-	{model.Game{Id: 0, Name: "Ghigliottina", Hashtag: "ghigliottina"}, ghigliottina.Solution},
-}
-
-var gameTrackersById = map[int]*GameTracker{}
+var gameTrackersById = map[int]*gametracker.GameTracker{}
 
 var games []model.Game
 
@@ -97,6 +84,22 @@ func gameSolution(ctx *gin.Context) {
 	}
 }
 
+func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, error) {
+	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	if err != nil {
+		return nil, err
+	}
+	query := gameTracker.Query
+	if successesOnly {
+		solution, err := gameTracker.Solution()
+		if err != nil {
+			return nil, err
+		}
+		query += " " + solution
+	}
+	return twitter.GetTweetsFromHashtag(query, util.LastGameDate(time.Now()))
+}
+
 // gameAttempts godoc
 // @Summary     Retrieve game's attempts
 // @Tags        tvgames
@@ -112,27 +115,30 @@ func gameSolution(ctx *gin.Context) {
 // @Failure     404	{string}	string  "game id not found"
 // @Router      /tvgames/{id}/attempts [get]
 func gameAttempts(ctx *gin.Context) {
-	// game tracker
-	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
-	if err != nil {
-		return
-	}
-	// page query
 	var pageIndex, pageLength int
-	pageIndex, err = strconv.Atoi(ctx.DefaultQuery("pageIndex", "1"))
+	pageIndex, err := strconv.Atoi(ctx.DefaultQuery("pageIndex", "1"))
 	pageLength, err = strconv.Atoi(ctx.DefaultQuery("pageLength", "1"))
 	if err != nil {
 		return
 	}
-	//tweets
-	tweets, err := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, util.LastGameDate(time.Now()))
-	// TODO
-	print(tweets, pageIndex, pageLength)
-	if err != nil {
-		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{Entries: []model.Tweet{}, NumberOfPages: 1})
-	} else {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+	result, err := getAttempts(ctx, true)
+	if err == nil {
+		tweets := result.Data
+		util.Reverse(&tweets)
+		usersById := make(map[string]twitter.Profile, len(result.Includes.Users))
+		for _, user := range result.Includes.Users {
+			usersById[user.ID] = user
+		}
+		n := len(tweets)
+		from := util.Max(0, util.Min(pageLength*(pageIndex-1), n-1))
+		res := make([]model.Tweet, util.Min(from+pageLength, n)-from)
+		for i := range res {
+			tweet := tweets[from+i]
+			res[i] = model.MakeTweet(tweet, usersById[tweet.AuthorId])
+		}
+		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{Entries: res, NumberOfPages: (n + pageLength - 1) / pageLength})
 	}
+	httputil.NewError(ctx, http.StatusInternalServerError, err)
 }
 
 // gameAttempts godoc

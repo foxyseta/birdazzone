@@ -2,6 +2,9 @@ package twitter
 
 import (
 	"testing"
+	"time"
+
+	"git.hjkl.gq/team13/birdazzone-api/util"
 )
 
 func TestGetUser(t *testing.T) {
@@ -12,8 +15,8 @@ func TestGetUser(t *testing.T) {
 }
 
 func TestGetTweetsFromUser(t *testing.T) {
-	_, err := GetTweetsFromUser("1499992669480755204", 10, "")
+	_, err := GetTweetsFromUser("1499992669480755204", 10, util.LastGameDate(time.Now()))
 	if err != nil {
-		t.Fatal("Error in GetTweetsFromUser")
+		t.Fatal(err)
 	}
 }
