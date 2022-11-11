@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/gametracker"
@@ -102,6 +103,62 @@ func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, 
 	return twitter.GetTweetsFromHashtag(query, util.LastInstantAtGivenTime(time.Now(), 18))
 }
 
+func toLowerAlphaOnly(r rune) rune {
+	if unicode.IsLetter(r) {
+		return unicode.ToLower(r)
+	}
+	if unicode.IsDigit(r) || strings.ContainsRune("#:/@", r) {
+		return r
+	}
+	return ' '
+}
+
+var attemptsBlacklist = []string{
+	"indovinato",
+	"indovinata",
+	"perché",
+	"perchè",
+	"perche'",
+	"soluzione",
+	"oppure",
+	"sicuramente",
+	"però",
+	"peró",
+	"non",
+	"stasera",
+	"voi",
+}
+
+func tweetTextToAttempt(text string) string {
+	for _, word := range strings.Split(strings.Map(toLowerAlphaOnly, text), " ") {
+		if len(word) < 3 {
+			continue
+		}
+		if len(word) > 0 && word[0:1] == "#" {
+			continue
+		}
+		if len(word) > 3 && word[0:4] == "http" {
+			continue
+		}
+		for _, r := range word {
+			if !unicode.IsLetter(r) {
+				word = ""
+				break
+			}
+		}
+		for _, w := range attemptsBlacklist {
+			if word == w {
+				word = ""
+				break
+			}
+		}
+		if word != "" {
+			return word
+		}
+	}
+	return ""
+}
+
 // gameAttempts godoc
 // @Summary     Retrieve game's attempts
 // @Tags        tvgames
@@ -154,16 +211,43 @@ func gameAttempts(ctx *gin.Context) {
 // @Router      /tvgames/{id}/attempts/stats [get]
 func gameAttemptsStats(ctx *gin.Context) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
-	if err != nil {
-		return
-	}
-	tweets, err := twitter.GetTweetsFromHashtag(gameTracker.Game.Hashtag, "?max_results=20&exclude=replies")
-	print(tweets)
 	if err == nil {
-		ctx.JSON(http.StatusOK, model.Page[model.Tweet]{NumberOfPages: 1})
-	} else {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		result, err := getAttempts(ctx, false)
+		if err == nil {
+			tweets := result.Data
+			solution, err := gameTracker.Solution()
+			if err == nil {
+				chartAsMap := make(map[string]int)
+				for _, tweet := range tweets {
+					text := strings.ToLower(tweet.Text)
+					var attempt string
+					if strings.Contains(text, solution) {
+						attempt = solution
+					} else {
+						attempt = tweetTextToAttempt(text)
+					}
+					if attempt == "" {
+						continue
+					}
+					_, ok := chartAsMap[attempt]
+					if ok {
+						chartAsMap[attempt]++
+					} else {
+						chartAsMap[attempt] = 1
+					}
+				}
+				chart := make(model.Chart, len(chartAsMap))
+				i := 0
+				for k, v := range chartAsMap {
+					chart[i] = model.ChartEntry{Value: k, AbsoluteFrequency: v}
+					i++
+				}
+				ctx.JSON(http.StatusOK, chart)
+				return
+			}
+		}
 	}
+	httputil.NewError(ctx, http.StatusInternalServerError, err)
 }
 
 // gameAttempts godoc

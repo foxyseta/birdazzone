@@ -40,13 +40,13 @@ func TestInit(t *testing.T) {
 
 func TestTimeFormat(t *testing.T) {
 	tm := time.Date(2022, time.September, 10, 18, 59, 00, 00, time.UTC)
-	x := LastInstantAtGivenTime(tm, 14)
-	if x != "2022-09-09T10:00:00Z" {
-		t.Fatal("Error in formatting time #1")
+	x := LastInstantAtGivenTime(tm, 20)
+	if x != "2022-09-09T20:00:00Z" {
+		t.Fatal("Error in formatting time #1: " + x)
 	}
 	tm = time.Date(2022, time.December, 01, 10, 19, 01, 00, time.UTC)
 	x = LastInstantAtGivenTime(tm, 20)
 	if x != "2022-11-30T20:00:00Z" {
-		t.Fatal("Error in formatting time #2")
+		t.Fatal("Error in formatting time #2: " + x)
 	}
 }
