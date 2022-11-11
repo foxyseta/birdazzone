@@ -102,6 +102,22 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Number of the page to query",
+                        "name": "pageIndex",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Length of the page to query",
+                        "name": "pageLength",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -109,6 +125,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/model.Page-model_Tweet"
+                        }
+                    },
+                    "400": {
+                        "description": "pageLength \u003c 1",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     "404": {
@@ -142,6 +164,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "description": "A chart as a sequence of entries",
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/model.ChartEntry"
@@ -228,6 +251,7 @@ const docTemplate = `{
     },
     "definitions": {
         "model.BooleanChart": {
+            "description": "A pair made of one positive counter and one negative counter",
             "type": "object",
             "properties": {
                 "negatives": {
@@ -243,6 +267,7 @@ const docTemplate = `{
             }
         },
         "model.ChartEntry": {
+            "description": "A possible value inside a chart, alongside its absolute frequency",
             "type": "object",
             "properties": {
                 "absolute_frequency": {
@@ -271,6 +296,7 @@ const docTemplate = `{
             }
         },
         "model.Metrics": {
+            "description": "Useful metrics describing a single Tweet",
             "type": "object",
             "properties": {
                 "like_count": {
@@ -306,6 +332,7 @@ const docTemplate = `{
             }
         },
         "model.Tweet": {
+            "description": "A post published on Twitter",
             "type": "object",
             "properties": {
                 "author": {
@@ -325,6 +352,7 @@ const docTemplate = `{
             }
         },
         "model.User": {
+            "description": "A Twitter user",
             "type": "object",
             "properties": {
                 "name": {
