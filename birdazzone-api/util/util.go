@@ -27,6 +27,33 @@ func (p *Pair[T, U]) String() string {
 	return fmt.Sprintf("(%T, %T)", p.First, p.Second)
 }
 
+func Max(x, y int) int {
+	if x > y {
+		return x
+	}
+	return y
+}
+
+func Min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}
+
+func Reverse[T any](array *[]T) {
+	n := len(*array)
+	halfN := n / 2
+	for i, j := 0, n-1; i < halfN; i++ {
+		x := &(*array)[i]
+		y := &(*array)[j]
+		t := *x
+		*x = *y
+		*y = t
+		j--
+	}
+}
+
 func GetTestingResponseRecorder() *httptest.ResponseRecorder {
 	return testingResponseRecorder
 }
@@ -53,7 +80,7 @@ func LastGameDate(dt time.Time) string {
 	if dt.Day() < 10 {
 		x += "0"
 	}
-	x += strconv.Itoa(dt.Day()) + "T18:55:00Z"
+	x += strconv.Itoa(dt.Day()) + "T17:55:00Z"
 	return x
 }
 

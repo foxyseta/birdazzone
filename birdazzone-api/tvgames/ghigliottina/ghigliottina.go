@@ -6,11 +6,23 @@ import (
 	"strings"
 	"time"
 
+	"git.hjkl.gq/team13/birdazzone-api/model"
+	"git.hjkl.gq/team13/birdazzone-api/tvgames/gametracker"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
 )
 
-func Solution() (string, error) {
+var ghigliottinaTracker = gametracker.GameTracker{
+	Game:     model.Game{Id: 0, Name: "Ghigliottina", Hashtag: "ghigliottina"},
+	Query:    "#ghigliottina -from:quizzettone -is:retweet",
+	Solution: solution,
+}
+
+func GetGhigliottinaTracker() gametracker.GameTracker {
+	return ghigliottinaTracker
+}
+
+func solution() (string, error) {
 	user, err := twitter.GetUser("quizzettone")
 	if err != nil {
 		return "", err

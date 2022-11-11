@@ -77,7 +77,7 @@ type User struct {
 	ProfileImageUrl string `json:"profile_image_url"`
 }
 
-func makeUser(user twitter.UIDLookup) User {
+func MakeUser(user twitter.UIDLookup) User {
 	return User{
 		Username:        user.Data.Username,
 		Name:            user.Data.Name,
@@ -112,6 +112,23 @@ type Tweet struct {
 	Author    User    `json:"author"`
 	CreatedAt string  `json:"created_at" format:"date-time"`
 	Metrics   Metrics `json:"metrics"`
+}
+
+func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile) Tweet {
+	return Tweet{
+		Text: tweet.Text,
+		Author: User{
+			Username:        author.Username,
+			Name:            author.Name,
+			ProfileImageUrl: author.ProfileImageUrl,
+		},
+		CreatedAt: tweet.CreatedAt,
+		Metrics: Metrics{
+			LikeCount:    tweet.PublicMetrics.LikeCount,
+			ReplyCount:   tweet.PublicMetrics.ReplyCount,
+			RetweetCount: tweet.PublicMetrics.RetweetCount,
+		},
+	}
 }
 
 func (t *Tweet) String() string {
