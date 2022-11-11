@@ -13,8 +13,8 @@ import (
 )
 
 var ghigliottinaTracker = gametracker.GameTracker{
-	Game:     model.Game{Id: 0, Name: "Ghigliottina", Hashtag: "ghigliottina"},
-	Query:    "#ghigliottina -from:quizzettone -is:retweet",
+	Game:     model.Game{Id: 0, Name: "Ghigliottina", Hashtag: "#ghigliottina#leredita"},
+	Query:    "(#ghigliottina OR #leredita) -from:quizzettone -is:retweet",
 	Solution: solution,
 }
 
@@ -28,7 +28,7 @@ func solution() (string, error) {
 		return "", err
 	}
 	dt := time.Now()
-	x := util.LastGameDate(dt)
+	x := util.LastInstantAtGivenTime(dt, 19)
 	tweets, err := twitter.GetTweetsFromUser(user.Data.ID, 20, x)
 	if err != nil {
 		return "", err
