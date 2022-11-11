@@ -80,7 +80,7 @@ func LastGameDate(dt time.Time) string {
 	if dt.Day() < 10 {
 		x += "0"
 	}
-	x += strconv.Itoa(dt.Day()) + "T17:55:00Z"
+	x += strconv.Itoa(dt.Day()) + "T17:30:00Z"
 	return x
 }
 

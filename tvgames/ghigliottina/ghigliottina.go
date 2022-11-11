@@ -13,8 +13,8 @@ import (
 )
 
 var ghigliottinaTracker = gametracker.GameTracker{
-	Game:     model.Game{Id: 0, Name: "Ghigliottina", Hashtag: "ghigliottina"},
-	Query:    "#ghigliottina -from:quizzettone -is:retweet",
+	Game:     model.Game{Id: 0, Name: "Ghigliottina", Hashtag: "#ghigliottina#leredita"},
+	Query:    "(#ghigliottina OR #leredita) -from:quizzettone -is:retweet",
 	Solution: solution,
 }
 
