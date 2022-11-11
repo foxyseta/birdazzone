@@ -28,7 +28,7 @@ func solution() (string, error) {
 		return "", err
 	}
 	dt := time.Now()
-	x := util.LastGameDate(dt)
+	x := util.LastInstantAtGivenTime(dt, 19)
 	tweets, err := twitter.GetTweetsFromUser(user.Data.ID, 20, x)
 	if err != nil {
 		return "", err
