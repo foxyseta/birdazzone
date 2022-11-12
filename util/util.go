@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"strconv"
 	"time"
+	"unicode"
 
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/swag/example/celler/httputil"
@@ -39,6 +40,24 @@ func Min(x, y int) int {
 		return x
 	}
 	return y
+}
+
+func Contains[T comparable](array *[]T, value T) bool {
+	for _, x := range *array {
+		if x == value {
+			return true
+		}
+	}
+	return false
+}
+
+func IsAlphabetic(str *string) bool {
+	for _, r := range *str {
+		if !unicode.IsLetter(r) {
+			return false
+		}
+	}
+	return true
 }
 
 func Reverse[T any](array *[]T) {
