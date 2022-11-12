@@ -2,14 +2,12 @@ package util
 
 import (
 	"fmt"
-	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"time"
 	"unicode"
 
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/swag/example/celler/httputil"
 )
 
 var testingResponseRecorder = httptest.NewRecorder()
@@ -21,13 +19,6 @@ const NilRepresentation = "<nil>"
 type Pair[T any, U any] struct {
 	First  T
 	Second U
-}
-
-func (p *Pair[T, U]) String() string {
-	if p == nil {
-		return "<nil>"
-	}
-	return fmt.Sprintf("(%T, %T)", p.First, p.Second)
 }
 
 func Max(x, y int) int {
@@ -123,21 +114,6 @@ func IdToObject[T any](ctx *gin.Context, data map[int]T) (T, error) {
 	}
 
 	return value, err
-}
-
-func QueryParamToPositiveInt(ctx *gin.Context, paramName string, defaultValue string) (int, error) {
-	value, err := strconv.Atoi(ctx.DefaultQuery(paramName, defaultValue))
-	if err != nil {
-		newError := fmt.Errorf("integer parsing error (%s)", paramName)
-		httputil.NewError(ctx, http.StatusBadRequest, newError)
-		return 0, newError
-	}
-	if value < 1 {
-		newError := fmt.Errorf("%s < 1", paramName)
-		httputil.NewError(ctx, http.StatusBadRequest, newError)
-		return 0, newError
-	}
-	return value, nil
 }
 
 func init() {
