@@ -88,7 +88,7 @@ func getRequest(
 		}
 		req.URL.RawQuery = q.Encode()
 	}
-	println(req.URL.String())
+	// println(req.URL.String())
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
