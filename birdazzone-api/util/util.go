@@ -16,6 +16,8 @@ var testingResponseRecorder = httptest.NewRecorder()
 var testingGinContext *gin.Context = nil
 var testingGinEngine *gin.Engine = nil
 
+const NilRepresentation = "<nil>"
+
 type Pair[T any, U any] struct {
 	First  T
 	Second U
