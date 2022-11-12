@@ -34,7 +34,7 @@ func TestGetTvGameById(t *testing.T) {
 	}
 }
 
-func TestInitAPI(t *testing.T) {
+func TestInit(t *testing.T) {
 	v1 := util.GetTestingGinEngine().Group("/api/v1")
 	TvGamesGroup(v1)
 
