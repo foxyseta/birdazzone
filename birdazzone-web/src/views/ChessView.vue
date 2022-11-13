@@ -4,6 +4,6 @@
 <template>
   <main>
     <h1> chess </h1>
-    <ereditaGuesserList />
+    <ereditaGuesserList :game-id="0"/>
   </main>
 </template>

@@ -1,9 +1,12 @@
 <script setup lang="ts">
+  import type { ListGuesser } from '@/api/interfaces/list-guesser';
   import {ref} from 'vue'
-  let showAll = ref<boolean>(true)
+  let showAll = ref<boolean>(false)
   function prova(){
     showAll.value = !showAll.value
   }
+
+  const data = defineProps<{data:ListGuesser}>()
 </script>
 
 <template>
@@ -14,8 +17,8 @@
                 <img :src="'./public/icons/user.svg'" alt="propic"/>
             </div>
             <div class="flex flex-col mx-4" style="flex: 1 1 auto">
-                <p class="flex flex-1 text-white font-bold">@username</p>
-                <p class="flex flex-1 text-lgray">Name Surname</p>
+                <p class="flex flex-1 text-white font-bold">{{data.username}}</p>
+                <p class="flex flex-1 text-lgray">{{data.name}}</p>
             </div>
             <div class="flex flex-col mx-4">
             <div class="flex" style="flex: 1 1 auto; height:2rem">
