@@ -11,7 +11,7 @@ export default class ApiRepository {
   private static readonly _BASE_URL = "http://localhost:8080/api/v1"
   private static readonly _HELLO = "/hello"
   private static readonly _TWITTER = "/twitter/{0}"
-  private static readonly _TV_GAMES = "/tvgames"
+  private static readonly _TV_GAMES = "/tvgames/"
   private static readonly _TV_GAMES_ID = "/tvgames/{0}"
   private static readonly _RESULTS_ID = "/tvgames/{0}/results"
   private static readonly _TV_GAMES_ID_ATTEMPTS_STATS = "/tvgames/{0}/attempts/stats"
