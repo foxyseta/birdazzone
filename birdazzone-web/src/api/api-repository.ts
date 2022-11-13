@@ -2,6 +2,7 @@ import { ApiManager, ApiResponse } from "./api"
 import type HelloBird from "./interfaces/hello-bird"
 import type { TweetList } from "./interfaces/tweet"
 import type { TvGame } from "./interfaces/tv-game"
+import type { Results } from "./interfaces/results"
 import type { ChartEntry } from "./interfaces/chart-entry"
 import type { WordCloudOptions } from "./interfaces/wordcloud-options"
 import type { Solution } from "./interfaces/solution"
@@ -10,8 +11,9 @@ export default class ApiRepository {
   private static readonly _BASE_URL = "http://localhost:8080/api/v1"
   private static readonly _HELLO = "/hello"
   private static readonly _TWITTER = "/twitter/{0}"
-  private static readonly _TV_GAMES = "/tvgames/"
+  private static readonly _TV_GAMES = "/tvgames"
   private static readonly _TV_GAMES_ID = "/tvgames/{0}"
+  private static readonly _RESULTS_ID = "/tvgames/{0}/results"
   private static readonly _TV_GAMES_ID_ATTEMPTS_STATS = "/tvgames/{0}/attempts/stats"
   private static readonly _TV_GAMES_ID_SOLUTION = "/tvgames/{0}/solution"
 
@@ -26,6 +28,9 @@ export default class ApiRepository {
 
   public static readonly getTvGameById = (id: string): Promise<ApiResponse<TvGame>> =>
     ApiManager.get<TvGame>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID, id))
+
+  public static readonly getResults = (id: string): Promise<ApiResponse<Results>> =>
+    ApiManager.get<Results>(this.stringFormat(this._BASE_URL + this._RESULTS_ID, id))
 
   public static readonly getTvGameAttemptsStat = (id: string): Promise<ApiResponse<ChartEntry[]>> =>
     ApiManager.get<ChartEntry[]>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS, id))
