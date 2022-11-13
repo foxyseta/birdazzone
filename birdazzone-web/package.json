@@ -17,8 +17,6 @@
     "yarn": "1.x"
   },
   "dependencies": {
-    "@material-ui/core": "^4.12.4",
-    "@popperjs/core": "^2.11.6",
     "@types/jquery": "^3.5.14",
     "autoprefixer": "^10.4.13",
     "c8": "^7.12.0",

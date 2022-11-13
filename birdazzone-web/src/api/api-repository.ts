@@ -25,7 +25,7 @@ export default class ApiRepository {
     ApiManager.get<TvGame>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID, id))
 
   public static readonly getResults = (id: string): Promise<ApiResponse<Results>> =>
-    ApiManager.get<Results>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID + this._RESULTS_ID, id))
+    ApiManager.get<Results>(this.stringFormat(this._BASE_URL + this._RESULTS_ID, id))
 
   /// Takes a string in input containing placeholders in the form of {n}, where
   /// n is a number >= 0. Then replace all the occurence of the {n} pattern with 

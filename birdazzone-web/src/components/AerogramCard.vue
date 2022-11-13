@@ -22,11 +22,17 @@ onBeforeMount(fetchData);
 
 const canvas = ref(null);
 
-const nFail = data.value?.negatives;
-const nSucc = data.value?.positives;
-const nAttempts = nFail + nSucc;
+const nFail = data.value?.negatives;    // failed attempts
+const nSucc = data.value?.positives;    // succeded attempts
+const nAttempts = nFail + nSucc;        // total attempts
 
-const success = nSucc/nAttempts;   // x : 1 = nSucc : nAttempts
+const success = (() => {
+  if (nAttempts == 0)
+    return 0;
+  else
+    return nSucc / nAttempts;   // x : 1 = nSucc : nAttempts
+})();
+
 const fail = 1-success;
 
 onMounted(() => {
