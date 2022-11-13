@@ -2,6 +2,7 @@ import { ApiManager, ApiResponse } from "./api"
 import type HelloBird from "./interfaces/hello-bird"
 import type { TweetList } from "./interfaces/tweet"
 import type { TvGame } from "./interfaces/tv-game"
+import type { Results } from "./interfaces/results"
 
 export default class ApiRepository {
   private static readonly _BASE_URL = "http://localhost:8080/api/v1"
@@ -9,6 +10,7 @@ export default class ApiRepository {
   private static readonly _TWITTER = "/twitter/{0}"
   private static readonly _TV_GAMES = "/tv-games"
   private static readonly _TV_GAMES_ID = "/tv-games/{0}"
+  private static readonly _RESULTS_ID = "/tv-games/{0}/results"
 
   public static readonly getHelloBird = (): Promise<ApiResponse<HelloBird>> =>
     ApiManager.get<HelloBird>(this._BASE_URL + this._HELLO)
@@ -21,6 +23,9 @@ export default class ApiRepository {
 
   public static readonly getTvGameById = (id: string): Promise<ApiResponse<TvGame>> =>
     ApiManager.get<TvGame>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID, id))
+
+  public static readonly getResults = (id: string): Promise<ApiResponse<Results>> =>
+    ApiManager.get<Results>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID + this._RESULTS_ID, id))
 
   /// Takes a string in input containing placeholders in the form of {n}, where
   /// n is a number >= 0. Then replace all the occurence of the {n} pattern with 
