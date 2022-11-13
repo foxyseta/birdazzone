@@ -12,6 +12,7 @@ module.exports = {
       'dgreen': '#005d57', // dark green
       'lgray': '#7f7f85',  // light gray
       'white': '#fff',   // white
+      'lblack': '#1a1a1a',   // light black
       'lred': '#ff937f'  // light red
     },
     extend: {},

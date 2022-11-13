@@ -3,5 +3,5 @@ import AerogramCard from '../components/AerogramCard.vue'
 </script>
 <template>
   <h1> chess </h1>
-  <AerogramCard />
+  <AerogramCard :id="0" />
 </template>
