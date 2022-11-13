@@ -4,9 +4,11 @@ import { ref, onBeforeMount } from 'vue'
 import type { WordCloudOptions } from '@/api/interfaces/wordcloud-options';
 import type { ChartEntry } from '@/api/interfaces/chart-entry';
 import type { Solution } from '@/api/interfaces/solution';
+import { SemipolarSpinner } from 'epic-spinners';
 
 const props = defineProps<{tvGameId: number}>()
 const svgString = ref<string>()
+const loading = ref<boolean>(true)
 
 const explodeChartEntry = (entry: ChartEntry, solution: Solution): string => {
   let res = ""
@@ -23,8 +25,8 @@ const generateCloudOptions = (entries: ChartEntry[], solution: Solution): WordCl
   text: generateWordsList(entries, solution),
   useWordList: true,
   fontFamily: 'monospace',
-  width: 500,
-  height: 400,
+  width: 350,
+  height: 250,
   case: 'upper',
   maxNumWords: 40,
   fontScale: 40,
@@ -50,17 +52,22 @@ const fetchCloud = async (opts: WordCloudOptions) => {
 }
 
 onBeforeMount(async () => {
+  loading.value = true
   const stats = await fetchStats()
   const solution = await fetchSolution()
   if (stats && solution) {
     await fetchCloud(generateCloudOptions(stats, solution))
   }
+  loading.value = false 
 })
 
 </script>
 <template>
-  <div class="shadow bg-foreground rounded-xl m-5">
-    <div v-if="svgString">
+  <div  class="shadow bg-foreground rounded-xl m-5">
+  <div v-if="loading" class="flex p-5 align-center justify-center">
+      <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
+  </div>
+    <div v-show="!loading" v-if="svgString">
       <span v-html="svgString"></span>
     </div>
   </div>
