@@ -6,6 +6,7 @@
 
     const error = ref<boolean> (false)
     const list = ref<Tweet[]>([])
+    
     const props = defineProps<{gameId: number}>()
 
     const fetchList = async () => {
@@ -21,7 +22,7 @@
 </script>
 
 <template>
-    <div v-for="item in list" :key="item.author.username">
-        <guesserListItem :data="item" class="flex flex-1"/>
+    <div v-for="(item,index) in list" :key="index">
+        <guesserListItem :data="item" :index="index" class="flex flex-1"/>
     </div>
 </template>

@@ -1,7 +1,7 @@
 export interface Tweet {
   text: string
   author: Author
-  created_at: Date
+  created_at: string
   metrics: Metrics
 }
 

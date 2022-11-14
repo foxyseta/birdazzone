@@ -11,9 +11,6 @@ export default class ApiRepository {
   private static readonly _TV_GAMES_ID = "/tv-games/{0}"
   private static readonly _LIST_GUESSER = "/tvgames/{0}/attempts"
 
-  public static readonly getHelloBird = (): Promise<ApiResponse<HelloBird>> =>
-    ApiManager.get<HelloBird>(this._BASE_URL + this._HELLO)
-
   public static readonly getTvGames = (): Promise<ApiResponse<TvGame[]>> =>
     ApiManager.get<TvGame[]>(this._BASE_URL + this._TV_GAMES)
 

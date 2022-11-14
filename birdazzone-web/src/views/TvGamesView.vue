@@ -8,7 +8,6 @@ const error = ref<boolean>(false)
 const games = ref<TvGame[]>([])
 
 const fetchTvGames = async () => {
-  await ApiRepository.getTweetList("hellow")
   const response = await ApiRepository.getTvGames()
   if (response.esit) {
     error.value = false
