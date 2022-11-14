@@ -15,7 +15,7 @@ import {ref} from 'vue'
       <button class="btn p-4 rounded-lg  bg-foreground hover:bg-lgray/50" @click="prova()" >
         <div class="flex flex-row" style="flex: 1 1 auto;">
             <div class="flex" style="height:4rem">
-                <img :src="props.data.author.profile_image_url" alt="propic" onerror="this.onerror = null; this.src='./public/icons/user.svg' "/>
+                <img :src="props.data.author.profile_image_url" alt="propic" onerror="this.onerror = null; this.src='/icons/user.svg' "/>
             </div>
             <div class="flex flex-col mx-4" style="flex: 1 1 auto">
                 <p class="flex flex-1 text-white font-bold"> @{{props.data.author.username}}</p>
@@ -23,9 +23,9 @@ import {ref} from 'vue'
             </div>
             <div class="flex flex-col mx-4">
             <div class="flex" style="flex: 1 1 auto; height:2rem">
-                <img v-if="index===0" :src="'./public/icons/coccarda1.svg'" alt="propic"/>
-                <img v-if="index===1" :src="'./public/icons/coccarda2.svg'" alt="propic"/>
-                <img v-if="index===2" :src="'./public/icons/coccarda3.svg'" alt="propic"/>
+                <img v-if="index===0" :src="'/icons/coccarda1.svg'" alt="propic"/>
+                <img v-if="index===1" :src="'/icons/coccarda2.svg'" alt="propic"/>
+                <img v-if="index===2" :src="'/icons/coccarda3.svg'" alt="propic"/>
 
             </div>
                 <div class="text-lgray text-xs">{{new Date(props.data.created_at).getHours()}}:{{new Date(props.data.created_at).getMinutes()}}</div>
@@ -36,9 +36,9 @@ import {ref} from 'vue'
                 {{props.data.text}}
             </div>
             <div id="paramTweet" class="flex flex-row text-lgray" style="justify-content:left;max-height: 1.5rem;">
-              <div class="flex flex-row mr-2"><img class="mr-1" style="max-height: 1.5rem;" src='/public/icons/comment.svg' /> {{props.data.metrics.reply_count}} </div>  
-              <div class="flex flex-row mr-2"><img class="mr-1" style="max-height: 1.5rem;" src='/public/icons/retweet.svg' /> {{props.data.metrics.retweet_count}} </div>
-              <div class="flex flex-row"><img class="mr-1" style="max-height: 1.5rem;" src='/public/icons/heart.svg' /> {{props.data.metrics.like_count}} </div>
+              <div class="flex flex-row mr-2"><img class="mr-1" style="max-height: 1.5rem;" src='/icons/comment.svg' /> {{props.data.metrics.reply_count}} </div>  
+              <div class="flex flex-row mr-2"><img class="mr-1" style="max-height: 1.5rem;" src='/icons/retweet.svg' /> {{props.data.metrics.retweet_count}} </div>
+              <div class="flex flex-row"><img class="mr-1" style="max-height: 1.5rem;" src='/icons/heart.svg' /> {{props.data.metrics.like_count}} </div>
             </div>
         </div>
       </button>

@@ -22,7 +22,10 @@
 </script>
 
 <template>
-    <div v-for="(item,index) in list" :key="index">
+    <div>
+
+    <div class="flex flex-col" v-for="(item,index) in list" :key="index">
         <guesserListItem :data="item" :index="index" class="flex flex-1"/>
     </div>
+  </div>
 </template>

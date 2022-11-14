@@ -97,7 +97,7 @@ const popover = () => {
     <ErrorWidget />
   </div>
 
-  <div class="bg-foreground font-semibold text-lg rounded-lg h-full p-4 place-self-center z-0" >
+  <div class="bg-foreground font-semibold text-lg rounded-lg p-4 place-self-center z-0" >
 
     <div v-if="loading">
       <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
