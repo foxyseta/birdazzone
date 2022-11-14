@@ -87,6 +87,6 @@ func TestGetTweetsFromUser(t *testing.T) {
 }
 
 func TestGetTweetsFromHashtag(t *testing.T) {
-	response, err := GetTweetsFromHashtag("hello", util.LastInstantAtGivenTime(time.Now(), 18))
+	response, err := GetManyRecentTweetsFromQuery("hello", util.LastInstantAtGivenTime(time.Now(), 18))
 	testTweets(t, response, err)
 }
