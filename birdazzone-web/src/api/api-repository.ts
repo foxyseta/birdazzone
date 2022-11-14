@@ -9,13 +9,10 @@ import type { Solution } from "./interfaces/solution"
 
 export default class ApiRepository {
   private static readonly _BASE_URL = "http://localhost:8080/api/v1"
-  private static readonly _TV_GAMES = "/tv-games"
-  private static readonly _TV_GAMES_ID = "/tv-games/{0}"
-  private static readonly _LIST_GUESSER = "/tvgames/{0}/attempts"
-  private static readonly _TWITTER = "/twitter/{0}"
   private static readonly _TV_GAMES = "/tvgames/"
   private static readonly _TV_GAMES_ID = "/tvgames/{0}"
   private static readonly _RESULTS_ID = "/tvgames/{0}/results"
+  private static readonly _TV_GAMES_ID_ATTEMPTS = "/tvgames/{0}/attempts"
   private static readonly _TV_GAMES_ID_ATTEMPTS_STATS = "/tvgames/{0}/attempts/stats"
   private static readonly _TV_GAMES_ID_SOLUTION = "/tvgames/{0}/solution"
 
@@ -26,6 +23,7 @@ export default class ApiRepository {
     ApiManager.get<TvGame>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID, id))
 
   public static readonly getListOfGuesser = (id: string): Promise<ApiResponse<ApiList<Tweet>>> =>
+    ApiManager.get<ApiList<Tweet>>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS, id))
 
   public static readonly getResults = (id: string): Promise<ApiResponse<Results>> =>
     ApiManager.get<Results>(this.stringFormat(this._BASE_URL + this._RESULTS_ID, id))
