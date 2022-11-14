@@ -25,7 +25,7 @@ const items = ref<NavItem[]>([
 
 </script>
 <template>
-  <aside class="w-64 h-screen bg-foreground" aria-label="Sidebar">
+  <aside class="w-64 h-100 bg-foreground" aria-label="Sidebar">
     <!-- Title -->
     <div class="py-10 flex flex-col items-center">
       <img src="/logo.png" alt="Birdazzone's logo"/>

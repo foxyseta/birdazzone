@@ -12,7 +12,7 @@ export default class ApiRepository {
   private static readonly _TV_GAMES = "/tvgames/"
   private static readonly _TV_GAMES_ID = "/tvgames/{0}"
   private static readonly _RESULTS_ID = "/tvgames/{0}/results"
-  private static readonly _TV_GAMES_ID_ATTEMPTS = "/tvgames/{0}/attempts"
+  private static readonly _TV_GAMES_ID_ATTEMPTS = "/tvgames/{0}/attempts?pageLength=10"
   private static readonly _TV_GAMES_ID_ATTEMPTS_STATS = "/tvgames/{0}/attempts/stats"
   private static readonly _TV_GAMES_ID_SOLUTION = "/tvgames/{0}/solution"
 
