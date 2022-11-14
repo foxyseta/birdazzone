@@ -1,3 +1,5 @@
+import camelcaseKeys from "camelcase-keys"
+
 export class ApiResponse<T> {
   public data?: T
   public error?: any
@@ -21,9 +23,8 @@ export class ApiManager {
     const response = await fetch(url, config)
 
     const responseStatusCode = response.status
-    console.log(response.status)
     if (response.ok) {            // success
-      const responseBody = (await response.json()) as T
+      const responseBody = (camelcaseKeys(await response.json())) as T
       return new ApiResponse<T>(responseStatusCode, responseBody)
     }
     else {
@@ -32,6 +33,8 @@ export class ApiManager {
       return new ApiResponse<T>(responseStatusCode, undefined, responseError)
     }
   }
+
+  private static readonly camelToSnakeCase = (str: string) => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 
   public static async get<T>(url: string): Promise<ApiResponse<T>> {
     const config: RequestInit = {
@@ -47,7 +50,7 @@ export class ApiManager {
       method: 'POST',
       headers: {
         'Accept': 'Application/Json',
-        'Content-Type': 'Application/Json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
     }
