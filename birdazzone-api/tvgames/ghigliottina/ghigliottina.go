@@ -29,7 +29,7 @@ func solution() (string, error) {
 	}
 	dt := time.Now()
 	x := util.LastInstantAtGivenTime(dt, 19)
-	tweets, err := twitter.GetTweetsFromUser(user.Data.ID, 20, x)
+	tweets, err := twitter.GetTweetsFromUser(user.Data.ID, 50, x)
 	if err != nil {
 		return "", err
 	}
