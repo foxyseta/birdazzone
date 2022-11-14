@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import ereditaGuesserList from '@/components/ereditaGuesserList.vue';
+
 </script>
 <template>
   <main>

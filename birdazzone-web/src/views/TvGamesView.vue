@@ -29,9 +29,9 @@ onBeforeMount(fetchTvGames)
   </div>
   <div class="flex flex-col justify-evenly">
     <div v-for="game in games">
-      <RouterLink :to="`/tv-games/${game.Id}`">
+      <RouterLink :to="`/tv-games/${game.id}`">
         <div class="rounded shadow bg-foreground py-9 px-9">
-          <h1 class="text-white text-xl font-bold"> {{game.Name}}</h1>
+          <h1 class="text-white text-xl font-bold"> {{game.name}}</h1>
         </div>
       </RouterLink>
     </div>
