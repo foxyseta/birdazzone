@@ -5,7 +5,7 @@ import { ref, onBeforeMount } from 'vue'
 import ErrorWidget from '../components/ErrorWidget.vue'
 import WordCloud from '../components/WordCloud.vue'
 import AerogramCard from '../components/AerogramCard.vue'
-import EreditaGuesserList from '@/components/EreditaGuesserList.vue'
+import GuesserList from '@/components/GuesserList.vue'
 
 const error = ref<boolean> (false)
 const game = ref<TvGame>()
@@ -34,7 +34,7 @@ onBeforeMount(fetchGame)
       {{game?.name.toUpperCase()}}
     </div>
     <div class="w-full flex justify-evenly">
-        <EreditaGuesserList :game-id="props.id"/>
+        <GuesserList :game-id="props.id"/>
       <div class="flex flex-col justify-start">
         <AerogramCard :id="props.id" />
         <WordCloud :tv-game-id="props.id" />

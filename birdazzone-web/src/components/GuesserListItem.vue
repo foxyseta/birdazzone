@@ -36,9 +36,9 @@ import {ref} from 'vue'
                 {{props.data.text}}
             </div>
             <div id="paramTweet" class="flex flex-row text-lgray" style="justify-content:left;max-height: 1.5rem;">
-              <div class="flex flex-row mr-2"><img class="mr-1" style="max-height: 1.5rem;" src='/icons/comment.svg' /> {{props.data.metrics.reply_count}} </div>  
-              <div class="flex flex-row mr-2"><img class="mr-1" style="max-height: 1.5rem;" src='/icons/retweet.svg' /> {{props.data.metrics.retweet_count}} </div>
-              <div class="flex flex-row"><img class="mr-1" style="max-height: 1.5rem;" src='/icons/heart.svg' /> {{props.data.metrics.like_count}} </div>
+              <div class="flex flex-row mr-2"><img class="mr-1" alt="replies" style="max-height: 1.5rem;" src='/icons/comment.svg' /> {{props.data.metrics.reply_count}} </div>  
+              <div class="flex flex-row mr-2"><img class="mr-1" alt="retweets" style="max-height: 1.5rem;" src='/icons/retweet.svg' /> {{props.data.metrics.retweet_count}} </div>
+              <div class="flex flex-row"><img class="mr-1" alt="likes" style="max-height: 1.5rem;" src='/icons/heart.svg' /> {{props.data.metrics.like_count}} </div>
             </div>
         </div>
       </button>

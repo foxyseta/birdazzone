@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import guesserListItem from '@/components/guesserListItem.vue'
+    import GuesserListItem from '@/components/GuesserListItem.vue'
     import ApiRepository from '@/api/api-repository';
     import {onBeforeMount, ref} from 'vue'
     import type { Tweet } from '@/api/interfaces/tweet';
@@ -25,7 +25,7 @@
     <div>
 
     <div class="flex flex-col" v-for="(item,index) in list" :key="index">
-        <guesserListItem :data="item" :index="index" class="flex flex-1"/>
+        <GuesserListItem :data="item" :index="index" class="flex flex-1"/>
     </div>
   </div>
 </template>
