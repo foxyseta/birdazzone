@@ -3,18 +3,18 @@
 package docs
 
 import (
-  "testing"
+	"testing"
 
-  "github.com/swaggo/swag"
+	"github.com/swaggo/swag"
 )
 
 func TestInit(t *testing.T) {
-  const infoInstanceName = "swagger"
-  s := swag.GetSwagger(infoInstanceName)
-  if s == nil {
-    t.Fatal("Swagger not found")
-  }
-  if s.ReadDoc() == "" {
-    t.Fatal("Empty docs")
-  }
+	const infoInstanceName = "swagger"
+	s := swag.GetSwagger(infoInstanceName)
+	if s == nil {
+		t.Fatal("Swagger not found")
+	}
+	if s.ReadDoc() == "" {
+		t.Fatal("Empty docs")
+	}
 }
