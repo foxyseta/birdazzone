@@ -36,8 +36,12 @@ onBeforeMount(fetchGame)
     <div class="w-full flex justify-evenly">
         <GuesserList :game-id="props.id"/>
       <div class="flex flex-col justify-start">
-        <AerogramCard :id="props.id" />
-        <WordCloud :tv-game-id="props.id" />
+        <div class="mt-3">
+          <AerogramCard :id="props.id" />
+        </div>
+        <div class="mt-5">
+          <WordCloud :tv-game-id="props.id" />
+        </div>  
       </div>
     </div>
   </div>
