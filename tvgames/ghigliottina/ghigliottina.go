@@ -31,11 +31,12 @@ func solution() (string, error) {
 		return "", err
 	}
 	if tweets.Meta.ResultCount == 0 {
-		return "", errors.New("Couldn't find Ghigliottina solution")
+		return "", errors.New("couldn't find Ghigliottina solution")
 	}
 	m := regexp.MustCompile(`La #parola della #ghigliottina de #leredita di oggi è:\s([A-Z]|[a-z])+`)
 	a := strings.ToLower(strings.Trim(m.FindString(tweets.Data[0].Text), "La #parola della #ghigliottina de #leredita di oggi è: "))
-
+	if a == "" {
+		return "", errors.New("couldn't find Ghigliottina solution")
+	}
 	return a, nil
-
 }
