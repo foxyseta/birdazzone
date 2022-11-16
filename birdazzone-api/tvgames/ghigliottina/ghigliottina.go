@@ -23,22 +23,20 @@ func GetGhigliottinaTracker() gametracker.GameTracker {
 }
 
 func solution() (string, error) {
-	user, err := twitter.GetUser("quizzettone")
-	if err != nil {
-		return "", err
-	}
 	dt := time.Now()
 	x := util.LastInstantAtGivenTime(dt, 19)
-	tweets, err := twitter.GetTweetsFromUser(user.Data.ID, 50, x)
+	tweets, err := twitter.GetRecentTweetsFromQuery("La #parola della #ghigliottina de #leredita di oggi", x, 10)
+
 	if err != nil {
 		return "", err
 	}
-	for i := 0; i < tweets.Meta.ResultCount; i++ {
-		if strings.Contains(tweets.Data[i].Text, "La #parola della #ghigliottina de #leredita di oggi è:") {
-			m := regexp.MustCompile(`La #parola della #ghigliottina de #leredita di oggi è:\s([A-Z]|[a-z])+`)
-			a := strings.ToLower(strings.Trim(m.FindString(tweets.Data[i].Text), "La #parola della #ghigliottina de #leredita di oggi è: "))
-			return a, nil
-		}
+	if tweets.Meta.ResultCount == 0 {
+		return "", errors.New("couldn't find Ghigliottina solution")
 	}
-	return "", errors.New("Couldn't find Ghigliottina solution")
+	m := regexp.MustCompile(`La #parola della #ghigliottina de #leredita di oggi è:\s([A-Z]|[a-z])+`)
+	a := strings.ToLower(strings.Trim(m.FindString(tweets.Data[0].Text), "La #parola della #ghigliottina de #leredita di oggi è: "))
+	if a == "" {
+		return "", errors.New("couldn't find Ghigliottina solution")
+	}
+	return a, nil
 }
