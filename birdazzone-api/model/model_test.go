@@ -23,9 +23,9 @@ func TestBooleanChartString(t *testing.T) {
 	if bc.String() != util.NilRepresentation {
 		t.Fatalf("%s differs from %s", bc.String(), util.NilRepresentation)
 	}
-	bc = &BooleanChart{52, 21}
-	if bc.String() != "[52 VS 21]" {
-		t.Fatalf("%s differs from \"[52 VS 21]\"", bc.String())
+	bc = &BooleanChart{"Votes", 52, 21}
+	if bc.String() != "Votes: 52 VS 21" {
+		t.Fatalf("%s differs from \"Votes: 52 VS 21\"", bc.String())
 	}
 }
 
@@ -48,6 +48,17 @@ func TestGameString(t *testing.T) {
 	g = &Game{0, "My game", "mygame"}
 	if g.String() != "#0 (My game #mygame)" {
 		t.Fatalf("%s differs from \"#0 (My game #mygame)\"", g.String())
+	}
+}
+
+func TestGameKeyString(t *testing.T) {
+	var gk *GameKey
+	if gk.String() != util.NilRepresentation {
+		t.Fatalf("%s differs from %s", gk.String(), util.NilRepresentation)
+	}
+	gk = &GameKey{"crown", "2022-10-20"}
+	if gk.String() != "2022-10-20: 'crown'" {
+		t.Fatalf("%s differs from \"2022-10-20: 'crown'\"", gk.String())
 	}
 }
 

@@ -110,11 +110,17 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 1,
-                        "description": "Number of the page to query",
-                        "name": "pageIndex",
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Starting instant of the time interval used to filter the tweets. If not specified, the beginning of the last game instance is used",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Ending instant of the time interval used to filter the tweets. Must be later than but in the same day of the starting instant. If not specified, the ending of the game happening during the starting instant is used",
+                        "name": "to",
                         "in": "query"
                     },
                     {
@@ -170,6 +176,20 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Starting instant of the time interval used to filter the tweets. If not specified, the beginning of the last game instance is used",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Ending instant of the time interval used to filter the tweets. Must be later than but in the same day of the starting instant. If not specified, the ending of the game happening during the starting instant is used",
+                        "name": "to",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -206,7 +226,7 @@ const docTemplate = `{
                 "tags": [
                     "tvgames"
                 ],
-                "summary": "Retrieve game's number of successes and failures",
+                "summary": "Retrieve game's number of successes and failures, grouped in time interval bins",
                 "parameters": [
                     {
                         "type": "string",
@@ -214,17 +234,41 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Starting date of the time interval used to filter the tweets. If not specified, the last game instance's date is used",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Ending date of the time interval used to filter the tweets. Cannot be earlier than the starting date. If not specified, the starting date is used",
+                        "name": "to",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Number of seconds for the duration of each time interval bin the retrieved tweets are to be grouped by",
+                        "name": "each",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "A array of boolean charts comparing successes and failures in the game. Each boolean chart is labeled as the starting instant of its time interval bin",
                         "schema": {
-                            "$ref": "#/definitions/model.BooleanChart"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.BooleanChart"
+                            }
                         }
                     },
                     "400": {
-                        "description": "integer parsing error (id)",
+                        "description": "each \u003c 1",
                         "schema": {
                             "$ref": "#/definitions/model.Error"
                         }
@@ -254,13 +298,20 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Date to query; if not specified, last game instance is considered",
+                        "name": "date",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.GameKey"
                         }
                     },
                     "400": {
@@ -299,6 +350,10 @@ const docTemplate = `{
                     "type": "integer",
                     "minimum": 0,
                     "example": 209
+                },
+                "string": {
+                    "type": "string",
+                    "example": "Votes"
                 }
             }
         },
@@ -332,6 +387,7 @@ const docTemplate = `{
             }
         },
         "model.Game": {
+            "description": "A game which can be observed",
             "type": "object",
             "properties": {
                 "hashtag": {
@@ -342,6 +398,21 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "model.GameKey": {
+            "description": "A possible solution for a Game",
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2022-11-17"
+                },
+                "key": {
+                    "type": "string",
+                    "example": "parola"
                 }
             }
         },
