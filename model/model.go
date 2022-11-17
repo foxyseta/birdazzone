@@ -3,9 +3,9 @@ package model
 import (
 	"fmt"
 
-	"github.com/swaggo/swag/example/celler/httputil"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
+	"github.com/swaggo/swag/example/celler/httputil"
 )
 
 // @Description Object returned on failed requests
@@ -32,15 +32,16 @@ type Page[T any] struct {
 
 // @Description A pair made of one positive counter and one negative counter
 type BooleanChart struct {
-	Positives int `json:"positives" minimum:"0" example:"209"`
-	Negatives int `json:"negatives" minimum:"0" example:"318"`
+	Label     string `json:"string" example:"Votes"`
+	Positives int    `json:"positives" minimum:"0" example:"209"`
+	Negatives int    `json:"negatives" minimum:"0" example:"318"`
 }
 
 func (bc *BooleanChart) String() string {
 	if bc == nil {
 		return util.NilRepresentation
 	}
-	return fmt.Sprintf("[%d VS %d]", bc.Positives, bc.Negatives)
+	return fmt.Sprintf("%s: %d VS %d", bc.Label, bc.Positives, bc.Negatives)
 }
 
 // @Description A possible value inside a chart, alongside its absolute
@@ -60,6 +61,7 @@ func (ce *ChartEntry) String() string {
 // @Description A chart as a sequence of entries
 type Chart []ChartEntry
 
+// @Description A game which can be observed
 type Game struct {
 	Id      int    `json:"id"`
 	Name    string `json:"name"`
@@ -71,6 +73,19 @@ func (g *Game) String() string {
 		return util.NilRepresentation
 	}
 	return fmt.Sprintf("#%d (%s #%s)", g.Id, g.Name, g.Hashtag)
+}
+
+// @Description A possible solution for a Game
+type GameKey struct {
+	Key  string `json:"key" example:"parola"`
+	Date string `json:"date" example:"2022-11-17" format:"date"`
+}
+
+func (gk *GameKey) String() string {
+	if gk == nil {
+		return util.NilRepresentation
+	}
+	return fmt.Sprintf("%s: '%s'", gk.Date, gk.Key)
 }
 
 // @Description A Twitter user
