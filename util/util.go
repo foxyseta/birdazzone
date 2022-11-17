@@ -1,13 +1,16 @@
 package util
 
 import (
+	"errors"
 	"fmt"
+	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"time"
 	"unicode"
 
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/swag/example/celler/httputil"
 )
 
 var testingResponseRecorder = httptest.NewRecorder()
@@ -100,7 +103,7 @@ func IdToObject[T any](ctx *gin.Context, data map[int]T) (T, error) {
 	key, err := strconv.Atoi(ctx.Param("id"))
 
 	if err != nil {
-		ctx.AbortWithStatus(400)
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id)"))
 		var result T
 		return result, err
 	}
@@ -108,7 +111,7 @@ func IdToObject[T any](ctx *gin.Context, data map[int]T) (T, error) {
 	value, ok := data[key]
 
 	if !ok {
-		ctx.AbortWithStatus(404)
+		httputil.NewError(ctx, http.StatusNotFound, errors.New("game id not found"))
 		var result T
 		return result, fmt.Errorf("Object not found using key %d", key)
 	}

@@ -82,6 +82,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.Game"
                         }
+                    },
+                    "404": {
+                        "description": "game id not found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Error"
+                        }
                     }
                 }
             }
@@ -128,15 +134,21 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "pageLength \u003c 1",
+                        "description": "integer parsing error (id)",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.Error"
                         }
                     },
                     "404": {
                         "description": "game id not found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "(internal server error)",
+                        "schema": {
+                            "$ref": "#/definitions/model.Error"
                         }
                     }
                 }
@@ -171,10 +183,16 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "400": {
+                        "description": "integer parsing error (id)",
+                        "schema": {
+                            "$ref": "#/definitions/model.Error"
+                        }
+                    },
                     "404": {
                         "description": "game id not found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.Error"
                         }
                     }
                 }
@@ -205,10 +223,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.BooleanChart"
                         }
                     },
+                    "400": {
+                        "description": "integer parsing error (id)",
+                        "schema": {
+                            "$ref": "#/definitions/model.Error"
+                        }
+                    },
                     "404": {
                         "description": "game id not found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.Error"
                         }
                     }
                 }
@@ -239,10 +263,22 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
+                    "400": {
+                        "description": "integer parsing error (id)",
+                        "schema": {
+                            "$ref": "#/definitions/model.Error"
+                        }
+                    },
                     "404": {
                         "description": "game id not found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "(internal server error)",
+                        "schema": {
+                            "$ref": "#/definitions/model.Error"
                         }
                     }
                 }
@@ -278,6 +314,20 @@ const docTemplate = `{
                 "value": {
                     "type": "string",
                     "example": "parola"
+                }
+            }
+        },
+        "model.Error": {
+            "description": "Object returned on failed requests",
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "status bad request"
                 }
             }
         },
