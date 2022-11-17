@@ -20,11 +20,11 @@ import (
 )
 
 // helloWorld godoc
-// @Summary     Test your connection to birdazzone API
-// @Tags        test
-// @Produce     json
-// @Success     200
-// @Router      /hello [get]
+// @Summary Test your connection to birdazzone API
+// @Tags    test
+// @Produce json
+// @Success 200
+// @Router  /hello [get]
 func helloWorld(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Hi! You've successfully connected to Birdazzone API.",

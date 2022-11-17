@@ -11,6 +11,9 @@ definitions:
         example: 209
         minimum: 0
         type: integer
+      string:
+        example: Votes
+        type: string
     type: object
   model.ChartEntry:
     description: A possible value inside a chart, alongside its absolute frequency
@@ -34,12 +37,24 @@ definitions:
         type: string
     type: object
   model.Game:
+    description: A game which can be observed
     properties:
       hashtag:
         type: string
       id:
         type: integer
       name:
+        type: string
+    type: object
+  model.GameKey:
+    description: A possible solution for a Game
+    properties:
+      date:
+        example: "2022-11-17"
+        format: date
+        type: string
+      key:
+        example: parola
         type: string
     type: object
   model.Metrics:
@@ -159,12 +174,19 @@ paths:
         name: id
         required: true
         type: string
-      - default: 1
-        description: Number of the page to query
+      - description: Starting instant of the time interval used to filter the tweets.
+          If not specified, the beginning of the last game instance is used
+        format: date-time
         in: query
-        minimum: 1
-        name: pageIndex
-        type: integer
+        name: from
+        type: string
+      - description: Ending instant of the time interval used to filter the tweets.
+          Must be later than but in the same day of the starting instant. If not specified,
+          the ending of the game happening during the starting instant is used
+        format: date-time
+        in: query
+        name: to
+        type: string
       - default: 10
         description: Length of the page to query
         in: query
@@ -201,6 +223,19 @@ paths:
         name: id
         required: true
         type: string
+      - description: Starting instant of the time interval used to filter the tweets.
+          If not specified, the beginning of the last game instance is used
+        format: date-time
+        in: query
+        name: from
+        type: string
+      - description: Ending instant of the time interval used to filter the tweets.
+          Must be later than but in the same day of the starting instant. If not specified,
+          the ending of the game happening during the starting instant is used
+        format: date-time
+        in: query
+        name: to
+        type: string
       produces:
       - application/json
       responses:
@@ -230,22 +265,46 @@ paths:
         name: id
         required: true
         type: string
+      - description: Starting date of the time interval used to filter the tweets.
+          If not specified, the last game instance's date is used
+        format: date
+        in: query
+        name: from
+        type: string
+      - description: Ending date of the time interval used to filter the tweets. Cannot
+          be earlier than the starting date. If not specified, the starting date is
+          used
+        format: date
+        in: query
+        name: to
+        type: string
+      - description: Number of seconds for the duration of each time interval bin
+          the retrieved tweets are to be grouped by
+        in: query
+        minimum: 1
+        name: each
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: A array of boolean charts comparing successes and failures
+            in the game. Each boolean chart is labeled as the starting instant of
+            its time interval bin
           schema:
-            $ref: '#/definitions/model.BooleanChart'
+            items:
+              $ref: '#/definitions/model.BooleanChart'
+            type: array
         "400":
-          description: integer parsing error (id)
+          description: each < 1
           schema:
             $ref: '#/definitions/model.Error'
         "404":
           description: game id not found
           schema:
             $ref: '#/definitions/model.Error'
-      summary: Retrieve game's number of successes and failures
+      summary: Retrieve game's number of successes and failures, grouped in time interval
+        bins
       tags:
       - tvgames
   /tvgames/{id}/solution:
@@ -256,13 +315,18 @@ paths:
         name: id
         required: true
         type: string
+      - description: Date to query; if not specified, last game instance is considered
+        format: date
+        in: query
+        name: date
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/model.GameKey'
         "400":
           description: integer parsing error (id)
           schema:
