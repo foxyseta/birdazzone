@@ -273,29 +273,30 @@ func gameAttemptsStats(ctx *gin.Context) {
 func gameResults(ctx *gin.Context) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err == nil {
-    return
-  }
-  result, err := getAttempts(ctx, false)
-  if err == nil {
-    tweets := result.Data
-    solution, err := gameTracker.Solution()
-    if err == nil {
-      successes := 0
-      for _, tweet := range tweets {
-        if strings.Contains(strings.ToLower(tweet.Text), solution) {
-          successes++
-        }
-      }
-      ctx.JSON(
-        http.StatusOK,
-        model.BooleanChart{
-          Positives: successes,
-          Negatives: len(tweets) - successes,
-        },
-      )
-      return
-    }
-  }
+    var result *twitter.ProfileTweets
+		result, err = getAttempts(ctx, false)
+		if err == nil {
+			tweets := result.Data
+      var solution string
+			solution, err = gameTracker.Solution()
+			if err == nil {
+				successes := 0
+				for _, tweet := range tweets {
+					if strings.Contains(strings.ToLower(tweet.Text), solution) {
+						successes++
+					}
+				}
+				ctx.JSON(
+					http.StatusOK,
+					model.BooleanChart{
+						Positives: successes,
+						Negatives: len(tweets) - successes,
+					},
+				)
+				return
+			}
+		}
+	}
 	httputil.NewError(ctx, http.StatusInternalServerError, err)
 }
 
