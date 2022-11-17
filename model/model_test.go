@@ -45,7 +45,7 @@ func TestGameString(t *testing.T) {
 	if g.String() != util.NilRepresentation {
 		t.Fatalf("%s differs from %s", g.String(), util.NilRepresentation)
 	}
-	g = &Game{0, "My game", "mygame"}
+	g = &Game{0, "My game", "mygame", "game-logo.png"}
 	if g.String() != "#0 (My game #mygame)" {
 		t.Fatalf("%s differs from \"#0 (My game #mygame)\"", g.String())
 	}

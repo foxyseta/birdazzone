@@ -43,6 +43,7 @@ func Address() string {
 func CreateServer() *gin.Engine {
 	r := gin.Default()
 	r.Use(corsMiddleware)
+  r.Static("/public/", "./public/")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return r
 }
