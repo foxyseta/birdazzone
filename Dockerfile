@@ -12,7 +12,7 @@ RUN go mod download
 COPY . ./
 
 RUN go install github.com/swaggo/swag/cmd/swag@latest
-RUN swag init
+RUN swag init --parseDependency --generatedTime
 
 RUN go build -o /birdazzone-api
 
