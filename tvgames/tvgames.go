@@ -254,10 +254,12 @@ func gameAttemptsStats(ctx *gin.Context) {
 func gameResults(ctx *gin.Context) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err == nil {
-		result, err := getAttempts(ctx, false)
+    var result *twitter.ProfileTweets
+		result, err = getAttempts(ctx, false)
 		if err == nil {
 			tweets := result.Data
-			solution, err := gameTracker.Solution()
+      var solution string
+			solution, err = gameTracker.Solution()
 			if err == nil {
 				successes := 0
 				for _, tweet := range tweets {
