@@ -24,7 +24,7 @@ func GetGhigliottinaTracker() gametracker.GameTracker {
 
 func solution() (string, error) {
 	dt := time.Now()
-	x := util.LastInstantAtGivenTime(dt, 19)
+	x := util.LastInstantAtGivenTime(dt, 16)
 	tweets, err := twitter.GetRecentTweetsFromQuery("La #parola della #ghigliottina de #leredita di oggi", x, 10)
 
 	if err != nil {
