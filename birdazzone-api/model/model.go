@@ -3,9 +3,13 @@ package model
 import (
 	"fmt"
 
+	"github.com/swaggo/swag/example/celler/httputil"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
 )
+
+// @Description Object returned on failed requests
+type Error httputil.HTTPError
 
 // @Description Parameters to query a single page
 type PageQuery struct {
