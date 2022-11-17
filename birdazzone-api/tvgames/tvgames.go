@@ -1,6 +1,7 @@
 package tvgames
 
 import (
+  "errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -50,8 +51,9 @@ func getTvGames(ctx *gin.Context) {
 // @Summary     Get TV game
 // @Tags        tvgames
 // @Produce     json
-// @Success     200 {object} model.Game
 // @Param       id	path	int	true	"ID to search"
+// @Success     200 {object} model.Game
+// @Failure     404	{object}	model.Error "game id not found"
 // @Router      /tvgames/{id} [get]
 func getTvGameById(ctx *gin.Context) {
 	game, err := util.IdToObject(ctx, gamesById)
@@ -66,7 +68,9 @@ func getTvGameById(ctx *gin.Context) {
 // @Produce     json
 // @Param       id	path	string	true	"Game to query"
 // @Success     200 {string} string
-// @Failure     404	{string}	string  "game id not found"
+// @Failure     400	{object}	model.Error "integer parsing error (id)"
+// @Failure     404	{object}	model.Error "game id not found"
+// @Failure     500	{object}	model.Error "(internal server error)"
 // @Router      /tvgames/{id}/solution [get]
 func gameSolution(ctx *gin.Context) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
@@ -83,7 +87,7 @@ func gameSolution(ctx *gin.Context) {
 		}
 	} else {
 		httputil.NewError(ctx, http.StatusInternalServerError,
-			fmt.Errorf("Missing solution getter for %T", gameTracker))
+			fmt.Errorf("missing solution getter for %T", gameTracker))
 	}
 }
 
@@ -150,19 +154,34 @@ func tweetTextToAttempt(text string) string {
 // @Param       pageIndex query int false "Number of the page to query" minimum(1) default(1)
 // @Param       pageLength query int false "Length of the page to query" minimum(1) default(10)
 // @Success     200 {object} model.Page[model.Tweet]
-// @Failure     400	{string}	string  "integer parsing error (pageIndex)"
-// @Failure     400	{string}	string  "pageIndex < 1"
-// @Failure     400	{string}	string  "integer parsing error (pageLength)"
-// @Failure     400	{string}	string  "pageLength < 1"
-// @Failure     404	{string}	string  "game id not found"
+// @Failure     400	{object}	model.Error "integer parsing error (pageIndex)"
+// @Failure     400	{object}	model.Error "pageIndex < 1"
+// @Failure     400	{object}	model.Error "integer parsing error (pageLength)"
+// @Failure     400	{object}	model.Error "pageIndex < pageLength"
+// @Failure     400	{object}	model.Error "integer parsing error (id)"
+// @Failure     404	{object}	model.Error "game id not found"
+// @Failure     500	{object}	model.Error "(internal server error)"
 // @Router      /tvgames/{id}/attempts [get]
 func gameAttempts(ctx *gin.Context) {
 	var pageIndex, pageLength int
 	pageIndex, err := strconv.Atoi(ctx.DefaultQuery("pageIndex", "1"))
+  if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex)"))
+    return
+  }
+  if pageIndex < 1 {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageIndex < 1"))
+    return
+  }
 	pageLength, err = strconv.Atoi(ctx.DefaultQuery("pageLength", "1"))
-	if err != nil {
-		return
-	}
+  if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageLength)"))
+    return
+  }
+  if pageLength < 1 {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageLength < 1"))
+    return
+  }
 	result, err := getAttempts(ctx, true)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
@@ -232,15 +251,14 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 // @Produce     json
 // @Param       id path string true "Game to query"
 // @Success     200 {object} model.Chart
-// @Failure     404	{string}	string  "game id not found"
+// @Failure     400	{object}	model.Error "integer parsing error (id)"
+// @Failure     404	{object}	model.Error "game id not found"
 // @Router      /tvgames/{id}/attempts/stats [get]
 func gameAttemptsStats(ctx *gin.Context) {
 	chart, err := getAttemptsStats(ctx)
 	if err == nil {
 		ctx.JSON(http.StatusOK, chart)
-	} else {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
-	}
+  }
 }
 
 // gameAttempts godoc
@@ -249,33 +267,35 @@ func gameAttemptsStats(ctx *gin.Context) {
 // @Produce     json
 // @Param       id path string true "Game to query"
 // @Success     200 {object} model.BooleanChart
-// @Failure     404	{string}	string  "game id not found"
+// @Failure     400	{object}	model.Error "integer parsing error (id)"
+// @Failure     404	{object}	model.Error "game id not found"
 // @Router      /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err == nil {
-		result, err := getAttempts(ctx, false)
-		if err == nil {
-			tweets := result.Data
-			solution, err := gameTracker.Solution()
-			if err == nil {
-				successes := 0
-				for _, tweet := range tweets {
-					if strings.Contains(strings.ToLower(tweet.Text), solution) {
-						successes++
-					}
-				}
-				ctx.JSON(
-					http.StatusOK,
-					model.BooleanChart{
-						Positives: successes,
-						Negatives: len(tweets) - successes,
-					},
-				)
-				return
-			}
-		}
-	}
+    return
+  }
+  result, err := getAttempts(ctx, false)
+  if err == nil {
+    tweets := result.Data
+    solution, err := gameTracker.Solution()
+    if err == nil {
+      successes := 0
+      for _, tweet := range tweets {
+        if strings.Contains(strings.ToLower(tweet.Text), solution) {
+          successes++
+        }
+      }
+      ctx.JSON(
+        http.StatusOK,
+        model.BooleanChart{
+          Positives: successes,
+          Negatives: len(tweets) - successes,
+        },
+      )
+      return
+    }
+  }
 	httputil.NewError(ctx, http.StatusInternalServerError, err)
 }
 
