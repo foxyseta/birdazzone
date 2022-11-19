@@ -27,7 +27,6 @@ onBeforeMount(fetchTvGames)
   </div>
   <div v-else class="text-center">
     <h1 class="text-4xl font-black text-lgreen">TV GAMES</h1>
-    <TimeFilter />
   </div>
   <div class="flex flex-col justify-evenly">
     <div v-for="game in games">
