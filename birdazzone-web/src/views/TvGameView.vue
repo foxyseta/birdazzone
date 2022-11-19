@@ -6,17 +6,20 @@ import ErrorWidget from '../components/ErrorWidget.vue'
 import WordCloud from '../components/WordCloud.vue'
 import AerogramCard from '../components/AerogramCard.vue'
 import GuesserList from '@/components/GuesserList.vue'
+import { SemipolarSpinner } from 'epic-spinners';
 
-const error = ref<boolean> (false)
+const loading = ref<boolean> (true)
 const game = ref<TvGame>()
 const props = defineProps<{id: number}>()
 
 const fetchGame = async () => {
+    loading.value = true
     const resp = await ApiRepository.getTvGameById(props.id.toString())
     if (resp.esit) {
       game.value = resp.data
+      loading.value = false
     } else {
-      error.value = true
+      window.location.href = "/not-found"   
     }
   }
 
@@ -24,9 +27,9 @@ const fetchGame = async () => {
 onBeforeMount(fetchGame)
 </script>
 <template>
-  <!-- Error -->
-  <div v-if="error">
-    <ErrorWidget/>
+  <!-- Loading -->
+  <div class="w-full h-full flex justify-center items-center" v-if="loading">
+    <semipolar-spinner :animation-duration="2000" :size="50" color="#1eb980" />
   </div>
   <!-- Success -->
   <div v-else class="w-full flex flex-col justify-start items-center">

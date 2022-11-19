@@ -29,10 +29,10 @@ const generateCloudOptions = (entries: ChartEntry[], solution: Solution): WordCl
   height: 250,
   case: 'upper',
   maxNumWords: 40,
-  fontScale: 40,
+  fontScale: 20,
   padding: 1,
   scale: 'sqrt',
-  colors: ["#999083","#53534f"],
+  colors: ["#999083","#aaaaaa", "#ffffff"],
   rotation: 90
 })
 
