@@ -2,15 +2,18 @@
 import ApiRepository from '@/api/api-repository';
 import type { TvGame } from '@/api/interfaces/tv-game';
 import { ref, onBeforeMount } from 'vue'
-import ErrorWidget from '../components/ErrorWidget.vue'
 import WordCloud from '../components/WordCloud.vue'
+import GuesserMap from '../components/GuesserMap.vue'
 import AerogramCard from '../components/AerogramCard.vue'
+import BirdazzoneButton from '../components/BirdazzoneButton.vue'
 import GuesserList from '@/components/GuesserList.vue'
 import { SemipolarSpinner } from 'epic-spinners';
 
+const props = defineProps<{id: number}>()
+
 const loading = ref<boolean> (true)
 const game = ref<TvGame>()
-const props = defineProps<{id: number}>()
+const showList = ref<boolean>(true)
 
 const fetchGame = async () => {
     loading.value = true
@@ -23,6 +26,8 @@ const fetchGame = async () => {
     }
   }
 
+const showMap = () => { showList.value = false }
+const hideMap = () => { showList.value = true }
 
 onBeforeMount(fetchGame)
 </script>
@@ -32,12 +37,26 @@ onBeforeMount(fetchGame)
     <semipolar-spinner :animation-duration="2000" :size="50" color="#1eb980" />
   </div>
   <!-- Success -->
-  <div v-else class="w-full flex flex-col justify-start items-center">
-    <div class="rounded-lg text-white bg-lgreen text-4xl font-semibold py-3 px-9 my-8 m-3">
+  <div v-else class="pl-4 w-full flex flex-col justify-start">
+    <!-- Title -->
+    <div class="shadow-4xl rounded-lg text-white bg-lgreen text-4xl font-semibold py-3 px-9 my-8 m-3">
       {{game?.name.toUpperCase()}}
     </div>
-    <div class="w-full flex justify-evenly">
-        <GuesserList :game-id="props.id"/>
+
+    <!-- Buttons -->
+    <div class="flex justify-start w-100 m-3">
+      <BirdazzoneButton :text="'LIST'" :active="showList" @click="hideMap">ciao</BirdazzoneButton>
+      <BirdazzoneButton :text="'MAP'" :active="!showList" @click="showMap">ciao</BirdazzoneButton>
+    </div>
+
+    <!-- Content -->
+    <div class="w-full flex justify-evenly flex-wrap">
+      <div v-show="showList">
+        <GuesserList  :game-id="props.id"/>
+      </div>
+      <div v-show="!showList" >
+        <GuesserMap :tv-game-id="props.id" />
+      </div>
       <div class="flex flex-col justify-start">
         <div class="mt-3">
           <AerogramCard :id="props.id" />
