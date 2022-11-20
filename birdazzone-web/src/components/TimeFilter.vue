@@ -13,6 +13,8 @@ export default defineComponent({
       endDate: null,
       endTime: null,
 
+      openClose: false,
+
       openSD: false,
       openST: false,
       openED: false,
@@ -20,6 +22,9 @@ export default defineComponent({
     };
   },
   methods: {
+    openCloseFunction() {
+      this.openClose = !this.openClose;
+    },
     closeSD() {
       this.openSD = false;
     },
@@ -38,12 +43,15 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="bg-foreground font-semibold text-lg rounded-lg m-4 p-4 place-self-center">
+  <button class="font-semibold text-white border border-lgreen bg-foreground hover:bg-lgreen rounded-lg px-4 py-2 text-center inline-flex items-center" type="button" @click="openCloseFunction()">
+    <svg class="mr-2 w-4 h-4" aria-hidden="true" fill="none" stroke="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+    </svg>
+    filters
+  </button>
 
-    <!--<div v-if="loading">
-      <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
-    </div>-->
-    <div class="flex flex-col">
+  <div v-if="openClose" class="z-10 bg-foreground shadow font-semibold text-md rounded-lg m-4 p-4 place-self-center">    
+    <div class="flex flex-col" aria-labelledby="dropdownDividerButton">
       <label for="startDateTime" class="justify-self-start text-white">Start</label>
       <div class="flex flex-col justify-self-start" id="startDateTime">
         <date-picker
