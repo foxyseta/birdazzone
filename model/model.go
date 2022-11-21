@@ -66,7 +66,7 @@ type Game struct {
 	Id      int    `json:"id"`
 	Name    string `json:"name"`
 	Hashtag string `json:"hashtag"`
-  Logo    string `json:"logo"`
+	Logo    string `json:"logo"`
 }
 
 func (g *Game) String() string {
