@@ -315,7 +315,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "integer parsing error (id)",
+                        "description": "error while parsing to date",
                         "schema": {
                             "$ref": "#/definitions/model.Error"
                         }
@@ -395,6 +395,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "logo": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"

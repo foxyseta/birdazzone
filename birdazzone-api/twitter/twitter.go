@@ -81,10 +81,12 @@ func getRequest(
 	if queryParams != nil {
 		q := req.URL.Query()
 		for _, queryParam := range queryParams {
-			q.Add(
-				queryParam.First,
-				queryParam.Second,
-			)
+			if queryParam.Second != "" {
+				q.Add(
+					queryParam.First,
+					queryParam.Second,
+				)
+			}
 		}
 		req.URL.RawQuery = q.Encode()
 	}
@@ -94,7 +96,7 @@ func getRequest(
 		return nil, err
 	}
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("From Twitter API: %s", resp.Status)
+		return nil, fmt.Errorf("from Twitter API: %s", resp.Status)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -149,12 +151,13 @@ func GetTweetsFromUser(id string, maxResults int, startTime string) (*ProfileTwe
 	)
 }
 
-func GetRecentTweetsFromQuery(query string, startTime string, maxResults int) (*ProfileTweets, error) {
+func GetRecentTweetsFromQuery(query string, startTime string, endTime string, maxResults int) (*ProfileTweets, error) {
 	return getTweets(
 		"https://api.twitter.com/2/tweets/search/recent",
 		[]any{},
 		util.Pair[string, string]{First: "query", Second: query},
 		util.Pair[string, string]{First: "start_time", Second: startTime},
+		util.Pair[string, string]{First: "end_time", Second: endTime},
 		util.Pair[string, string]{First: "max_results", Second: strconv.Itoa(maxResults)},
 		util.Pair[string, string]{First: "tweet.fields", Second: "author_id,created_at,public_metrics,text"},
 		util.Pair[string, string]{First: "expansions", Second: "author_id"},
@@ -162,6 +165,6 @@ func GetRecentTweetsFromQuery(query string, startTime string, maxResults int) (*
 	)
 }
 
-func GetManyRecentTweetsFromQuery(query string, startTime string) (*ProfileTweets, error) {
-	return GetRecentTweetsFromQuery(query, startTime, 100)
+func GetManyRecentTweetsFromQuery(query string, startTime string, endTime string) (*ProfileTweets, error) {
+	return GetRecentTweetsFromQuery(query, startTime, endTime, 100)
 }

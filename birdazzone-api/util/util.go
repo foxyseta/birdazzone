@@ -81,22 +81,21 @@ func GetTestingGinEngine() *gin.Engine {
 	return testingGinEngine
 }
 
+func StringToPtrDate(d string) (time.Time, error) {
+	return time.Parse("2006-01-02", d)
+}
+
+func DateToString(d time.Time) string {
+	return d.UTC().Format(time.RFC3339)
+}
+
 func LastInstantAtGivenTime(dt time.Time, hours int) string {
 	// before <hours> returns yesterday's solution
 	if dt.Hour() < hours {
 		dt = dt.AddDate(0, 0, -1)
 	}
-	// time format YYYY-MM-DDTHH:MM:SSZ (ISO 8601/RFC 3339 UTC TIMEZONE)
-	x := strconv.Itoa(dt.Year()) + "-"
-	if int(dt.Month()) < 10 {
-		x += "0"
-	}
-	x += strconv.Itoa(int(dt.Month())) + "-"
-	if dt.Day() < 10 {
-		x += "0"
-	}
-	x += strconv.Itoa(dt.Day()) + fmt.Sprintf("T%d:00:00Z", hours)
-	return x
+	dt = time.Date(dt.Year(), dt.Month(), dt.Day(), hours, 0, 0, 0, &time.Location{})
+	return dt.UTC().Format(time.RFC3339)
 }
 
 func IdToObject[T any](ctx *gin.Context, data map[int]T) (T, error) {
@@ -113,7 +112,7 @@ func IdToObject[T any](ctx *gin.Context, data map[int]T) (T, error) {
 	if !ok {
 		httputil.NewError(ctx, http.StatusNotFound, errors.New("game id not found"))
 		var result T
-		return result, fmt.Errorf("Object not found using key %d", key)
+		return result, fmt.Errorf("object not found using key %d", key)
 	}
 
 	return value, err
