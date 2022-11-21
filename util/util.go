@@ -81,8 +81,9 @@ func GetTestingGinEngine() *gin.Engine {
 	return testingGinEngine
 }
 
-func StringToPtrDate(d string) (time.Time, error) {
-	return time.Parse("2006-01-02", d)
+func StringToDate(d string) (time.Time, error) {
+	t, err := time.Parse("2006-01-02", d)
+	return t, err
 }
 
 func DateToString(d time.Time) string {
