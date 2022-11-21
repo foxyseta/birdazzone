@@ -115,6 +115,35 @@ func TestIdToObjectParsingError(t *testing.T) {
 	}
 }
 
+func TestStringToPtrDate(t *testing.T) {
+	date, err := StringToPtrDate("2022-11-01")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if date != time.Date(2022, time.November, 1, 0, 0, 0, 0, time.UTC) {
+		t.Fatal("Error in formatting to date")
+	}
+	date, err = StringToPtrDate("2022-10-33")
+	if err == nil {
+		t.Fatal("Expected error but got: " + date.String())
+	}
+	date, err = StringToPtrDate("2022-10-011")
+	if err == nil {
+		t.Fatal("Expected error but got: " + date.String())
+	}
+	date, err = StringToPtrDate("2022-1a-22")
+	if err == nil {
+		t.Fatal("Expected error but got: " + date.String())
+	}
+}
+
+func TestDateToString(t *testing.T) {
+	s := DateToString(time.Date(2022, time.November, 12, 18, 55, 12, 12, time.UTC))
+	if s != "2022-11-12T18:55:12Z" {
+		t.Fatal("Error in formatting time: " + s)
+	}
+}
+
 func TestIdToObjectNotFound(t *testing.T) {
 	ctx := GetTestingGinContext()
 	ctx.AddParam("id", "2")
