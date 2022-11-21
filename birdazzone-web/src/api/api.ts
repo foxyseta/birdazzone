@@ -2,7 +2,7 @@ import camelcaseKeys from "camelcase-keys"
 
 export class ApiResponse<T> {
   public data?: T
-  public error?: any
+  public error?: ApiError
   private _esit: boolean
   public statusCode: number
 
@@ -10,12 +10,17 @@ export class ApiResponse<T> {
     return this._esit
   }
 
-  constructor(statusCode: number, data?: T, error?: any) {
+  constructor(statusCode: number, data?: T, error?: ApiError) {
     this.data = data
     this.error = error
     this._esit = statusCode >= 200 && statusCode < 300
     this.statusCode = statusCode
   }
+}
+
+export interface ApiError {
+  code: number
+  message: string
 }
 
 export class ApiManager {

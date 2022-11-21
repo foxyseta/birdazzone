@@ -58,7 +58,7 @@ export default class ApiRepository {
     if (response.ok) {
       return new ApiResponse<string>(response.status, await response.text())
     } else {
-      return new ApiResponse<string>(response.status, undefined, await response.text())
+      return new ApiResponse<string>(response.status, undefined, { code: 400, message: await response.text() })
     }
   }
 }
