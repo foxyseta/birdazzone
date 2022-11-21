@@ -189,6 +189,12 @@ paths:
         in: query
         name: to
         type: string
+      - default: 1
+        description: Index of the page to query
+        in: query
+        minimum: 1
+        name: pageIndex
+        type: integer
       - default: 10
         description: Length of the page to query
         in: query
