@@ -125,12 +125,19 @@ func (m *Metrics) String() string {
 	return fmt.Sprintf("(Likes: %d, Replies: %d, Retweets: %d)", m.LikeCount, m.ReplyCount, m.RetweetCount)
 }
 
+// @Description Map coordinates.
+type Coordinates struct {
+	Longitude float32 `json:"longitude" minimum:"-180" maximum:"180" example:"-74.026675"`
+	Latitude  float32 `json:"latitude" minimum:"-90" maximum:"90" example:"40.683935"`
+}
+
 // @Description A post published on Twitter
 type Tweet struct {
-	Text      string  `json:"text" example:"Hello, world!"`
-	Author    User    `json:"author"`
-	CreatedAt string  `json:"created_at" format:"date-time"`
-	Metrics   Metrics `json:"metrics"`
+	Text        string      `json:"text" example:"Hello, world!"`
+	Author      User        `json:"author"`
+	CreatedAt   string      `json:"created_at" format:"date-time"`
+	Metrics     Metrics     `json:"metrics"`
+	Coordinates Coordinates `json:"coordinates"`
 }
 
 func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile) Tweet {
