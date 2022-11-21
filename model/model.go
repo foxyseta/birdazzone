@@ -133,14 +133,19 @@ type Coordinates struct {
 
 // @Description A post published on Twitter
 type Tweet struct {
-	Text        string      `json:"text" example:"Hello, world!"`
-	Author      User        `json:"author"`
-	CreatedAt   string      `json:"created_at" format:"date-time"`
-	Metrics     Metrics     `json:"metrics"`
-	Coordinates Coordinates `json:"coordinates"`
+	Text        string       `json:"text" example:"Hello, world!"`
+	Author      User         `json:"author"`
+	CreatedAt   string       `json:"created_at" format:"date-time"`
+	Metrics     Metrics      `json:"metrics"`
+	Coordinates *Coordinates `json:"coordinates"`
 }
 
 func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile) Tweet {
+	var coordinates *Coordinates
+	if tweet.Coordinates != nil {
+		coordinates.Longitude = tweet.Coordinates.Coordinates[0]
+		coordinates.Latitude = tweet.Coordinates.Coordinates[1]
+	}
 	return Tweet{
 		Text: tweet.Text,
 		Author: User{
@@ -154,6 +159,7 @@ func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile) Tweet {
 			ReplyCount:   tweet.PublicMetrics.ReplyCount,
 			RetweetCount: tweet.PublicMetrics.RetweetCount,
 		},
+		Coordinates: coordinates,
 	}
 }
 
