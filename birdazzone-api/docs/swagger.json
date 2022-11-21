@@ -119,6 +119,14 @@
                     {
                         "minimum": 1,
                         "type": "integer",
+                        "default": 1,
+                        "description": "Index of the page to query",
+                        "name": "pageIndex",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
                         "default": 10,
                         "description": "Length of the page to query",
                         "name": "pageLength",

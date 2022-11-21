@@ -168,6 +168,7 @@ func tweetTextToAttempt(text string) string {
 // @Param   id         path     string true  "Game to query"
 // @Param   from       query    string false "Starting instant of the time interval used to filter the tweets. If not specified, the beginning of the last game instance is used"                                                                                    Format(date-time)
 // @Param   to         query    string false "Ending instant of the time interval used to filter the tweets. Must be later than but in the same day of the starting instant. If not specified, the ending of the game happening during the starting instant is used" Format(date-time)
+// @Param   pageIndex  query    int    false "Index of the page to query"                                                                                                                                                                                            minimum(1) default(1)
 // @Param   pageLength query    int    false "Length of the page to query"                                                                                                                                                                                           minimum(1) default(10)
 // @Success 200        {object} model.Page[model.Tweet]
 // @Failure 400        {object} model.Error "integer parsing error (pageIndex)"
