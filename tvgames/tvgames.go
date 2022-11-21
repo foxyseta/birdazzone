@@ -84,9 +84,9 @@ func gameSolution(ctx *gin.Context) {
 	}
 
 	date_str, hasDate := ctx.GetQuery("date")
-	var date time.Time
+	var date *time.Time = nil
 	if hasDate {
-		date, err = util.StringToPtrDate(date_str)
+		*date, err = util.StringToDate(date_str)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest,
 				fmt.Errorf("date %s is not well-formed (YYYY-MM-DD)", date_str))
@@ -96,7 +96,7 @@ func gameSolution(ctx *gin.Context) {
 
 	solution := gameTracker.Solution
 	if solution != nil {
-		sol, err := solution(&date)
+		sol, err := solution(date)
 		if err == nil {
 			ctx.JSON(http.StatusOK, sol)
 		} else {
