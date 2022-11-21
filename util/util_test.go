@@ -115,23 +115,23 @@ func TestIdToObjectParsingError(t *testing.T) {
 	}
 }
 
-func TestStringToPtrDate(t *testing.T) {
-	date, err := StringToPtrDate("2022-11-01")
+func TestStringToDate(t *testing.T) {
+	date, err := StringToDate("2022-11-01")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if date != time.Date(2022, time.November, 1, 0, 0, 0, 0, time.UTC) {
 		t.Fatal("Error in formatting to date")
 	}
-	date, err = StringToPtrDate("2022-10-33")
+	date, err = StringToDate("2022-10-33")
 	if err == nil {
 		t.Fatal("Expected error but got: " + date.String())
 	}
-	date, err = StringToPtrDate("2022-10-011")
+	date, err = StringToDate("2022-10-011")
 	if err == nil {
 		t.Fatal("Expected error but got: " + date.String())
 	}
-	date, err = StringToPtrDate("2022-1a-22")
+	date, err = StringToDate("2022-1a-22")
 	if err == nil {
 		t.Fatal("Expected error but got: " + date.String())
 	}
