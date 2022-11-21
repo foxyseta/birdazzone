@@ -37,6 +37,10 @@ type ProfileTweet struct {
 	EditHistoryTweetIds []string `json:"edit_history_tweet_ids"`
 	ID                  string   `json:"id"`
 	Text                string   `json:"text"`
+	Coordinates         *struct {
+		Coordinates []float32 `json:"coordinates"`
+		Type        string    `json:"type"`
+	} `json:"coordinates"`
 }
 
 // List of tweets from a single profile
@@ -159,7 +163,7 @@ func GetRecentTweetsFromQuery(query string, startTime string, endTime string, ma
 		util.Pair[string, string]{First: "start_time", Second: startTime},
 		util.Pair[string, string]{First: "end_time", Second: endTime},
 		util.Pair[string, string]{First: "max_results", Second: strconv.Itoa(maxResults)},
-		util.Pair[string, string]{First: "tweet.fields", Second: "author_id,created_at,public_metrics,text"},
+		util.Pair[string, string]{First: "tweet.fields", Second: "author_id,created_at,public_metrics,text" /*,coordinates"*/},
 		util.Pair[string, string]{First: "expansions", Second: "author_id"},
 		util.Pair[string, string]{First: "user.fields", Second: "id,name,profile_image_url,username"},
 	)

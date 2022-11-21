@@ -10,6 +10,7 @@ import (
 	"unicode"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
+	"git.hjkl.gq/team13/birdazzone-api/tvgames/birdazzone"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/gametracker"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/ghigliottina"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
@@ -20,6 +21,7 @@ import (
 
 var gameTrackers = []gametracker.GameTracker{
 	ghigliottina.GetGhigliottinaTracker(),
+	birdazzone.GetBirdazzoneTracker(),
 }
 
 var gameTrackersById = map[int]*gametracker.GameTracker{}
