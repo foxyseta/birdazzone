@@ -63,7 +63,7 @@ onBeforeMount(async () => {
 
 </script>
 <template>
-  <div  class="shadow bg-foreground rounded-xl m-5">
+  <div  class="shadow bg-foreground rounded-xl">
   <div v-if="loading" class="flex p-5 align-center justify-center">
       <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
   </div>
