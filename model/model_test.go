@@ -5,6 +5,7 @@ import (
 
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
+	geojson "github.com/paulmach/go.geojson"
 )
 
 func TestPageQueryString(t *testing.T) {
@@ -104,7 +105,30 @@ func TestMetricsString(t *testing.T) {
 	}
 }
 
+func TestOpenStreetMapCoordinatesString(t *testing.T) {
+	var c *openStreetMapCoordinates
+	if c.String() != util.NilRepresentation {
+		t.Fatalf("%s differs from %s", c.String(), util.NilRepresentation)
+	}
+	c = &openStreetMapCoordinates{Lat: "2", Lon: "6"}
+	if c.String() != "(2, 6)" {
+		t.Fatalf("%s differs from \"(2, 6)\"", c.String())
+	}
+}
+
+func TestCoordinatesString(t *testing.T) {
+	var c *Coordinates
+	if c.String() != util.NilRepresentation {
+		t.Fatalf("%s differs from %s", c.String(), util.NilRepresentation)
+	}
+	c = &Coordinates{Latitude: 2, Longitude: 6}
+	if c.String() != "(2.000000, 6.000000)" {
+		t.Fatalf("%s differs from \"(2.000000, 6.000000)\"", c.String())
+	}
+}
+
 func TestMakeTweet(t *testing.T) {
+	geo := geojson.NewPointGeometry([]float64{1, 2})
 	tweet := MakeTweet(twitter.ProfileTweet{
 		CreatedAt: "today",
 		PublicMetrics: struct {
@@ -122,6 +146,7 @@ func TestMakeTweet(t *testing.T) {
 		Username:        "mariorossi",
 		ProfileImageUrl: "a.org/img.png",
 	},
+		geo,
 	)
 	if tweet.CreatedAt != "today" {
 		t.Fatal("Wrong creation instant")

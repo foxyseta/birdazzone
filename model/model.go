@@ -134,10 +134,24 @@ type openStreetMapCoordinates struct {
 	Lon string `json:"lon"`
 }
 
+func (c *openStreetMapCoordinates) String() string {
+	if c == nil {
+		return util.NilRepresentation
+	}
+	return fmt.Sprintf("(%s, %s)", c.Lat, c.Lon)
+}
+
 // @Description Map coordinates.
 type Coordinates struct {
-	Longitude float64 `json:"longitude" minimum:"-180" maximum:"180" example:"-74.026675"`
 	Latitude  float64 `json:"latitude" minimum:"-90" maximum:"90" example:"40.683935"`
+	Longitude float64 `json:"longitude" minimum:"-180" maximum:"180" example:"-74.026675"`
+}
+
+func (c *Coordinates) String() string {
+	if c == nil {
+		return util.NilRepresentation
+	}
+	return fmt.Sprintf("(%f, %f)", c.Latitude, c.Longitude)
 }
 
 func StringToCoordinates(s string) (Coordinates, error) {
@@ -178,21 +192,17 @@ func MakeCoordinates(l *geojson.Geometry, p twitter.Profile) *Coordinates {
 	if l == nil {
 		result, err := StringToCoordinates(p.Location)
 		if err != nil {
-			println(err.Error())
 			return nil
 		}
-		println(p.Location)
 		return &result
 	}
 	if l.IsPoint() {
-		println("Point")
 		return &Coordinates{
 			Longitude: l.Point[1],
 			Latitude:  l.Point[0],
 		}
 	}
 	if l.BoundingBox != nil {
-		println("Bounding box")
 		bb := l.BoundingBox
 		n := len(bb) / 2
 		return &Coordinates{
