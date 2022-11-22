@@ -17,7 +17,7 @@ func TestGhihliottinaTracker(t *testing.T) {
 
 func TestSolution(t *testing.T) {
 	// checking last solution
-	sol, err := solution(nil)
+	sol, err := lastSolution()
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -27,7 +27,7 @@ func TestSolution(t *testing.T) {
 	now := time.Now()
 	// checking yesterday's solution
 	tm := now.AddDate(0, 0, -1)
-	sol, err = solution(&tm)
+	sol, err = givenSolution(tm)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -36,7 +36,7 @@ func TestSolution(t *testing.T) {
 	}
 	// checking 7 days ago solution
 	tm = now.AddDate(0, 0, -6)
-	sol, err = solution(&tm)
+	sol, err = givenSolution(tm)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -45,7 +45,7 @@ func TestSolution(t *testing.T) {
 	}
 	// checking tomorrow's solution
 	tm = now.AddDate(0, 0, 1)
-	_, err = solution(&tm)
+	_, err = givenSolution(tm)
 	if err == nil {
 		t.Fatal("Didn't get expected error")
 	}

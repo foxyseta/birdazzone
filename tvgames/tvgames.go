@@ -82,28 +82,36 @@ func gameSolution(ctx *gin.Context) {
 	}
 
 	date_str, hasDate := ctx.GetQuery("date")
-	var date *time.Time = nil
+	var date time.Time
+	var sol model.GameKey
 	if hasDate {
-		*date, err = util.StringToDate(date_str)
+		date, err = util.StringToDate(date_str)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest,
 				fmt.Errorf("date %s is not well-formed (YYYY-MM-DD)", date_str))
 			return
 		}
-	}
-
-	solution := gameTracker.Solution
-	if solution != nil {
-		sol, err := solution(date)
-		if err == nil {
-			ctx.JSON(http.StatusOK, sol)
+		if gameTracker.Solution != nil {
+			sol, err = gameTracker.Solution(date)
 		} else {
-			httputil.NewError(ctx, http.StatusInternalServerError, err)
+			httputil.NewError(ctx, http.StatusInternalServerError,
+				fmt.Errorf("missing solution getter for %T", gameTracker))
 		}
 	} else {
-		httputil.NewError(ctx, http.StatusInternalServerError,
-			fmt.Errorf("missing solution getter for %T", gameTracker))
+		if gameTracker.Solution != nil {
+			sol, err = gameTracker.LastSolution()
+		} else {
+			httputil.NewError(ctx, http.StatusInternalServerError,
+				fmt.Errorf("missing last solution getter for %T", gameTracker))
+		}
 	}
+
+	if err == nil {
+		ctx.JSON(http.StatusOK, sol)
+	} else {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+	}
+
 }
 
 func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, error) {
@@ -113,7 +121,7 @@ func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, 
 	}
 	query := gameTracker.Query
 	if successesOnly {
-		solution, err := gameTracker.Solution(nil) // TODO: implement filter based on time
+		solution, err := gameTracker.LastSolution() // TODO: implement filter based on time
 		if err != nil {
 			return nil, err
 		}
@@ -230,7 +238,7 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 		return nil, err
 	}
 	tweets := result.Data
-	solution, err := gameTracker.Solution(nil) // TODO: implement filter based on time
+	solution, err := gameTracker.LastSolution() // TODO: implement filter based on time
 	if err != nil {
 		return nil, err
 	}
@@ -305,7 +313,7 @@ func gameResults(ctx *gin.Context) {
 		result, err = getAttempts(ctx, false)
 		if err == nil {
 			tweets := result.Data
-			solution, err := gameTracker.Solution(nil) // TODO: implement filter based on time
+			solution, err := gameTracker.LastSolution() // TODO: implement filter based on time
 			if err == nil {
 				successes := 0
 				for _, tweet := range tweets {
