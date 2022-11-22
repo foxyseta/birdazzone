@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import ApiRepository from '@/api/api-repository';
-import type { TvGame } from '@/api/interfaces/tv-game';
+import ApiRepository from '@/api/api-repository'
+import type { TvGame } from '@/api/interfaces/tv-game'
 import { ref, onBeforeMount } from 'vue'
 import ErrorWidget from '../components/ErrorWidget.vue'
 import WordCloud from '../components/WordCloud.vue'
 import AerogramCard from '../components/AerogramCard.vue'
-import GuesserList from '@/components/GuesserList.vue'
+import GuesserList from '../components/GuesserList.vue'
+import TimeFilter from '../components/TimeFilter.vue'
 
 const error = ref<boolean> (false)
 const game = ref<TvGame>()
@@ -33,8 +34,12 @@ onBeforeMount(fetchGame)
     <div class="rounded-lg text-white bg-lgreen text-4xl font-semibold py-3 px-9 my-8 m-3">
       {{game?.name.toUpperCase()}}
     </div>
+
     <div class="w-full flex justify-evenly">
+      <div classs="flex flex-col">
+        <TimeFilter />
         <GuesserList :game-id="props.id"/>
+      </div>
       <div class="flex flex-col justify-start">
         <div class="mt-3">
           <AerogramCard :id="props.id" />
