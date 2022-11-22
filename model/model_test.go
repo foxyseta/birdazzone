@@ -127,6 +127,78 @@ func TestCoordinatesString(t *testing.T) {
 	}
 }
 
+func TestStringToCoordinatesOnEmptyString(t *testing.T) {
+	_, err := StringToCoordinates("")
+	if err == nil {
+		t.Fatal("Error expected")
+	}
+}
+
+func TestStringToCoordinateOnNonsensicalString(t *testing.T) {
+	_, err := StringToCoordinates("Place that does not really exist")
+	if err == nil {
+		t.Fatal("Error expected")
+	}
+}
+
+func TestStringToCoordinateOnBologna(t *testing.T) {
+	r, err := StringToCoordinates("Bologna")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if (int)(r.Latitude) != 44 {
+		t.Fatalf("Got latitude %f instead of 44", r.Latitude)
+	}
+	if (int)(r.Longitude) != 11 {
+		t.Fatalf("Got longitude %f instead of 11", r.Longitude)
+	}
+}
+
+func TestMakeCoordinatesOnNull(t *testing.T) {
+	if MakeCoordinates(nil, twitter.Profile{}) != nil {
+		t.Fatal("Expected null result")
+	}
+}
+
+func TestMakeCoordinatesOnNullWithUserLocation(t *testing.T) {
+	c := MakeCoordinates(nil, twitter.Profile{Location: "Bologna"})
+	if c == nil {
+		t.Fatal("Null result")
+	}
+	if (int)(c.Latitude) != 44 {
+		t.Fatalf("Got latitude %f instead of 44", c.Latitude)
+	}
+	if (int)(c.Longitude) != 11 {
+		t.Fatalf("Got longitude %f instead of 11", c.Longitude)
+	}
+}
+
+func TestMakeCoordinatesOnPoint(t *testing.T) {
+	c := MakeCoordinates(geojson.NewPointGeometry([]float64{5, -3}), twitter.Profile{})
+	if c == nil {
+		t.Fatal("Null result")
+	}
+	if (int)(c.Latitude) != 5 {
+		t.Fatalf("Got latitude %f instead of 5", c.Latitude)
+	}
+	if (int)(c.Longitude) != -3 {
+		t.Fatalf("Got longitude %f instead of -3", c.Longitude)
+	}
+}
+
+func TestMakeCoordinatesOnBoundingBox(t *testing.T) {
+	c := MakeCoordinates(&geojson.Geometry{Type: "unknown", BoundingBox: []float64{1, 2, 3, 4}}, twitter.Profile{})
+	if c == nil {
+		t.Fatal("Null result")
+	}
+	if (int)(c.Latitude) != 2 {
+		t.Fatalf("Got latitude %f instead of 2", c.Latitude)
+	}
+	if (int)(c.Longitude) != 3 {
+		t.Fatalf("Got longitude %f instead of 3", c.Longitude)
+	}
+}
+
 func TestMakeTweet(t *testing.T) {
 	geo := geojson.NewPointGeometry([]float64{1, 2})
 	tweet := MakeTweet(twitter.ProfileTweet{
