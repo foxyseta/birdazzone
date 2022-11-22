@@ -35,7 +35,7 @@ func solution(dt *time.Time) (model.GameKey, error) {
 			end_time = ""
 		}
 	}
-	tweets, err := twitter.GetRecentTweetsFromQuery("La soluzione alla partita di #birdazzone di oggi era:", start_time, end_time, 10)
+	tweets, err := twitter.GetRecentTweetsFromQuery("La soluzione alla partita di #birdazzone di oggi era", start_time, end_time, 10)
 
 	if err != nil {
 		return model.GameKey{}, err

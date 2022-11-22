@@ -3,8 +3,10 @@ package util
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strconv"
 	"time"
 	"unicode"
@@ -12,6 +14,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/swag/example/celler/httputil"
 )
+
+const BearerToken = "AAAAAAAAAAAAAAAAAAAAAE4higEAAAAAIAkazaLrT4LHjJx2XFPsdVzEPe8%3DE7HE9wBq5B5b0m4F8uGmcslObTmQFccb9gppULjUwTNBGj1Td3"
 
 var testingResponseRecorder = httptest.NewRecorder()
 var testingGinContext *gin.Context = nil
@@ -117,6 +121,57 @@ func IdToObject[T any](ctx *gin.Context, data map[int]T) (T, error) {
 	}
 
 	return value, err
+}
+
+func GetRequest(
+	urlTemplate string,
+	twitterToken bool,
+	pathParams []any,
+	queryParams ...Pair[string, string],
+) ([]byte, error) {
+	if pathParams == nil {
+		pathParams = []any{}
+	}
+	client := &http.Client{}
+
+	// path parameters
+	for i := range pathParams {
+		pathParams[i] = url.PathEscape(fmt.Sprint(pathParams[i]))
+	}
+	req, err := http.NewRequest("GET", fmt.Sprintf(urlTemplate, pathParams...), nil)
+	if err != nil {
+		return nil, err
+	}
+	if twitterToken {
+		req.Header.Set("Authorization", "Bearer "+BearerToken)
+	}
+
+	// query parameters
+	if queryParams != nil {
+		q := req.URL.Query()
+		for _, queryParam := range queryParams {
+			if queryParam.Second != "" {
+				q.Add(
+					queryParam.First,
+					queryParam.Second,
+				)
+			}
+		}
+		req.URL.RawQuery = q.Encode()
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 200 {
+		body, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("from Twitter API: %s (%s) -> (%s)", resp.Status, req.URL.String(), string(body))
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return []byte(string(body)), nil
 }
 
 func init() {
