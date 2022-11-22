@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { Tweet } from '@/api/interfaces/tweet';
-import {ref} from 'vue'
+  import {ref} from 'vue'
 
   let showAll = ref<boolean>(false)
   function prova(){
@@ -12,10 +12,13 @@ import {ref} from 'vue'
 
 <template>
     <div class="flex flex-col flex-1 my-3 ml-10" style="flex: 1 1 auto">
-      <button class="btn p-4 rounded-lg  bg-foreground hover:bg-lgray/50" @click="prova()" >
-        <div class="flex flex-row" style="flex: 1 1 auto;">
+      <div class="flex flex-row flex-1">
+          <span class="mr-3 text-lgray">{{index}}.</span>
+      <button class="btn rounded-lg  bg-foreground hover:bg-lgray/50 p-4 flex-1" @click="prova()" >
+        
+        <div class="flex flex-row" style="border-radius:50%; flex: 1 1 auto;">
             <div class="flex" style="height:4rem">
-                <img :src="props.data.author.profile_image_url" alt="propic" onerror="this.onerror = null; this.src='/icons/user.svg' "/>
+                <img :src="props.data.author.profile_image_url" style="border-radius:50%;" alt="propic" onerror="this.onerror = null; this.src='/icons/user.svg' "/>
             </div>
             <div class="flex flex-col mx-4" style="flex: 1 1 auto">
                 <p class="flex flex-1 text-white font-bold"> @{{props.data.author.username}}</p>
@@ -23,9 +26,9 @@ import {ref} from 'vue'
             </div>
             <div class="flex flex-col mx-4">
             <div class="flex" style="flex: 1 1 auto; height:2rem">
-                <img v-if="index===0" :src="'/icons/coccarda1.svg'" alt="propic"/>
-                <img v-if="index===1" :src="'/icons/coccarda2.svg'" alt="propic"/>
-                <img v-if="index===2" :src="'/icons/coccarda3.svg'" alt="propic"/>
+                <img v-if="index===1" :src="'/icons/coccarda1.svg'" alt="propic"/>
+                <img v-if="index===2" :src="'/icons/coccarda2.svg'" alt="propic"/>
+                <img v-if="index===3" :src="'/icons/coccarda3.svg'" alt="propic"/>
 
             </div>
                 <div class="text-lgray text-xs">{{new Date(props.data.created_at).getHours()}}:{{new Date(props.data.created_at).getMinutes()}}</div>
@@ -41,6 +44,8 @@ import {ref} from 'vue'
               <div class="flex flex-row"><img class="mr-1" alt="likes" style="max-height: 1.5rem;" src='/icons/heart.svg' /> {{props.data.metrics.like_count}} </div>
             </div>
         </div>
+      
       </button>
+    </div>
     </div>
 </template>
