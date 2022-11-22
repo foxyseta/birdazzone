@@ -163,6 +163,25 @@ func TestIdToObject(t *testing.T) {
 	}
 }
 
+func TestGetRequestOnNilPathParams(t *testing.T) {
+	GetTestingGinEngine()
+	_, err := GetRequest("/swagger/index.html", false, nil, Pair[string, string]{First: "a", Second: "b"})
+	if err == nil {
+		t.FailNow()
+	}
+}
+
+func TestGetRequestOnWrongPath(t *testing.T) {
+	GetTestingGinEngine()
+	response, err := GetRequest("/wrongPage.html", false, nil)
+	if response != nil {
+		t.Fatalf("Non-null response")
+	}
+	if err == nil {
+		t.Fatalf("Non-null error")
+	}
+}
+
 func TestInit(t *testing.T) {
 	if gin.Mode() != gin.TestMode {
 		t.Fatal("Gin is not in test mode")

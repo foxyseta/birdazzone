@@ -1,10 +1,14 @@
 package model
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"strconv"
 
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
+	"github.com/paulmach/go.geojson"
 	"github.com/swaggo/swag/example/celler/httputil"
 )
 
@@ -125,15 +129,101 @@ func (m *Metrics) String() string {
 	return fmt.Sprintf("(Likes: %d, Replies: %d, Retweets: %d)", m.LikeCount, m.ReplyCount, m.RetweetCount)
 }
 
-// @Description A post published on Twitter
-type Tweet struct {
-	Text      string  `json:"text" example:"Hello, world!"`
-	Author    User    `json:"author"`
-	CreatedAt string  `json:"created_at" format:"date-time"`
-	Metrics   Metrics `json:"metrics"`
+type openStreetMapCoordinates struct {
+	Lat string `json:"lat"`
+	Lon string `json:"lon"`
 }
 
-func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile) Tweet {
+func (c *openStreetMapCoordinates) String() string {
+	if c == nil {
+		return util.NilRepresentation
+	}
+	return fmt.Sprintf("(%s, %s)", c.Lat, c.Lon)
+}
+
+// @Description Map coordinates.
+type Coordinates struct {
+	Latitude  float64 `json:"latitude" minimum:"-90" maximum:"90" example:"40.683935"`
+	Longitude float64 `json:"longitude" minimum:"-180" maximum:"180" example:"-74.026675"`
+}
+
+func (c *Coordinates) String() string {
+	if c == nil {
+		return util.NilRepresentation
+	}
+	return fmt.Sprintf("(%f, %f)", c.Latitude, c.Longitude)
+}
+
+func StringToCoordinates(s string) (Coordinates, error) {
+	var result Coordinates
+	if s == "" {
+		return result, errors.New("User has no location")
+	}
+	data, err := util.GetRequest(
+		"https://nominatim.openstreetmap.org/search",
+		false,
+		[]any{},
+		util.Pair[string, string]{First: "q", Second: s},
+		util.Pair[string, string]{First: "format", Second: "jsonv2"},
+	)
+	if err != nil {
+		return result, err
+	}
+	var arr []openStreetMapCoordinates
+	err = json.Unmarshal(data, &arr)
+	if len(arr) == 0 {
+		return result, fmt.Errorf("No coordinates found for %s", s)
+	}
+	if err != nil {
+		return result, err
+	}
+	result.Longitude, err = strconv.ParseFloat(arr[0].Lon, 64)
+	if err != nil {
+		return result, err
+	}
+	result.Latitude, err = strconv.ParseFloat(arr[0].Lat, 64)
+	if err != nil {
+		return result, err
+	}
+	return result, nil
+}
+
+func MakeCoordinates(l *geojson.Geometry, p twitter.Profile) *Coordinates {
+	if l == nil {
+		result, err := StringToCoordinates(p.Location)
+		if err != nil {
+			return nil
+		}
+		return &result
+	}
+	if l.IsPoint() {
+		return &Coordinates{
+			Longitude: l.Point[1],
+			Latitude:  l.Point[0],
+		}
+	}
+	if l.BoundingBox != nil {
+		bb := l.BoundingBox
+		n := len(bb) / 2
+		return &Coordinates{
+			Latitude:  (bb[0] + bb[n]) / 2,
+			Longitude: (bb[1] + bb[n+1]) / 2,
+		}
+	}
+	return nil
+}
+
+// @Description A post published on Twitter
+type Tweet struct {
+	Text        string       `json:"text" example:"Hello, world!"`
+	Author      User         `json:"author"`
+	CreatedAt   string       `json:"created_at" format:"date-time"`
+	Metrics     Metrics      `json:"metrics"`
+	Coordinates *Coordinates `json:"coordinates"`
+}
+
+func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile, location *geojson.Geometry) Tweet {
+	coordinates := MakeCoordinates(location, author)
 	return Tweet{
 		Text: tweet.Text,
 		Author: User{
@@ -147,6 +237,7 @@ func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile) Tweet {
 			ReplyCount:   tweet.PublicMetrics.ReplyCount,
 			RetweetCount: tweet.PublicMetrics.RetweetCount,
 		},
+		Coordinates: coordinates,
 	}
 }
 

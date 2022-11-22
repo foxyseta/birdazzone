@@ -380,6 +380,24 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Coordinates": {
+            "description": "Map coordinates.",
+            "type": "object",
+            "properties": {
+                "latitude": {
+                    "type": "number",
+                    "maximum": 90,
+                    "minimum": -90,
+                    "example": 40.683935
+                },
+                "longitude": {
+                    "type": "number",
+                    "maximum": 180,
+                    "minimum": -180,
+                    "example": -74.026675
+                }
+            }
+        },
         "model.Error": {
             "description": "Object returned on failed requests",
             "type": "object",
@@ -469,6 +487,9 @@ const docTemplate = `{
             "properties": {
                 "author": {
                     "$ref": "#/definitions/model.User"
+                },
+                "coordinates": {
+                    "$ref": "#/definitions/model.Coordinates"
                 },
                 "created_at": {
                     "type": "string",
