@@ -19,25 +19,6 @@ func TestToCompleteUrl(t *testing.T) {
 	}
 }
 
-func TestGetRequestOnNilPathParams(t *testing.T) {
-	util.GetTestingGinEngine()
-	_, err := getRequest("/swagger/index.html", nil, util.Pair[string, string]{First: "a", Second: "b"})
-	if err == nil {
-		t.FailNow()
-	}
-}
-
-func TestGetRequestOnWrongPath(t *testing.T) {
-	util.GetTestingGinEngine()
-	response, err := getRequest("/wrongPage.html", nil)
-	if response != nil {
-		t.Fatalf("Non-null response")
-	}
-	if err == nil {
-		t.Fatalf("Non-null error")
-	}
-}
-
 func TestGetUserExisting(t *testing.T) {
 	_, err := GetUser("quizzettone")
 	if err != nil {

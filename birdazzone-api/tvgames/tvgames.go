@@ -15,6 +15,7 @@ import (
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
 	"github.com/gin-gonic/gin"
+	geojson "github.com/paulmach/go.geojson"
 	"github.com/swaggo/swag/example/celler/httputil"
 )
 
@@ -206,16 +207,27 @@ func gameAttempts(ctx *gin.Context) {
 	}
 	tweets := result.Data
 	util.Reverse(&tweets)
+	// users
 	usersById := make(map[string]twitter.Profile, len(result.Includes.Users))
 	for _, user := range result.Includes.Users {
 		usersById[user.ID] = user
+	}
+	// places
+	placesById := make(map[string]twitter.Place, len(result.Includes.Places))
+	for _, place := range result.Includes.Places {
+		placesById[place.ID] = place
 	}
 	n := len(tweets)
 	from := util.Max(0, util.Min(pageLength*(pageIndex-1), n-1))
 	res := make([]model.Tweet, util.Min(from+pageLength, n)-from)
 	for i := range res {
 		tweet := tweets[from+i]
-		res[i] = model.MakeTweet(tweet, usersById[tweet.AuthorId])
+		var geometry *geojson.Geometry
+		if tweet.Geo != nil {
+			geo := placesById[tweet.Geo.PlaceId].Geo
+			geometry = &geo
+		}
+		res[i] = model.MakeTweet(tweet, usersById[tweet.AuthorId], geometry)
 	}
 	ctx.JSON(http.StatusOK, model.Page[model.Tweet]{Entries: res, NumberOfPages: (n + pageLength - 1) / pageLength})
 }
