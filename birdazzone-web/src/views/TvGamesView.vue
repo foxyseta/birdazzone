@@ -3,7 +3,6 @@ import { onBeforeMount, ref } from 'vue'
 import ApiRepository from '@/api/api-repository';
 import type { TvGame } from '@/api/interfaces/tv-game';
 import ErrorWidget from '../components/ErrorWidget.vue';
-import TimeFilter from '../components/TimeFilter.vue';
 
 const error = ref<boolean>(false)
 const games = ref<TvGame[]>([])

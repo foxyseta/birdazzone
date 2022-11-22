@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import ApiRepository from '@/api/api-repository';
-import type { TvGame } from '@/api/interfaces/tv-game';
+import ApiRepository from '@/api/api-repository'
+import type { TvGame } from '@/api/interfaces/tv-game'
 import { ref, onBeforeMount } from 'vue'
 import WordCloud from '@/components/WordCloud.vue'
 import AerogramCard from '@/components/AerogramCard.vue'
 import ErrorWidget from '@/components/ErrorWidget.vue'
 import GuesserList from '@/components/GuesserList.vue'
 import { SemipolarSpinner } from 'epic-spinners';
+import TimeFilter from '../components/TimeFilter.vue'
 
 const loading = ref<boolean> (true)
 const error = ref<boolean> (false)
@@ -46,6 +47,7 @@ onBeforeMount(fetchGame)
       </div>
       <div class="w-full flex justify-evenly">
         <GuesserList :game-id="props.id"/>
+        <TimeFilter />
         <div class="flex flex-col justify-start">
           <AerogramCard :id="props.id" />
           <WordCloud :tv-game-id="props.id" />
