@@ -46,8 +46,10 @@ onBeforeMount(fetchGame)
         {{game?.name.toUpperCase()}}
       </div>
       <div class="w-full flex justify-evenly">
-        <GuesserList :game-id="props.id"/>
-        <TimeFilter />
+        <div classs="flex flex-col">
+          <TimeFilter />
+          <GuesserList :game-id="props.id" />
+        </div>
         <div class="flex flex-col justify-start">
           <AerogramCard :id="props.id" />
           <WordCloud :tv-game-id="props.id" />
