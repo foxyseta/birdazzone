@@ -1,24 +1,22 @@
 <script setup lang="ts">
-import GuesserListItem from '@/components/GuesserListItem.vue'
-import ApiRepository from '@/api/api-repository';
-import {onBeforeMount, ref} from 'vue'
-import type { Tweet } from '@/api/interfaces/tweet';
-import { SemipolarSpinner } from 'epic-spinners';
+  import GuesserListItem from '../components/GuesserListItem.vue'
+  import ApiRepository from '../api/api-repository';
+  import {onBeforeMount, ref} from 'vue'
+  import type { Tweet } from '../api/interfaces/tweet';
 
-const loading = ref<boolean> (false)
-const list = ref<Tweet[]>([])
-const props = defineProps<{gameId: number}>()
+  const error = ref<boolean> (false)
+  const list = ref<Tweet[]>([])
+  const props = defineProps<{gameId: number}>()
 
-const fetchList = async () => {
-  loading.value = true
+  const fetchList = async () => {
   const resp = await ApiRepository.getListOfGuesser(props.gameId.toString())
     if (resp.esit) {
       list.value = resp.data!.entries
-      loading.value = false
-    } 
-}
-
- onBeforeMount(fetchList)
+    } else {
+      error.value = true
+    }
+  }
+  onBeforeMount(fetchList)
 </script>
 
 <template>
