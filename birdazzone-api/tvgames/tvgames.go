@@ -327,7 +327,8 @@ func gameResults(ctx *gin.Context) {
 		result, err = getAttempts(ctx, false)
 		if err == nil {
 			tweets := result.Data
-			solution, err := gameTracker.LastSolution() // TODO: implement filter based on time
+			var solution model.GameKey
+			solution, err = gameTracker.LastSolution() // TODO: implement filter based on time
 			if err == nil {
 				successes := 0
 				for _, tweet := range tweets {
