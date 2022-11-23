@@ -10,6 +10,7 @@ import (
 	"unicode"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
+	"git.hjkl.gq/team13/birdazzone-api/tvgames/birdazzone"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/gametracker"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/ghigliottina"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
@@ -21,6 +22,7 @@ import (
 
 var gameTrackers = []gametracker.GameTracker{
 	ghigliottina.GetGhigliottinaTracker(),
+	birdazzone.GetBirdazzoneTracker(),
 }
 
 var gameTrackersById = map[int]*gametracker.GameTracker{}
@@ -325,7 +327,8 @@ func gameResults(ctx *gin.Context) {
 		result, err = getAttempts(ctx, false)
 		if err == nil {
 			tweets := result.Data
-			solution, err := gameTracker.LastSolution() // TODO: implement filter based on time
+			var solution model.GameKey
+			solution, err = gameTracker.LastSolution() // TODO: implement filter based on time
 			if err == nil {
 				successes := 0
 				for _, tweet := range tweets {
@@ -347,13 +350,25 @@ func gameResults(ctx *gin.Context) {
 	httputil.NewError(ctx, http.StatusInternalServerError, err)
 }
 
-func init() {
+func assignIds() {
+	for i := range gameTrackers {
+		gameTrackers[i].Game.Id = i
+	}
+}
+
+func initDataStructures() {
 	games = make([]model.Game, len(gameTrackers))
 	i := 0
-	for k, v := range gameTrackers {
-		gameTrackersById[k] = &v
+	for k := range gameTrackers {
+		v := &gameTrackers[k]
+		gameTrackersById[k] = v
 		games[i] = v.Game
-		gamesById[k] = &v.Game
+		gamesById[k] = &(v.Game)
 		i += 1
 	}
+}
+
+func init() {
+	assignIds()
+	initDataStructures()
 }
