@@ -2,7 +2,6 @@ package birdazzone
 
 import (
 	"errors"
-	"regexp"
 	"strings"
 	"time"
 
@@ -14,7 +13,7 @@ import (
 
 var birdazzoneTracker = gametracker.GameTracker{
 	Game: model.Game{
-		Id:      0,
+		Id:      1,
 		Name:    "Birdazzone",
 		Hashtag: "#birdazzone",
 		Logo:    "/public/birdazzone.png"},
@@ -36,8 +35,8 @@ func solution(start_time string, end_time string) (model.GameKey, error) {
 	if tweets.Meta.ResultCount == 0 {
 		return model.GameKey{}, errors.New("couldn't find Birdazzone solution")
 	}
-	m := regexp.MustCompile(`La soluzione al #birdazzone di oggi è:\s([A-Z]|[a-z])+`)
-	a := strings.ToLower(strings.Trim(m.FindString(tweets.Data[0].Text), "La soluzione al #birdazzone di oggi è: "))
+	text := tweets.Data[0].Text
+	a := strings.ToLower(text[strings.LastIndex(text, " ")+1:])
 	if len(a) > 0 {
 		return model.GameKey{
 			Key:  a,
