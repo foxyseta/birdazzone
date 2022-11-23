@@ -18,23 +18,16 @@ var ghigliottinaTracker = gametracker.GameTracker{
 		Name:    "Ghigliottina",
 		Hashtag: "#ghigliottina#leredita",
 		Logo:    "/public/leredita.png"},
-	Query:    "(#ghigliottina OR #leredita) -from:quizzettone -is:retweet",
-	Solution: solution,
+	Query:        "(#ghigliottina OR #leredita) -from:quizzettone -is:retweet",
+	Solution:     givenSolution,
+	LastSolution: lastSolution,
 }
 
 func GetGhigliottinaTracker() gametracker.GameTracker {
 	return ghigliottinaTracker
 }
 
-func solution(dt *time.Time) (model.GameKey, error) {
-	start_time, end_time := "", ""
-	if dt != nil {
-		start_time = util.LastInstantAtGivenTime(*dt, 0)
-		end_time = util.LastInstantAtGivenTime(dt.AddDate(0, 0, 1), 0)
-		if end_time > util.DateToString(time.Now()) {
-			end_time = ""
-		}
-	}
+func solution(start_time string, end_time string) (model.GameKey, error) {
 	tweets, err := twitter.GetRecentTweetsFromQuery("La #parola della #ghigliottina de #leredita di oggi", start_time, end_time, 10)
 
 	if err != nil {
@@ -52,4 +45,17 @@ func solution(dt *time.Time) (model.GameKey, error) {
 		}, nil
 	}
 	return model.GameKey{}, errors.New("couldn't find Ghigliottina solution")
+}
+
+func givenSolution(dt time.Time) (model.GameKey, error) {
+	start_time := util.LastInstantAtGivenTime(dt, 0)
+	end_time := util.LastInstantAtGivenTime(dt.AddDate(0, 0, 1), 0)
+	if end_time > util.DateToString(time.Now()) {
+		end_time = ""
+	}
+	return solution(start_time, end_time)
+}
+
+func lastSolution() (model.GameKey, error) {
+	return solution("", "")
 }

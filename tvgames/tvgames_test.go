@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 	"unicode"
 
 	"git.hjkl.gq/team13/birdazzone-api/util"
@@ -21,6 +22,12 @@ func TestGetTvGames(t *testing.T) {
 func testAPICall(t *testing.T, call func(*gin.Context)) {
 	// id: 0 should return something + Code 200
 	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
+	call(util.GetTestingGinContext())
+	if util.GetTestingResponseRecorder().Code != http.StatusOK {
+		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, util.GetTestingResponseRecorder().Code)
+	}
+	// test solution with yesterday's date
+	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}, {Key: "date", Value: util.DateToString(time.Now().AddDate(0, 0, -1))}}
 	call(util.GetTestingGinContext())
 	if util.GetTestingResponseRecorder().Code != http.StatusOK {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, util.GetTestingResponseRecorder().Code)
