@@ -13,7 +13,7 @@
 </script>
 
 <template>
-    <div class="flex flex-col flex-1 my-3 ml-10" style="flex: 1 1 auto">
+    <div class="flex flex-col flex-1 my-3" style="flex: 1 1 auto">
       <div class="flex flex-row flex-1">
           <span class="mr-3 text-lgray">{{index}}.</span>
       <button class="btn rounded-lg  bg-foreground hover:bg-lgray/50 p-4 flex-1" @click="prova()" >

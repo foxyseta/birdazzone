@@ -11,7 +11,7 @@
   const props = defineProps<{gameId: number}>()
   const max = ref<number>(0)
   const actualPage = ref<number>(1)
-  const itemPerPage = ref<number>(4)
+  const itemPerPage = ref<number>(5)
   const firstLoad = ref<boolean>(true)
 
   const fetchList = async () => {
@@ -33,7 +33,6 @@
 
 <template>
   <div class="flex flex-col">
-    <PaginationBar v-show="!loading || !firstLoad" :actualPage="actualPage" :max="max" @change-actual="(n) => {actualPage = n; fetchList()}"/>
     <div v-show="loading" class="h-screen flex items-center">
       <semipolar-spinner :animation-duration="2000" :size="50" color="#1eb980" />
     </div>
@@ -42,8 +41,9 @@
         Nobody was smart enough to guess &#127773;
       </div>  
       <div v-else class="flex flex-col" v-for="(item,index) in list" :key="index">
-          <GuesserListItem :data="item" :index="index+(actualPage-1)*itemPerPage +1" class="flex flex-1"/>
+        <GuesserListItem :data="item" :index="index+(actualPage-1)*itemPerPage +1" class="flex flex-1"/>
       </div>
     </div>
+    <PaginationBar class="mt-2" v-show="!firstLoad" :actualPage="actualPage" :max="max" @change-actual="(n) => {actualPage = n; fetchList()}"/>
   </div>
 </template>

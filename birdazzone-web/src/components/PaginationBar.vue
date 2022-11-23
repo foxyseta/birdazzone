@@ -14,7 +14,7 @@
 </script>
 
 <template>
-    <div v-if="actualPage >= 1 && actualPage <= max" class="flex flex-row justify-start" style="max-width: 30rem;">
+    <div v-if="actualPage >= 1 && actualPage <= max" class="flex flex-row justify-center" style="max-width: 30rem;">
         <div v-if="actualPage === 1" @click="$emit('changeActual',1)" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
             1
         </div>
