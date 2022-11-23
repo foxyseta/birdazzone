@@ -350,13 +350,25 @@ func gameResults(ctx *gin.Context) {
 	httputil.NewError(ctx, http.StatusInternalServerError, err)
 }
 
-func init() {
+func assignIds() {
+	for i := range gameTrackers {
+		gameTrackers[i].Game.Id = i
+	}
+}
+
+func initDataStructures() {
 	games = make([]model.Game, len(gameTrackers))
 	i := 0
-	for k, v := range gameTrackers {
-		gameTrackersById[k] = &v
+	for k := range gameTrackers {
+		v := &gameTrackers[k]
+		gameTrackersById[k] = v
 		games[i] = v.Game
-		gamesById[k] = &v.Game
+		gamesById[k] = &(v.Game)
 		i += 1
 	}
+}
+
+func init() {
+	assignIds()
+	initDataStructures()
 }

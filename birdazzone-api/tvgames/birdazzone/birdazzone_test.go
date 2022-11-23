@@ -25,26 +25,8 @@ func TestSolution(t *testing.T) {
 		t.Fatal("Empty solution #1")
 	}
 	now := time.Now()
-	// checking yesterday's solution
-	tm := now.AddDate(0, 0, -1)
-	sol, err = givenSolution(tm)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-	if sol.Key == "" {
-		t.Fatal("Empty solution #2")
-	}
-	// checking 7 days ago solution
-	tm = now.AddDate(0, 0, -6)
-	sol, err = givenSolution(tm)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-	if sol.Key == "" {
-		t.Fatal("Empty solution #3")
-	}
 	// checking tomorrow's solution
-	tm = now.AddDate(0, 0, 1)
+	tm := now.AddDate(0, 0, 1)
 	_, err = givenSolution(tm)
 	if err == nil {
 		t.Fatal("Didn't get expected error")

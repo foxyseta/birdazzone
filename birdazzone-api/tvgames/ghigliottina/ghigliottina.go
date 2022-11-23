@@ -14,7 +14,6 @@ import (
 
 var ghigliottinaTracker = gametracker.GameTracker{
 	Game: model.Game{
-		Id:      0,
 		Name:    "Ghigliottina",
 		Hashtag: "#ghigliottina#leredita",
 		Logo:    "/public/leredita.png"},
