@@ -13,7 +13,6 @@ import (
 
 var birdazzoneTracker = gametracker.GameTracker{
 	Game: model.Game{
-		Id:      1,
 		Name:    "Birdazzone",
 		Hashtag: "#birdazzone",
 		Logo:    "/public/birdazzone.png"},
