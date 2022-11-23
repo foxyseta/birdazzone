@@ -1,13 +1,15 @@
 <script setup lang="ts">
   import type { Tweet } from '@/api/interfaces/tweet';
-  import {ref} from 'vue'
+  import {onBeforeMount, ref} from 'vue'
 
   let showAll = ref<boolean>(false)
-  function prova(){
+  function prova() {
     showAll.value = !showAll.value
   }
-
   const props = defineProps<{data:Tweet, index:number}>()
+
+  const hours: number = new Date(props.data.created_at).getHours()
+  const mins: number = new Date(props.data.created_at).getMinutes()
 </script>
 
 <template>
@@ -31,7 +33,7 @@
                 <img v-if="index===3" :src="'/icons/coccarda3.svg'" alt="propic"/>
 
             </div>
-                <div class="text-lgray text-xs">{{new Date(props.data.created_at).getHours()}}:{{new Date(props.data.created_at).getMinutes()}}</div>
+                <div class="text-lgray text-xs">{{hours}}:{{(mins>10)?mins:'0'+mins}}</div>
             </div>
         </div>
         <div id="wholeTweet" class="flex flex-1 flex-col mt-3 p-2 border border-lgray rounded-lg" v-show="showAll">

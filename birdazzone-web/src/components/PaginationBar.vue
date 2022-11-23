@@ -15,30 +15,30 @@
 
 <template>
     <div v-if="actualPage >= 1 && actualPage <= max" class="flex flex-row justify-start" style="max-width: 30rem;">
-        <div v-if="actualPage === 1" id="firstIndex" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
+        <div v-if="actualPage === 1" @click="$emit('changeActual',1)" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
             1
         </div>
-        <div v-else id="firstIndex" class="mx-2 p-1 text-lgreen text-center hover:bg-lgreen hover:text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
+        <div v-else id="firstIndex" @click="$emit('changeActual',1)" class="mx-2 p-1 text-lgreen text-center hover:bg-lgreen hover:text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
             1
         </div>
 
         <div v-if="actualPage !== 1" class="flex flex-row">
-            <div v-if="actualPage === 2" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
+            <div v-if="actualPage === 2" @click="$emit('changeActual',actualPage)" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
                 {{actualPage}}
             </div>
             <div v-else class="flex flex-row">
                 <div v-if="actualPage !== 3" class="text-lgray mx-2">
                     ...
                 </div>
-                <div class="mx-2 p-1 text-lgreen text-center hover:bg-lgreen hover:text-foreground" style="flex: 1 1 auto; height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
+                <div @click="$emit('changeActual',actualPage-1)" class="mx-2 p-1 text-lgreen text-center hover:bg-lgreen hover:text-foreground" style="flex: 1 1 auto; height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
                     {{actualPage-1}}
                 </div>
-                <div v-if="actualPage !== max" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style="flex: 1 1 auto; height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
+                <div v-if="actualPage !== max" @click="$emit('changeActual',actualPage)" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style="flex: 1 1 auto; height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
                     {{actualPage}}
                 </div>
             </div>
         </div>
-        <div v-if="props.max > actualPage+1" class="mx-2 p-1 text-lgreen text-center hover:bg-lgreen hover:text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
+        <div v-if="props.max > actualPage+1" @click="$emit('changeActual',actualPage+1)" class="mx-2 p-1 text-lgreen text-center hover:bg-lgreen hover:text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
             {{actualPage+1}}
         </div>
 
@@ -46,10 +46,10 @@
             ...
         </div>
 
-        <div v-if="actualPage === props.max" id="firstIndex" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
+        <div v-if="actualPage === props.max" @click="$emit('changeActual',actualPage)" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
             {{props.max}}
         </div>
-        <div v-else id="firstIndex" class="mx-2 p-1 text-lgreen text-center hover:bg-lgreen hover:text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
+        <div v-else class="mx-2 p-1 text-lgreen text-center hover:bg-lgreen hover:text-foreground" @click="$emit('changeActual',props.max)" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
             {{props.max}}
         </div>
     </div>

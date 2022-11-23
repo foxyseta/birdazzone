@@ -10,8 +10,9 @@
   const list = ref<Tweet[]>([])
   const props = defineProps<{gameId: number}>()
   const max = ref<number>(0)
-  const actualPage = ref<number>(5)
-  const itemPerPage = ref<number>(10)
+  const actualPage = ref<number>(1)
+  const itemPerPage = ref<number>(4)
+  const firstLoad = ref<boolean>(true)
 
   const fetchList = async () => {
     loading.value = true
@@ -22,6 +23,7 @@
         console.log("resp")
         console.log(resp)
         loading.value = false
+        firstLoad.value = false
         console.log(resp.data!.numberOfPages)
       } 
   }
@@ -31,7 +33,7 @@
 
 <template>
   <div class="flex flex-col">
-    <PaginationBar v-show="!loading" :actualPage="actualPage" :max="max"/>
+    <PaginationBar v-show="!loading || !firstLoad" :actualPage="actualPage" :max="max" @change-actual="(n) => {actualPage = n; fetchList()}"/>
     <div v-show="loading" class="h-screen flex items-center">
       <semipolar-spinner :animation-duration="2000" :size="50" color="#1eb980" />
     </div>
