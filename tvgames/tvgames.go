@@ -133,7 +133,7 @@ func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, 
 		if hasTo {
 			to, err = util.StringToDateTime(to_str)
 			if err != nil {
-				return nil, fmt.Errorf("date %s is not well-formed (YYYY-MM-DD), %s", to_str, err.Error())
+				return nil, fmt.Errorf("date %s is not well-formed (YYYY-MM-DDTHH:MM:DDZ), %s", to_str, err.Error())
 			}
 			from_str = util.DateToString(from)
 			to_str = util.DateToString(to)
@@ -141,7 +141,17 @@ func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, 
 			if from_str > to_str || from.Day() != to.Day() || from.Month() != to.Month() || from.Year() != to.Year() {
 				return nil, fmt.Errorf("TO must be later than but in the same day of FROM")
 			}
-			//TODO
+			sol, err := gameTracker.Solution(from)
+			if successesOnly {
+				if err != nil {
+					return nil, err
+				}
+				query += " " + sol.Key
+			}
+			if sol.Date < to_str {
+				to_str = sol.Date
+			}
+			return twitter.GetManyRecentTweetsFromQuery(query, from_str, to_str)
 
 		} else {
 			//FROM AND NOT TO
