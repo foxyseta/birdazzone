@@ -130,7 +130,7 @@ func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, 
 		}
 		query += " " + solution.Key
 	}
-	return twitter.GetManyRecentTweetsFromQuery(query, util.LastInstantAtGivenTime(time.Now(), 18), "")
+	return twitter.GetManyRecentTweetsFromQuery(query, util.LastInstantAtGivenTime(time.Now(), gameTracker.Start), "")
 }
 
 func toLowerAlphaOnly(r rune) rune {
