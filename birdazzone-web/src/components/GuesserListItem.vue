@@ -3,20 +3,22 @@
   import {onBeforeMount, ref} from 'vue'
 
   let showAll = ref<boolean>(false)
-  function prova() {
+  function changeVisibility() {
     showAll.value = !showAll.value
   }
   const props = defineProps<{data:Tweet, index:number}>()
 
-  const hours: number = new Date(props.data.created_at).getHours()
-  const mins: number = new Date(props.data.created_at).getMinutes()
+  const hours:number = new Date(props.data.created_at).getHours()
+  const mins:number = new Date(props.data.created_at).getMinutes()
+
+  onBeforeMount(()=>{showAll.value = false})
 </script>
 
 <template>
     <div class="flex flex-col flex-1 my-3" style="flex: 1 1 auto">
       <div class="flex flex-row flex-1">
           <span class="mr-3 text-lgray">{{index}}.</span>
-      <button class="btn rounded-lg  bg-foreground hover:bg-lgray/50 p-4 flex-1" @click="prova()" >
+      <button class="btn rounded-lg  bg-foreground hover:bg-lgray/50 p-4 flex-1" @click="changeVisibility()" >
         
         <div class="flex flex-row" style="border-radius:50%; flex: 1 1 auto;">
             <div class="flex" style="height:4rem">

@@ -21,12 +21,9 @@ import CardPerPage from './ItemPerPage.vue';
       if (resp.esit) {
         list.value = resp.data!.entries
         max.value = resp.data!.numberOfPages
-        console.log("resp")
-        console.log(resp)
         loading.value = false
         firstLoad.value = false
-        console.log(resp.data!.numberOfPages)
-      } 
+      }
   }
 
   onBeforeMount(fetchList)
@@ -34,6 +31,7 @@ import CardPerPage from './ItemPerPage.vue';
 
 <template>
   <div class="flex flex-col">
+    <CardPerPage class="mt-2 flex justify-start" v-show="!firstLoad" :itemPerPage="itemPerPage" @change-item-page="(n) => {itemPerPage = n; actualPage = 1; fetchList()}"/>
     <div v-show="loading" class="h-screen flex items-center">
       <semipolar-spinner :animation-duration="2000" :size="50" color="#1eb980" />
     </div>
@@ -42,10 +40,9 @@ import CardPerPage from './ItemPerPage.vue';
         Nobody was smart enough to guess &#127773;
       </div>  
       <div v-else class="flex flex-col" v-for="(item,index) in list" :key="index">
-        <GuesserListItem :data="item" :index="index+(actualPage-1)*itemPerPage +1" class="flex flex-1"/>
+        <GuesserListItem :data="item" :index="index+(actualPage-1)*itemPerPage +1" class="flex" style="flex: 1 1 auto; width: 30rem;"/>
       </div>
     </div>
     <PaginationBar class="mt-2" v-show="!firstLoad" :actualPage="actualPage" :max="max" @change-actual="(n) => {actualPage = n; fetchList()}"/>
-    <CardPerPage class="mt-2" v-show="!firstLoad" :itemPerPage="itemPerPage" @change-item-page="(n) => {itemPerPage = n; fetchList()}"/>
   </div>
 </template>
