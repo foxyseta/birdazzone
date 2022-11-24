@@ -5,6 +5,7 @@
   import type { Tweet } from '@/api/interfaces/tweet';
   import { SemipolarSpinner } from 'epic-spinners';
   import PaginationBar from '../components/PaginationBar.vue';
+import CardPerPage from './ItemPerPage.vue';
 
   const loading = ref<boolean> (false)
   const list = ref<Tweet[]>([])
@@ -45,5 +46,6 @@
       </div>
     </div>
     <PaginationBar class="mt-2" v-show="!firstLoad" :actualPage="actualPage" :max="max" @change-actual="(n) => {actualPage = n; fetchList()}"/>
+    <CardPerPage class="mt-2" v-show="!firstLoad" :itemPerPage="itemPerPage" @change-item-page="(n) => {itemPerPage = n; fetchList()}"/>
   </div>
 </template>
