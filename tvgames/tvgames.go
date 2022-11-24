@@ -121,14 +121,51 @@ func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, 
 		return nil, err
 	}
 	query := gameTracker.Query
+
+	from_str, hasFrom := ctx.GetQuery("from")
+	to_str, hasTo := ctx.GetQuery("to")
+	var from, to time.Time
+	if hasFrom {
+		from, err = util.StringToDateTime(from_str)
+		if err != nil {
+			return nil, fmt.Errorf("date %s is not well-formed (YYYY-MM-DDTHH:MM:DDZ), %s", from_str, err.Error())
+		}
+		if hasTo {
+			to, err = util.StringToDateTime(to_str)
+			if err != nil {
+				return nil, fmt.Errorf("date %s is not well-formed (YYYY-MM-DD), %s", to_str, err.Error())
+			}
+			from_str = util.DateToString(from)
+			to_str = util.DateToString(to)
+			//FROM AND TO
+			if from_str > to_str || from.Day() != to.Day() || from.Month() != to.Month() || from.Year() != to.Year() {
+				return nil, fmt.Errorf("TO must be later than but in the same day of FROM")
+			}
+			//TODO
+
+		} else {
+			//FROM AND NOT TO
+			sol, err := gameTracker.Solution(from)
+			if successesOnly {
+				if err != nil {
+					return nil, err
+				}
+				query += " " + sol.Key
+			}
+			return twitter.GetManyRecentTweetsFromQuery(query, from_str, sol.Date)
+
+		}
+	}
+	//NOT FROM AND NOT TO
+	lastSol, err := gameTracker.LastSolution()
 	if successesOnly {
-		solution, err := gameTracker.LastSolution() // TODO: implement filter based on time
 		if err != nil {
 			return nil, err
 		}
-		query += " " + solution.Key
+		query += " " + lastSol.Key
 	}
-	return twitter.GetManyRecentTweetsFromQuery(query, util.LastInstantAtGivenTime(time.Now(), 18), "")
+	return twitter.GetManyRecentTweetsFromQuery(query, "", lastSol.Date) //CAMBIATO
+
 }
 
 func toLowerAlphaOnly(r rune) rune {

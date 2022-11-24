@@ -91,7 +91,7 @@ func StringToDate(d string) (time.Time, error) {
 }
 
 func StringToDateTime(d string) (time.Time, error) {
-	t, err := time.Parse("2006-01-02T03:04:05Z", d)
+	t, err := time.Parse(time.RFC3339, d)
 	return t, err
 }
 
