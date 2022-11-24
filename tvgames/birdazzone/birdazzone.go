@@ -19,6 +19,7 @@ var birdazzoneTracker = gametracker.GameTracker{
 	Query:        "#birdazzone -from:birdazzone -is:retweet",
 	Solution:     givenSolution,
 	LastSolution: lastSolution,
+	Start:        4,
 }
 
 func GetBirdazzoneTracker() gametracker.GameTracker {
