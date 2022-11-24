@@ -128,12 +128,12 @@ func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, 
 	if hasFrom {
 		from, err = util.StringToDateTime(from_str)
 		if err != nil {
-			return nil, fmt.Errorf("date %s is not well-formed (YYYY-MM-DDTHH:MM:DDZ), %s", from_str, err.Error())
+			return nil, fmt.Errorf("date %s is not well-formed (YYYY-MM-DDTHH:MM:DDZ)", from_str)
 		}
 		if hasTo {
 			to, err = util.StringToDateTime(to_str)
 			if err != nil {
-				return nil, fmt.Errorf("date %s is not well-formed (YYYY-MM-DDTHH:MM:DDZ), %s", to_str, err.Error())
+				return nil, fmt.Errorf("date %s is not well-formed (YYYY-MM-DDTHH:MM:DDZ)", to_str)
 			}
 			from_str = util.DateToString(from)
 			to_str = util.DateToString(to)
@@ -174,7 +174,7 @@ func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, 
 		}
 		query += " " + lastSol.Key
 	}
-	return twitter.GetManyRecentTweetsFromQuery(query, "", lastSol.Date) //CAMBIATO
+	return twitter.GetManyRecentTweetsFromQuery(query, "", lastSol.Date)
 
 }
 

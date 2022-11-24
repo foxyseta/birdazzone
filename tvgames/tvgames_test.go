@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 	"unicode"
 
 	"git.hjkl.gq/team13/birdazzone-api/util"
@@ -26,12 +25,6 @@ func testAPICall(t *testing.T, call func(*gin.Context)) {
 	if util.GetTestingResponseRecorder().Code != http.StatusOK {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, util.GetTestingResponseRecorder().Code)
 	}
-	// test solution with yesterday's date
-	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}, {Key: "date", Value: util.DateToString(time.Now().AddDate(0, 0, -1))}}
-	call(util.GetTestingGinContext())
-	if util.GetTestingResponseRecorder().Code != http.StatusOK {
-		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, util.GetTestingResponseRecorder().Code)
-	}
 	// predicted failure (id: -1 should return Code 400)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
@@ -40,6 +33,7 @@ func testAPICall(t *testing.T, call func(*gin.Context)) {
 	if w.Code != http.StatusNotFound {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusNotFound, w.Code)
 	}
+	//TODO TEST WITH QUERY PARAM DATE
 }
 
 func TestGetTvGameById(t *testing.T) {
@@ -51,6 +45,7 @@ func TestGameSolution(t *testing.T) {
 }
 
 func testGetAttempts(t *testing.T, successesOnly bool) {
+	//id=0
 	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
 	result, err := getAttempts(util.GetTestingGinContext(), successesOnly)
 	if err != nil {
@@ -59,6 +54,13 @@ func testGetAttempts(t *testing.T, successesOnly bool) {
 	if result == nil || result.Data == nil {
 		t.Fatal("Nil result")
 	}
+	//id=-1
+	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "-1"}}
+	_, err = getAttempts(util.GetTestingGinContext(), successesOnly)
+	if err == nil {
+		t.Fatal("Didn't get expected error")
+	}
+	//TODO TEST WITH QUERY PARAMS FROM AND TO
 }
 
 func TestGetAttemptsWrongParam(t *testing.T) {
