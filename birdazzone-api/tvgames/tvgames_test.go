@@ -47,7 +47,7 @@ func TestGameSolution(t *testing.T) {
 func testGetAttempts(t *testing.T, successesOnly bool) {
 	//id=0
 	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
-	result, err := getAttempts(util.GetTestingGinContext(), successesOnly)
+	result, err := getAttempts(util.GetTestingGinContext(), successesOnly, "", "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -56,16 +56,17 @@ func testGetAttempts(t *testing.T, successesOnly bool) {
 	}
 	//id=-1
 	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "-1"}}
-	_, err = getAttempts(util.GetTestingGinContext(), successesOnly)
+	_, err = getAttempts(util.GetTestingGinContext(), successesOnly, "", "")
 	if err == nil {
 		t.Fatal("Didn't get expected error")
 	}
 	//TODO TEST WITH QUERY PARAMS FROM AND TO
+
 }
 
 func TestGetAttemptsWrongParam(t *testing.T) {
 	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "zebra"}}
-	_, err := getAttempts(util.GetTestingGinContext(), true)
+	_, err := getAttempts(util.GetTestingGinContext(), true, "", "")
 	if err == nil {
 		t.FailNow()
 	}

@@ -148,7 +148,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "integer parsing error (id)",
+                        "description": "from and to must be in the same day",
                         "schema": {
                             "$ref": "#/definitions/model.Error"
                         }

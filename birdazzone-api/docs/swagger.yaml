@@ -225,7 +225,7 @@ paths:
           schema:
             $ref: '#/definitions/model.Page-model_Tweet'
         "400":
-          description: integer parsing error (id)
+          description: from and to must be in the same day
           schema:
             $ref: '#/definitions/model.Error'
         "404":

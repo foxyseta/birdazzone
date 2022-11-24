@@ -117,67 +117,39 @@ func gameSolution(ctx *gin.Context) {
 
 }
 
-func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, error) {
+func getAttempts(ctx *gin.Context, successesOnly bool, fromStr string, toStr string) (*twitter.ProfileTweets, error) {
+	fmt.Println(fromStr + " | " + toStr)
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
 		return nil, err
 	}
 	query := gameTracker.Query
 
-	from_str, hasFrom := ctx.GetQuery("from")
-	to_str, hasTo := ctx.GetQuery("to")
-	var from, to time.Time
-	if hasFrom {
-		from, err = util.StringToDateTime(from_str)
-		if err != nil {
-			return nil, fmt.Errorf("date %s is not well-formed (YYYY-MM-DDTHH:MM:DDZ)", from_str)
-		}
-		if hasTo {
-			to, err = util.StringToDateTime(to_str)
+	if fromStr == "" {
+		//!from && !to
+		lastSol, err := gameTracker.LastSolution()
+		if successesOnly {
 			if err != nil {
-				return nil, fmt.Errorf("date %s is not well-formed (YYYY-MM-DDTHH:MM:DDZ)", to_str)
+				return nil, err
 			}
-			from_str = util.DateToString(from)
-			to_str = util.DateToString(to)
-			//FROM AND TO
-			if from_str > to_str || from.Day() != to.Day() || from.Month() != to.Month() || from.Year() != to.Year() {
-				return nil, fmt.Errorf("TO must be later than but in the same day of FROM")
-			}
-			sol, err := gameTracker.Solution(from)
-			if successesOnly {
-				if err != nil {
-					return nil, err
-				}
-				query += " " + sol.Key
-			}
-			if sol.Date < to_str {
-				to_str = sol.Date
-			}
-			return twitter.GetManyRecentTweetsFromQuery(query, from_str, to_str)
-
-		} else {
-			//FROM AND NOT TO
-			sol, err := gameTracker.Solution(from)
-			if successesOnly {
-				if err != nil {
-					return nil, err
-				}
-				query += " " + sol.Key
-			}
-			return twitter.GetManyRecentTweetsFromQuery(query, from_str, sol.Date)
-
+			query += " " + lastSol.Key
 		}
-	}
-	//NOT FROM AND NOT TO
-	lastSol, err := gameTracker.LastSolution()
-	if successesOnly {
-		if err != nil {
-			return nil, err
+		return twitter.GetManyRecentTweetsFromQuery(query, "", lastSol.Date)
+	} else {
+		//from enabled
+		t, _ := util.StringToDateTime(fromStr)
+		sol, err := gameTracker.Solution(t)
+		if successesOnly {
+			if err != nil {
+				return nil, err
+			}
+			query += " " + sol.Key
 		}
-		query += " " + lastSol.Key
+		if sol.Date < toStr || toStr == "" { //from and !to
+			toStr = sol.Date
+		}
+		return twitter.GetManyRecentTweetsFromQuery(query, fromStr, toStr)
 	}
-	return twitter.GetManyRecentTweetsFromQuery(query, "", lastSol.Date)
-
 }
 
 func toLowerAlphaOnly(r rune) rune {
@@ -234,6 +206,11 @@ func tweetTextToAttempt(text string) string {
 // @Failure 400        {object} model.Error "integer parsing error (pageLength)"
 // @Failure 400        {object} model.Error "pageIndex < pageLength"
 // @Failure 400        {object} model.Error "integer parsing error (id)"
+// @Failure 400  	   {object} model.Error "date parsing error (from)"
+// @Failure 400        {object} model.Error "date parsing error (to)"
+// @Failure 400        {object} model.Error "to > today"
+// @Failure 400        {object} model.Error "from > to"
+// @Failure 400        {object} model.Error "from and to must be in the same day"
 // @Failure 404        {object} model.Error "game id not found"
 // @Failure 500        {object} model.Error "(internal server error)"
 // @Router  /tvgames/{id}/attempts [get]
@@ -257,7 +234,43 @@ func gameAttempts(ctx *gin.Context) {
 		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageLength < 1"))
 		return
 	}
-	result, err := getAttempts(ctx, true)
+
+	fromStr, hasFrom := ctx.GetQuery("from")
+	toStr, hasTo := ctx.GetQuery("to")
+	var fromTime, toTime time.Time
+	if hasFrom {
+		fromTime, err = util.StringToDateTime(fromStr)
+		if err != nil {
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (from)"))
+			return
+		}
+		fromStr = util.DateToString(fromTime)
+		if hasTo {
+			toTime, err = util.StringToDateTime(toStr)
+			if err != nil {
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (to)"))
+				return
+			}
+			toStr = util.DateToString(toTime)
+			if fromStr > toStr {
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from > to"))
+				return
+			}
+			if toStr > util.DateToString(time.Now()) {
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("to > today"))
+				return
+			}
+			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from and to must be in the same day"))
+				return
+			}
+		}
+	} else {
+		fromStr = ""
+		toStr = ""
+	}
+
+	result, err := getAttempts(ctx, true, fromStr, toStr)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusInternalServerError, err)
 		return
@@ -290,16 +303,17 @@ func gameAttempts(ctx *gin.Context) {
 }
 
 func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
+	// TODO: implement filter based on time
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
 		return nil, err
 	}
-	result, err := getAttempts(ctx, false)
+	result, err := getAttempts(ctx, false, "", "")
 	if err != nil {
 		return nil, err
 	}
 	tweets := result.Data
-	solution, err := gameTracker.LastSolution() // TODO: implement filter based on time
+	solution, err := gameTracker.LastSolution()
 	if err != nil {
 		return nil, err
 	}
@@ -368,14 +382,15 @@ func gameAttemptsStats(ctx *gin.Context) {
 // @Failure 404  {object} model.Error        "game id not found"
 // @Router  /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
+	// TODO: implement filter based on time
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err == nil {
 		var result *twitter.ProfileTweets
-		result, err = getAttempts(ctx, false)
+		result, err = getAttempts(ctx, false, "", "")
 		if err == nil {
 			tweets := result.Data
 			var solution model.GameKey
-			solution, err = gameTracker.LastSolution() // TODO: implement filter based on time
+			solution, err = gameTracker.LastSolution()
 			if err == nil {
 				successes := 0
 				for _, tweet := range tweets {
