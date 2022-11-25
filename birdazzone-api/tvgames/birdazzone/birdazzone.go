@@ -26,8 +26,8 @@ func GetBirdazzoneTracker() gametracker.GameTracker {
 	return birdazzoneTracker
 }
 
-func solution(start_time string, end_time string) (model.GameKey, error) {
-	tweets, err := twitter.GetRecentTweetsFromQuery("La soluzione al #birdazzone di oggi", start_time, end_time, 10)
+func solution(startTime string, endTime string) (model.GameKey, error) {
+	tweets, err := twitter.GetRecentTweetsFromQuery("La soluzione al #birdazzone di oggi", startTime, endTime, 10)
 
 	if err != nil {
 		return model.GameKey{}, err
@@ -47,12 +47,12 @@ func solution(start_time string, end_time string) (model.GameKey, error) {
 }
 
 func givenSolution(dt time.Time) (model.GameKey, error) {
-	start_time := util.LastInstantAtGivenTime(dt, 0)
-	end_time := util.LastInstantAtGivenTime(dt.AddDate(0, 0, 1), 0)
-	if end_time > util.DateToString(time.Now()) {
-		end_time = ""
+	startTime := util.LastInstantAtGivenTime(dt, 0)
+	endTime := util.LastInstantAtGivenTime(dt.AddDate(0, 0, 1), 0)
+	if endTime > util.DateToString(time.Now()) {
+		endTime = ""
 	}
-	return solution(start_time, end_time)
+	return solution(startTime, endTime)
 }
 
 func lastSolution() (model.GameKey, error) {
