@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ApiRepository from '@/api/api-repository'
-import type { TvGame } from '@/api/interfaces/tv-game'
+import ApiRepository from '../api/api-repository'
+import type { TvGame } from '../api/interfaces/tv-game'
 import { ref, onBeforeMount } from 'vue'
 import ErrorWidget from '../components/ErrorWidget.vue'
 import WordCloud from '../components/WordCloud.vue'
@@ -46,10 +46,7 @@ onBeforeMount(fetchGame)
         {{game?.name.toUpperCase()}}
       </div>
       <div class="w-full flex justify-evenly">
-        <div classs="flex flex-col">
-          <TimeFilter />
-          <GuesserList :game-id="props.id" />
-        </div>
+        <GuesserList :game-id="props.id" />
         <div class="flex flex-col justify-start">
           <AerogramCard :id="props.id" />
           <WordCloud :tv-game-id="props.id" />

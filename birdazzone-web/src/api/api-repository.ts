@@ -13,6 +13,7 @@ export default class ApiRepository {
   private static readonly _TV_GAMES_ID = "/tvgames/{0}"
   private static readonly _RESULTS_ID = "/tvgames/{0}/results"
   private static readonly _TV_GAMES_ID_ATTEMPTS = "/tvgames/{0}/attempts?pageLength=10"
+  private static readonly _TV_GAMES_ID_ATTEMPTS_FILTERED = "/tvgames/{0}/attempts?pageLength=10&from={1}&to={2}"
   private static readonly _TV_GAMES_ID_ATTEMPTS_STATS = "/tvgames/{0}/attempts/stats"
   private static readonly _TV_GAMES_ID_SOLUTION = "/tvgames/{0}/solution"
 
@@ -24,6 +25,9 @@ export default class ApiRepository {
 
   public static readonly getListOfGuesser = (id: string): Promise<ApiResponse<ApiList<Tweet>>> =>
     ApiManager.get<ApiList<Tweet>>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS, id))
+
+  public static readonly getListOfGuesserFiltered = (id: string, from: string, to: string): Promise<ApiResponse<ApiList<Tweet>>> =>
+    ApiManager.get<ApiList<Tweet>>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_FILTERED, id, from, to))
 
   public static readonly getResults = (id: string): Promise<ApiResponse<Results>> =>
     ApiManager.get<Results>(this.stringFormat(this._BASE_URL + this._RESULTS_ID, id))

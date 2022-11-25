@@ -1,63 +1,122 @@
 <script lang=ts>
+import { checkCompatEnabled } from '@vue/compiler-core';
 import { ref } from 'vue';
 import { defineComponent } from 'vue';
 import DatePicker from 'vue-datepicker-next';
 import 'vue-datepicker-next/index.css';
+import ErrorWidget from './ErrorWidget.vue';
+
 
 export default defineComponent({
   components: { DatePicker },
+  props: {
+    from: {
+      type: String,
+      default: '',
+    },
+    to: {
+      type: String,
+      default: '',
+    }
+  },
+
   data() {
     return {
-      startDate: null,
-      startTime: null,
-      endDate: null,
-      endTime: null,
+      dates: null,          /** to save dates values */
+      sDate: String(null),    /** to save start date */
+      eDate: String(null),    /** to save end date */
+      choosenDates: false,  /** to verify if dates has been chosen */
+      equalDates: ref(false),    /** to verify if dates are equals */
+      diffDates: ref(false),     /** to verify if dates are equals */
+      openD: false,         /** to close dates popup */
 
-      openClose: false,
+      sTime: String(null),  /** to same start time value */
+      openST: false,          /** to close start time popup */
+      eTime: String(null),  /** to same end time value */
+      openET: false,          /** to close end time popup */
 
-      openSD: false,
-      openST: false,
-      openED: false,
-      openET: false,
+      DatesTimes: false,
+      openClose: false,   /** to open/close filters card */
     };
   },
+
   methods: {
-    openCloseFunction() {
+    /** GENERAL */
+    openCloseFunction() {               /** to open/close filters card */
       this.openClose = !this.openClose;
     },
-    sendData() {
-      this.openClose = !this.openClose;
+
+    /** DATES */
+    closeD() {                          /** to close dates popup */
+      this.openD = false;
     },
-    closeSD() {
-      this.openSD = false;
+    selectDates(){                      /** to confirm selected dates */
+      if (this.dates != null) {              // entered dates
+        this.sDate = this.dates[0];
+        this.eDate = this.dates[1];
+      }   // ELSE -> didnt enter dates -> by default: today
+
+      if(this.sDate === this.eDate){        // equal dates
+        this.choosenDates = true;
+        this.equalDates = true;
+      }
+      else {                                // different dates
+        this.sDate = this.sDate + "T00:00:00.000Z";
+        this.eDate = this.eDate + "T00:00:00.000Z";
+        this.equalDates = false;
+        this.diffDates = true;
+      }
+
+      console.log("start date: " + this.sDate);
+      console.log("end date: " + this.eDate);
     },
-    closeST() {
+
+    /** TIMES */
+    closeST() {                          /** to close start time popup */
       this.openST = false;
     },
-    closeED() {
-      this.openED = false;
-    },
-    closeET() {
+    closeET() {                          /** to close end time popup */
       this.openET = false;
     },
-    defaultDate() {
-      return new Date();
-    },
-    disabledAfterToday(date) {
+    disabledAfterToday(date) {          /** to disabilitate days after today in dates popup */
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
       return date > today;
     },
-    disabledAfterTodayBeforeStartDate(date) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+    selectTimes(){
+      if(this.sDate == this.eDate && this.sTime != null && this.eTime != null){                 /* entered same valid date: check on entered times */ 
+        if(this.sTime.substring(0, 2) === this.eTime.substring(0, 2))  {            // sTime HH == eTime HH (same hours)
+          if(this.sTime.substring(3) > this.eTime.substring(3)){                      // sTime mm > eTime mm -> switch of the two dates
+            let box = this.sTime;
+            this.sTime = this.eTime;
+            this.eTime = box;
+          }
+        }
+        else{                                                                      // sTime HH != eTime HH (different hours)
+          if(this.sTime.substring(0, 2) > this.eTime.substring(0, 2)){                  // sTime HH > eTime HH -> switch of the two
+            let box = this.sTime;
+            this.sTime = this.eTime;
+            this.eTime = box;
+          }
+        }
+        this.sDate = this.sDate + "T" + this.sTime + ":00.000Z";
+        this.eDate = this.eDate + "T" + this.eTime + ":00.000Z";
 
-      return date > today || date < this.startDate;
+        this.DatesTimes = true;
+      }
     },
-    disabledTime(time) {
-      
+
+    /** GENERAL */
+    sendData() {                        /** confirm button */
+      this.openCloseFunction();
+      console.log("from: " + this.from);
+      console.log("to: " + this.to);
+
+      console.log("start date: " + this.sDate);
+      console.log("end date: " + this.eDate);
     },
+    
   },
 });
 
@@ -75,25 +134,42 @@ export default defineComponent({
 
   <div v-if="openClose" class="z-10 bg-foreground shadow font-semibold text-md rounded-lg m-4 mr-0 p-4 place-self-end">    
     <div class="flex flex-row items-stretch" aria-labelledby="dropdownDividerButton">
-      <label for="startDateTime" class="justify-self-start self-center text-white w-9">start</label>
-      <div class="flex flex-row justify-self-start" id="startDateTime">
-        <date-picker
-          class = "m-2 mr-1"
+      <label for="Dates" class="justify-self-start self-center text-white w-9">dates</label>
+      <div class="flex justify-self-start" id="Dates">
+        <date-picker 
+          class = "m-2 ml-3"
+          range
           type="date"
-          v-model:value="startDate"
-          v-model:open="openSD"
-          placeholder="select start date"
+          v-model:value="dates"
+          v-model:open="openD"
+          value-type="format"
+          format="YYYY-MM-DD"
+          placeholder="select start and end date"
           :clearable="true"
-          :disabled-date="disabledAfterToday">
+          :disabled-date="disabledAfterToday"
+          @change="!equalDates">
             <template #footer>
-              <button class="mx-btn mx-btn-text" @click="closeSD()">close</button>
+              <button class="mx-btn mx-btn-text" @click="closeD()">close</button>
             </template>
         </date-picker>
-        <date-picker
-          class = "m-2 ml-1 mr-0"
+      </div>
+    </div>
+    <div class="flex justify-center">
+      <button class="font-semibold text-white bg-foreground hover:text-lgreen text-center text-sm" type="button"
+        @click="selectDates()">
+        select dates
+      </button>
+    </div>
+
+    <div v-if="equalDates" class="flex flex-row items-stretch">
+      <label for="Times" class="justify-self-start self-center text-white w-9">times</label>
+      <div class="flex flex-row justify-self-start" id="Times">
+        <date-picker 
+          class = "m-2 ml-3 mr-1"
           type="time"
+          value-type="format"
           format="HH:mm"
-          v-model:value="startTime" 
+          v-model:value="sTime"
           v-model:open="openST"
           placeholder="select start time"
           :clearable="true">
@@ -101,46 +177,32 @@ export default defineComponent({
               <button class="mx-btn mx-btn-text" @click="closeST()">close</button>
             </template>
         </date-picker>
-      </div>
-    </div>
-
-    <div class="flex flex-row items-stretch">
-      <label for="startDateTime" class="justify-self-start self-center text-white w-9">end</label>
-      <div class="flex flex-row justify-self-start" id="startDateTime">
         <date-picker
-          class = "m-2 mr-1"
-          type="date"
-          v-model:value="endDate" 
-          v-model:open="openED"
-          placeholder="select end date"
-          :clearable="true"
-          :disabled="startDate == null"
-          :disabled-date="disabledAfterTodayBeforeStartDate">
-          <template #footer>
-            <button class="mx-btn mx-btn-text" @click="closeED()">close</button>
-          </template>
-        </date-picker>
-        <date-picker
-          class = "m-2 ml-1 mr-0"
+          class = "m-2 mr-0"
           type="time"
+          value-type="format"
           format="HH:mm"
-          v-model:value="endTime" 
+          v-model:value="eTime"
           v-model:open="openET"
           placeholder="select end time"
           :clearable="true"
-          :disabled="startTime == null"
-          :disabled-time="disabledTime">
+          :disabled="sTime == null">
             <template #footer>
               <button class="mx-btn mx-btn-text" @click="closeET()">close</button>
             </template>
         </date-picker>
       </div>
+      <div class="flex justify-center">
+        <button class="font-semibold text-white bg-foreground hover:text-lgreen text-center text-sm" type="button" @click="selectTimes()">
+          select times
+        </button>
+      </div>
     </div>
 
-    <div class="flex justify-end mt-3">
+    <div v-if="diffDates || DatesTimes" class="flex justify-end mt-3">
       <button
         class="font-semibold text-white border border-lgreen bg-foreground hover:bg-lgreen rounded-lg p-2 text-center text-sm"
-        type="button" @click="sendData()">
+        type="button" @click="$emit('changeFrom', sDate); $emit('changeTo', eDate); sendData()">
         confirm
       </button>
     </div>

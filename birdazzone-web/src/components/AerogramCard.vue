@@ -24,14 +24,14 @@ const fetchData = async () => {
     nSucc.value = response.data!.positives;             // succeded attempts
     nAttempts.value = nFail.value + nSucc.value;        // total attempts
 
-    success.value = (() => {    // percentage 
+    success.value = (() => {        // success percentage
       if (nAttempts.value == 0)
         return 0;
       else
         return nSucc.value / nAttempts.value;   // x : 1 = nSucc : nAttempts
     })();
 
-    fail.value = 1-success.value;
+    fail.value = 1-success.value;   // fail percentage
 
   } else {
     error.value = true
