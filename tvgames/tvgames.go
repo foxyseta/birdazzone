@@ -91,7 +91,7 @@ func gameSolution(ctx *gin.Context) {
 		date, err = util.StringToDate(date_str)
 		if err != nil {
 			httputil.NewError(ctx, http.StatusBadRequest,
-				fmt.Errorf("date %s is not well-formed (YYYY-MM-DD)", date_str))
+				fmt.Errorf("integer parsing error (id) or error while parsing to date"))
 			return
 		}
 		if gameTracker.Solution != nil {
@@ -145,7 +145,7 @@ func getAttempts(ctx *gin.Context, successesOnly bool, fromStr string, toStr str
 			}
 			query += " " + sol.Key
 		}
-		if sol.Date < toStr || toStr == "" { //from and !to
+		if sol.Date < toStr || toStr == "" { //from && !to
 			toStr = sol.Date
 		}
 		return twitter.GetManyRecentTweetsFromQuery(query, fromStr, toStr)
@@ -201,8 +201,8 @@ func tweetTextToAttempt(text string) string {
 // @Param   pageIndex  query    int    false "Index of the page to query"                                                                                                                                                                                            minimum(1) default(1)
 // @Param   pageLength query    int    false "Length of the page to query"                                                                                                                                                                                           minimum(1) default(10)
 // @Success 200        {object} model.Page[model.Tweet]
-// @Success 204        {string} string      "No game instance has been played"
-// @Failure 400        {object} model.Error "integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id)"
+// @Success 204        {string} string      "no game instance has been played"
+// @Failure 400        {object} model.Error "integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"
 // @Failure 404        {object} model.Error "game id not found"
 // @Failure 500        {object} model.Error "(internal server error)"
 // @Router  /tvgames/{id}/attempts [get]
@@ -210,20 +210,20 @@ func gameAttempts(ctx *gin.Context) {
 	var pageIndex, pageLength int
 	pageIndex, err := strconv.Atoi(ctx.DefaultQuery("pageIndex", "1"))
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex)"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
 		return
 	}
 	if pageIndex < 1 {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageIndex < 1"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
 		return
 	}
 	pageLength, err = strconv.Atoi(ctx.DefaultQuery("pageLength", "1"))
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageLength)"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
 		return
 	}
 	if pageLength < 1 {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageLength < 1"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
 		return
 	}
 
@@ -233,27 +233,27 @@ func gameAttempts(ctx *gin.Context) {
 	if hasFrom {
 		fromTime, err = util.StringToDateTime(fromStr)
 		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (from)"))
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
 			return
 		}
 		fromStr = util.DateToString(fromTime)
 		if hasTo {
 			toTime, err = util.StringToDateTime(toStr)
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (to)"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
 				return
 			}
 			toStr = util.DateToString(toTime)
 			if fromStr > toStr {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from > to"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
 				return
 			}
 			if toStr > util.DateToString(time.Now()) {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("to > today"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
 				return
 			}
 			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from and to must be in the same day"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
 				return
 			}
 		}
@@ -264,7 +264,7 @@ func gameAttempts(ctx *gin.Context) {
 
 	result, err := getAttempts(ctx, true, fromStr, toStr)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
+		httputil.NewError(ctx, http.StatusNoContent, errors.New("no game instance has been played"))
 		return
 	}
 	tweets := result.Data
@@ -305,23 +305,23 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	if hasFrom {
 		fromTime, err = util.StringToDateTime(fromStr)
 		if err != nil {
-			return nil, errors.New("date parsing error (from)")
+			return nil, errors.New("integer parsing error (id) or error while parsing to date")
 		}
 		fromStr = util.DateToString(fromTime)
 		if hasTo {
 			toTime, err = util.StringToDateTime(toStr)
 			if err != nil {
-				return nil, errors.New("date parsing error (to)")
+				return nil, errors.New("integer parsing error (id) or error while parsing to date")
 			}
 			toStr = util.DateToString(toTime)
 			if fromStr > toStr {
-				return nil, errors.New("from > to")
+				return nil, errors.New("integer parsing error (id) or error while parsing to date")
 			}
 			if toStr > util.DateToString(time.Now()) {
-				return nil, errors.New("to > today")
+				return nil, errors.New("integer parsing error (id) or error while parsing to date")
 			}
 			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				return nil, errors.New("from and to must be in the same day")
+				return nil, errors.New("integer parsing error (id) or error while parsing to date")
 			}
 		}
 	} else {
@@ -382,7 +382,7 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 // @Param   to   query    string false "Ending instant of the time interval used to filter the tweets. Must be later than but in the same day of the starting instant. If not specified, the ending of the game happening during the starting instant is used" Format(date-time)
 // @Success 200  {object} model.Chart
 // @Success 204  {string} string      "No game instance has been played"
-// @Failure 400  {object} model.Error "integer parsing error (id)"
+// @Failure 400  {object} model.Error "integer parsing error (id) or error while parsing to date"
 // @Failure 404  {object} model.Error "game id not found"
 // @Router  /tvgames/{id}/attempts/stats [get]
 func gameAttemptsStats(ctx *gin.Context) {
