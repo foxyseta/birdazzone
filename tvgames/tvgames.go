@@ -409,31 +409,98 @@ func gameAttemptsStats(ctx *gin.Context) {
 // @Router  /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
 	// TODO: implement filter based on time
+
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err == nil {
-		var result *twitter.ProfileTweets
-		result, err = getAttempts(ctx, false, "", "")
-		if err == nil {
-			tweets := result.Data
-			var solution model.GameKey
-			solution, err = gameTracker.LastSolution()
-			if err == nil {
-				successes := 0
-				for _, tweet := range tweets {
-					if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
-						successes++
-					}
-				}
-				ctx.JSON(
-					http.StatusOK,
-					model.BooleanChart{
-						Positives: successes,
-						Negatives: len(tweets) - successes,
-					},
-				)
+		fromStr, hasFrom := ctx.GetQuery("from")
+		toStr, hasTo := ctx.GetQuery("to")
+		var fromTime, toTime time.Time
+		if hasFrom {
+			fromTime, err = util.StringToDate(fromStr)
+			if err != nil {
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
 				return
 			}
+			fromStr = util.DateToString(fromTime)
+			if hasTo {
+				//from && to
+				toTime, err = util.StringToDate(toStr)
+				if err != nil {
+					httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
+					return
+				}
+				toStr = util.DateToString(toTime)
+				if fromStr > toStr {
+					httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
+					return
+				}
+				if toStr > util.DateToString(time.Now()) {
+					httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
+					return
+				}
+			} else {
+				//from && !to
+				toTime, _ = util.StringToDateTime(util.LastInstantAtGivenTime(time.Now(), 0))
+			}
+		} else {
+			//!from && !to
+			result, err := getAttempts(ctx, false, "", "")
+			if err == nil {
+				tweets := result.Data
+				var solution model.GameKey
+				solution, err = gameTracker.LastSolution()
+				if err == nil {
+					successes := 0
+					for _, tweet := range tweets {
+						if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
+							successes++
+						}
+					}
+					ctx.JSON(
+						http.StatusOK,
+						model.BooleanChart{
+							Label:     "votes",
+							Positives: successes,
+							Negatives: len(tweets) - successes,
+						},
+					)
+				}
+			}
+			return
 		}
+
+		var result *twitter.ProfileTweets
+		pos := 0
+		neg := 0
+		//TODO DO EACH
+		for util.DateToString(fromTime) <= util.DateToString(toTime) {
+			result, err = getAttempts(ctx, false, util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC)), util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 23, 59, 59, 0, time.UTC)))
+			if err == nil {
+				tweets := result.Data
+				var solution model.GameKey
+				solution, err = gameTracker.Solution(fromTime)
+				if err == nil {
+					successes := 0
+					for _, tweet := range tweets {
+						if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
+							successes++
+						}
+					}
+					pos += successes
+					neg += (len(tweets) - successes)
+				}
+			}
+			fromTime = fromTime.AddDate(0, 0, 1)
+		}
+		ctx.JSON(
+			http.StatusOK,
+			model.BooleanChart{
+				Label:     "votes",
+				Positives: pos,
+				Negatives: neg,
+			},
+		)
+		return
 	}
 	httputil.NewError(ctx, http.StatusInternalServerError, err)
 }
