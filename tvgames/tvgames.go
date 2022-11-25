@@ -295,17 +295,53 @@ func gameAttempts(ctx *gin.Context) {
 }
 
 func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
-	// TODO: implement filter based on time
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
 		return nil, err
 	}
-	result, err := getAttempts(ctx, false, "", "")
+	fromStr, hasFrom := ctx.GetQuery("from")
+	toStr, hasTo := ctx.GetQuery("to")
+	var fromTime, toTime time.Time
+	if hasFrom {
+		fromTime, err = util.StringToDateTime(fromStr)
+		if err != nil {
+			return nil, errors.New("date parsing error (from)")
+		}
+		fromStr = util.DateToString(fromTime)
+		if hasTo {
+			toTime, err = util.StringToDateTime(toStr)
+			if err != nil {
+				return nil, errors.New("date parsing error (to)")
+			}
+			toStr = util.DateToString(toTime)
+			if fromStr > toStr {
+				return nil, errors.New("from > to")
+			}
+			if toStr > util.DateToString(time.Now()) {
+				return nil, errors.New("to > today")
+			}
+			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
+				return nil, errors.New("from and to must be in the same day")
+			}
+		}
+	} else {
+		fromStr = ""
+		toStr = ""
+	}
+
+	result, err := getAttempts(ctx, false, fromStr, toStr)
 	if err != nil {
 		return nil, err
 	}
 	tweets := result.Data
-	solution, err := gameTracker.LastSolution()
+	var solution model.GameKey
+	if fromStr != "" {
+		s, _ := util.StringToDateTime(fromStr)
+		solution, err = gameTracker.Solution(s)
+	} else {
+		solution, err = gameTracker.LastSolution()
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -353,6 +389,8 @@ func gameAttemptsStats(ctx *gin.Context) {
 	chart, err := getAttemptsStats(ctx)
 	if err == nil {
 		ctx.JSON(http.StatusOK, chart)
+	} else {
+		httputil.NewError(ctx, http.StatusBadRequest, err)
 	}
 }
 

@@ -147,8 +147,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.Page-model_Tweet"
                         }
                     },
+                    "204": {
+                        "description": "No game instance has been played",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "400": {
-                        "description": "from and to must be in the same day",
+                        "description": "integer parsing error (pageIndex) or pageIndex \u003c 1 or integer parsing error (pageLength) or pageIndex \u003c pageLength or integer parsing error (id)",
                         "schema": {
                             "$ref": "#/definitions/model.Error"
                         }
@@ -209,6 +215,12 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/model.ChartEntry"
                             }
+                        }
+                    },
+                    "204": {
+                        "description": "No game instance has been played",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     "400": {
@@ -275,8 +287,14 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "204": {
+                        "description": "No game instance has been played",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "400": {
-                        "description": "each \u003c 1",
+                        "description": "integer parsing error (id) or date parsing error (from) or date parsing error (to) or to \u003e today or from \u003e to or integer parsing error (each) or each \u003c 1",
                         "schema": {
                             "$ref": "#/definitions/model.Error"
                         }
@@ -322,8 +340,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.GameKey"
                         }
                     },
+                    "204": {
+                        "description": "No game instance has been played",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "400": {
-                        "description": "error while parsing to date",
+                        "description": "integer parsing error (id) or error while parsing to date",
                         "schema": {
                             "$ref": "#/definitions/model.Error"
                         }
