@@ -141,13 +141,13 @@
                         }
                     },
                     "204": {
-                        "description": "No game instance has been played",
+                        "description": "no game instance has been played",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "400": {
-                        "description": "integer parsing error (pageIndex) or pageIndex \u003c 1 or integer parsing error (pageLength) or pageIndex \u003c pageLength or integer parsing error (id)",
+                        "description": "integer parsing error (pageIndex) or pageIndex \u003c 1 or integer parsing error (pageLength) or pageIndex \u003c pageLength or integer parsing error (id) or error while parsing to date",
                         "schema": {
                             "$ref": "#/definitions/model.Error"
                         }
@@ -217,7 +217,7 @@
                         }
                     },
                     "400": {
-                        "description": "integer parsing error (id)",
+                        "description": "integer parsing error (id) or error while parsing to date",
                         "schema": {
                             "$ref": "#/definitions/model.Error"
                         }
