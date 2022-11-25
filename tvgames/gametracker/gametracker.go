@@ -14,6 +14,7 @@ type GameTracker struct {
 	Query        string
 	Solution     GameSolutionGetter
 	LastSolution LastGameSolutionGetter
+	Start        int
 }
 
 func (gt *GameTracker) String() string {

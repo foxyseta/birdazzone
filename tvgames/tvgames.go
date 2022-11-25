@@ -72,8 +72,8 @@ func getTvGameById(ctx *gin.Context) {
 // @Param   id   path     string true  "Game to query"
 // @Param   date query    string false "Date to query; if not specified, last game instance is considered" Format(date)
 // @Success 200  {object} model.GameKey
-// @Failure 400  {object} model.Error "integer parsing error (id)"
-// @Failure 400  {object} model.Error "error while parsing to date"
+// @Success 204  {string} string      "No game instance has been played"
+// @Failure 400  {object} model.Error "integer parsing error (id) or error while parsing to date"
 // @Failure 404  {object} model.Error "game id not found"
 // @Failure 500  {object} model.Error "(internal server error)"
 // @Router  /tvgames/{id}/solution [get]
@@ -201,16 +201,8 @@ func tweetTextToAttempt(text string) string {
 // @Param   pageIndex  query    int    false "Index of the page to query"                                                                                                                                                                                            minimum(1) default(1)
 // @Param   pageLength query    int    false "Length of the page to query"                                                                                                                                                                                           minimum(1) default(10)
 // @Success 200        {object} model.Page[model.Tweet]
-// @Failure 400        {object} model.Error "integer parsing error (pageIndex)"
-// @Failure 400        {object} model.Error "pageIndex < 1"
-// @Failure 400        {object} model.Error "integer parsing error (pageLength)"
-// @Failure 400        {object} model.Error "pageIndex < pageLength"
-// @Failure 400        {object} model.Error "integer parsing error (id)"
-// @Failure 400  	   {object} model.Error "date parsing error (from)"
-// @Failure 400        {object} model.Error "date parsing error (to)"
-// @Failure 400        {object} model.Error "to > today"
-// @Failure 400        {object} model.Error "from > to"
-// @Failure 400        {object} model.Error "from and to must be in the same day"
+// @Success 204        {string} string      "No game instance has been played"
+// @Failure 400        {object} model.Error "integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id)"
 // @Failure 404        {object} model.Error "game id not found"
 // @Failure 500        {object} model.Error "(internal server error)"
 // @Router  /tvgames/{id}/attempts [get]
@@ -353,6 +345,7 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 // @Param   from query    string false "Starting instant of the time interval used to filter the tweets. If not specified, the beginning of the last game instance is used"                                                                                    Format(date-time)
 // @Param   to   query    string false "Ending instant of the time interval used to filter the tweets. Must be later than but in the same day of the starting instant. If not specified, the ending of the game happening during the starting instant is used" Format(date-time)
 // @Success 200  {object} model.Chart
+// @Success 204  {string} string      "No game instance has been played"
 // @Failure 400  {object} model.Error "integer parsing error (id)"
 // @Failure 404  {object} model.Error "game id not found"
 // @Router  /tvgames/{id}/attempts/stats [get]
@@ -372,13 +365,8 @@ func gameAttemptsStats(ctx *gin.Context) {
 // @Param   to   query    string             false "Ending date of the time interval used to filter the tweets. Cannot be earlier than the starting date. If not specified, the starting date is used" Format(date)
 // @Param   each query    int                false "Number of seconds for the duration of each time interval bin the retrieved tweets are to be grouped by"                                            minimum(1)
 // @Success 200  {array}  model.BooleanChart "A array of boolean charts comparing successes and failures in the game. Each boolean chart is labeled as the starting instant of its time interval bin"
-// @Failure 400  {object} model.Error        "integer parsing error (id)"
-// @Failure 400  {object} model.Error        "date parsing error (from)"
-// @Failure 400  {object} model.Error        "date parsing error (to)"
-// @Failure 400  {object} model.Error        "to > today"
-// @Failure 400  {object} model.Error        "from > to"
-// @Failure 400  {object} model.Error        "integer parsing error (each)"
-// @Failure 400  {object} model.Error        "each < 1"
+// @Success 204  {string} string             "No game instance has been played"
+// @Failure 400  {object} model.Error        "integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"
 // @Failure 404  {object} model.Error        "game id not found"
 // @Router  /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
