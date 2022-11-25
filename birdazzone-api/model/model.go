@@ -9,11 +9,16 @@ import (
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
 	geojson "github.com/paulmach/go.geojson"
-	"github.com/swaggo/swag/example/celler/httputil"
+	// "github.com/swaggo/swag/example/celler/httputil"
 )
 
 // @Description Object returned on failed requests
-type Error httputil.HTTPError
+type Error struct {
+	Code    int    `json:"code" example:"400"`
+	Message string `json:"message" example:"status bad request"`
+}
+
+// type Error httputil.HTTPError
 
 // @Description Parameters to query a single page
 type PageQuery struct {

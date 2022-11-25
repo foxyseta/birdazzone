@@ -20,6 +20,7 @@ var ghigliottinaTracker = gametracker.GameTracker{
 	Query:        "(#ghigliottina OR #leredita) -from:quizzettone -is:retweet",
 	Solution:     givenSolution,
 	LastSolution: lastSolution,
+	Start:        18,
 }
 
 func GetGhigliottinaTracker() gametracker.GameTracker {
