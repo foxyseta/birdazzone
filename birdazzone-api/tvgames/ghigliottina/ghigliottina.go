@@ -28,7 +28,7 @@ func GetGhigliottinaTracker() gametracker.GameTracker {
 }
 
 func solution(startTime string, endTime string) (model.GameKey, error) {
-	tweets, err := twitter.GetRecentTweetsFromQuery("La #parola della #ghigliottina de #leredita di oggi", startTime, endTime, 10)
+	tweets, err := twitter.GetRecentTweetsFromQuery("La #parola della #ghigliottina de #leredita di oggi -is:retweet", startTime, endTime, 10)
 
 	if err != nil {
 		return model.GameKey{}, err

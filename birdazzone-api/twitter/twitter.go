@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"git.hjkl.gq/team13/birdazzone-api/util"
-	"github.com/paulmach/go.geojson"
+	geojson "github.com/paulmach/go.geojson"
 )
 
 const BaseUrl = "https://api.twitter.com/2/"
@@ -117,7 +117,7 @@ func GetRecentTweetsFromQuery(query string, startTime string, endTime string, ma
 	return getTweets(
 		"https://api.twitter.com/2/tweets/search/recent",
 		[]any{},
-		util.Pair[string, string]{First: "query", Second: query + " -is:retweet"},
+		util.Pair[string, string]{First: "query", Second: query},
 		util.Pair[string, string]{First: "start_time", Second: startTime},
 		util.Pair[string, string]{First: "end_time", Second: endTime},
 		util.Pair[string, string]{First: "max_results", Second: strconv.Itoa(maxResults)},
