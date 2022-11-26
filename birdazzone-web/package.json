@@ -10,7 +10,8 @@
     "test:unit": "vitest --environment jsdom --root src/",
     "coverage": "vitest run --coverage",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
+    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
+    "backend": "docker run --rm -p 8080:8080 --pull always registry.hjkl.gq/team13/birdazzone-api:develop"
   },
   "engines": {
     "node": "16.x",

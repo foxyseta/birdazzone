@@ -8,7 +8,7 @@ import type { WordCloudOptions } from "./interfaces/wordcloud-options"
 import type { Solution } from "./interfaces/solution"
 
 export default class ApiRepository {
-  private static readonly _BASE_URL = "http://localhost:8080/api/v1"
+  private static readonly _BASE_URL = `http://${import.meta.env.VITE_SERVER_URL}/api/v1`
   private static readonly _TV_GAMES = "/tvgames/"
   private static readonly _TV_GAMES_ID = "/tvgames/{0}"
   private static readonly _RESULTS_ID = "/tvgames/{0}/results"
@@ -58,7 +58,7 @@ export default class ApiRepository {
     if (response.ok) {
       return new ApiResponse<string>(response.status, await response.text())
     } else {
-      return new ApiResponse<string>(response.status, undefined, await response.text())
+      return new ApiResponse<string>(response.status, undefined, { code: 400, message: await response.text() })
     }
   }
 }

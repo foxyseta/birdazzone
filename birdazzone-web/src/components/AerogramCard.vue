@@ -1,9 +1,7 @@
 <script setup lang=ts>
-import { ref, onMounted, onBeforeMount } from 'vue'
+import { ref, onMounted } from 'vue'
 import { createPopper } from "@popperjs/core";
 import ApiRepository from '../api/api-repository';
-import type { Results } from '../api/interfaces/results';
-import ErrorWidget from '../components/ErrorWidget.vue';
 import { SemipolarSpinner } from 'epic-spinners';
 
 const error = ref<boolean>(false)
@@ -93,16 +91,13 @@ const popover = () => {
 </script>
 
 <template>
-  <div v-if="error">
-    <ErrorWidget />
-  </div>
 
   <div class="bg-foreground font-semibold text-lg rounded-lg p-4 place-self-center z-0" >
 
     <div v-if="loading">
       <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
     </div>
-    <div v-show="!loading" class="flex items-center">
+    <div v-show="!loading && !error" class="flex items-center">
       <div class="items-center mx-3">
         <div class="text-white m-2">{{nAttempts}} tried</div>
         <div class="m-2"><div class="text-lgreen inline">{{nSucc}}</div><div class="text-white inline"> succeded</div></div>

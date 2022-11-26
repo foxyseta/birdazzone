@@ -29,10 +29,10 @@ const generateCloudOptions = (entries: ChartEntry[], solution: Solution): WordCl
   height: 250,
   case: 'upper',
   maxNumWords: 40,
-  fontScale: 40,
+  fontScale: 20,
   padding: 1,
   scale: 'sqrt',
-  colors: ["#999083","#53534f"],
+  colors: ["#999083","#aaaaaa", "#ffffff"],
   rotation: 90
 })
 
@@ -63,7 +63,7 @@ onBeforeMount(async () => {
 
 </script>
 <template>
-  <div  class="shadow bg-foreground rounded-xl m-5">
+  <div  class="shadow bg-foreground rounded-xl">
   <div v-if="loading" class="flex p-5 align-center justify-center">
       <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
   </div>
