@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"git.hjkl.gq/team13/birdazzone-api/util"
-	"github.com/paulmach/go.geojson"
+	geojson "github.com/paulmach/go.geojson"
 )
 
 const BaseUrl = "https://api.twitter.com/2/"
