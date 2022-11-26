@@ -118,7 +118,6 @@ func gameSolution(ctx *gin.Context) {
 }
 
 func getAttempts(ctx *gin.Context, successesOnly bool, fromStr string, toStr string) (*twitter.ProfileTweets, error) {
-	fmt.Println(fromStr + " | " + toStr)
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
 		return nil, err
@@ -408,13 +407,27 @@ func gameAttemptsStats(ctx *gin.Context) {
 // @Failure 404  {object} model.Error        "game id not found"
 // @Router  /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
-	// TODO: implement filter based on time
-
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	var chart []model.BooleanChart
+
 	if err == nil {
 		fromStr, hasFrom := ctx.GetQuery("from")
 		toStr, hasTo := ctx.GetQuery("to")
+		eachStr, hasEach := ctx.GetQuery("each")
+		var each = 57600
 		var fromTime, toTime time.Time
+		if hasEach {
+			each, err = strconv.Atoi(eachStr)
+			if err != nil {
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
+				return
+			}
+			if each < 1 {
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
+				return
+			}
+		}
+
 		if hasFrom {
 			fromTime, err = util.StringToDate(fromStr)
 			if err != nil {
@@ -440,65 +453,102 @@ func gameResults(ctx *gin.Context) {
 				}
 			} else {
 				//from && !to
-				toTime, _ = util.StringToDateTime(util.LastInstantAtGivenTime(time.Now(), 0))
+				now := time.Now()
+				toTime = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 			}
 		} else {
 			//!from && !to
 			result, err := getAttempts(ctx, false, "", "")
 			if err == nil {
+				util.Reverse(&result.Data)
 				tweets := result.Data
 				var solution model.GameKey
 				solution, err = gameTracker.LastSolution()
 				if err == nil {
 					successes := 0
+					fails := 0
+					lt, _ := util.StringToDateTime(tweets[0].CreatedAt)
+					lastTime := util.DateToString(time.Date(lt.Year(), lt.Month(), lt.Day(), lt.Hour(), lt.Minute(), lt.Second()+each, 0, time.UTC))
 					for _, tweet := range tweets {
-						if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
-							successes++
+						if tweet.CreatedAt <= lastTime {
+							if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
+								successes++
+							} else {
+								fails++
+							}
+						} else {
+							nt, _ := util.StringToDateTime(lastTime)
+							nextTime := util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
+							chart = append(chart, model.BooleanChart{Label: lastTime + "#" + nextTime, Positives: successes, Negatives: fails})
+							nt, _ = util.StringToDateTime(tweet.CreatedAt)
+							nextTime = util.DateToString(nt)
+							lastTime = nextTime
+							successes = 0
+							fails = 0
+							if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
+								successes++
+							} else {
+								fails++
+							}
 						}
+
 					}
+					nextTime, _ := util.StringToDateTime(tweets[len(tweets)-1].CreatedAt)
+					chart = append(chart, model.BooleanChart{Label: lastTime + "#" + util.DateToString(nextTime), Positives: successes, Negatives: fails})
+
 					ctx.JSON(
 						http.StatusOK,
-						model.BooleanChart{
-							Label:     "votes",
-							Positives: successes,
-							Negatives: len(tweets) - successes,
-						},
+						chart,
 					)
 				}
 			}
 			return
 		}
 
-		var result *twitter.ProfileTweets
-		pos := 0
-		neg := 0
-		//TODO DO EACH
 		for util.DateToString(fromTime) <= util.DateToString(toTime) {
-			result, err = getAttempts(ctx, false, util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC)), util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 23, 59, 59, 0, time.UTC)))
+			result, err := getAttempts(ctx, false, util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC)), util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 23, 59, 59, 0, time.UTC)))
 			if err == nil {
+				util.Reverse(&result.Data)
 				tweets := result.Data
 				var solution model.GameKey
 				solution, err = gameTracker.Solution(fromTime)
 				if err == nil {
 					successes := 0
+					fails := 0
+					lt, _ := util.StringToDateTime(tweets[0].CreatedAt)
+					lastTime := util.DateToString(time.Date(lt.Year(), lt.Month(), lt.Day(), lt.Hour(), lt.Minute(), lt.Second()+each, 0, time.UTC))
 					for _, tweet := range tweets {
-						if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
-							successes++
+						if tweet.CreatedAt <= lastTime {
+							if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
+								successes++
+							} else {
+								fails++
+							}
+						} else {
+							nt, _ := util.StringToDateTime(lastTime)
+							nextTime := util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
+							chart = append(chart, model.BooleanChart{Label: lastTime + "#" + nextTime, Positives: successes, Negatives: fails})
+							nt, _ = util.StringToDateTime(tweet.CreatedAt)
+							lastTime = util.DateToString(nt)
+							successes = 0
+							fails = 0
+							if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
+								successes++
+							} else {
+								fails++
+							}
 						}
+
 					}
-					pos += successes
-					neg += (len(tweets) - successes)
+					nextTime, _ := util.StringToDateTime(tweets[len(tweets)-1].CreatedAt)
+					chart = append(chart, model.BooleanChart{Label: lastTime + "#" + util.DateToString(nextTime), Positives: successes, Negatives: fails})
 				}
 			}
 			fromTime = fromTime.AddDate(0, 0, 1)
 		}
 		ctx.JSON(
 			http.StatusOK,
-			model.BooleanChart{
-				Label:     "votes",
-				Positives: pos,
-				Negatives: neg,
-			},
+			chart,
 		)
 		return
 	}

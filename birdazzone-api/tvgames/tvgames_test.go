@@ -1,9 +1,11 @@
 package tvgames
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 	"unicode"
 
 	"git.hjkl.gq/team13/birdazzone-api/util"
@@ -29,11 +31,28 @@ func testAPICall(t *testing.T, call func(*gin.Context)) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Params = []gin.Param{{Key: "id", Value: "-1"}}
-	getTvGameById(c)
+	call(c)
 	if w.Code != http.StatusNotFound {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusNotFound, w.Code)
 	}
 	//TODO TEST WITH QUERY PARAM DATE
+
+}
+
+func TestGameAttemptsWParams(t *testing.T) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+
+	c.Params = []gin.Param{{Key: "id", Value: "0"}}
+	//ti := time.Now().AddDate(0, 0, -1)
+	fmt.Println(c.Request)
+
+	//c.Request.URL, _ = url.Parse("?from=" + util.DateToString(time.Date(ti.Year(), ti.Month(), ti.Day(), 0, 0, 0, 0, time.UTC)))
+	//c.Request.URL.Query().Set("from", util.DateToString(time.Date(ti.Year(), ti.Month(), ti.Day(), 0, 0, 0, 0, time.UTC)))
+	gameAttempts(c)
+	if w.Code != http.StatusOK {
+		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
+	}
 }
 
 func TestGetTvGameById(t *testing.T) {
@@ -60,7 +79,25 @@ func testGetAttempts(t *testing.T, successesOnly bool) {
 	if err == nil {
 		t.Fatal("Didn't get expected error")
 	}
-	//TODO TEST WITH QUERY PARAMS FROM AND TO
+	//test from
+	d := time.Now().AddDate(0, 0, -1)
+	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
+	result, err = getAttempts(util.GetTestingGinContext(), successesOnly, util.DateToString(d), "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result == nil || result.Data == nil {
+		t.Fatal("Nil result")
+	}
+	//test from and to
+	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
+	result, err = getAttempts(util.GetTestingGinContext(), successesOnly, util.DateToString(d), util.DateToString(time.Date(d.Year(), d.Month(), d.Day(), 23, 59, 0, 0, time.UTC)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result == nil || result.Data == nil {
+		t.Fatal("Nil result")
+	}
 
 }
 
