@@ -3,7 +3,7 @@
   import ApiRepository from '../api/api-repository'
   import {onBeforeMount, ref} from 'vue'
   import type { Tweet } from '../api/interfaces/tweet'
-  import TimeFilter from './TimeFilter.vue'
+  import FilterTandW from './FilterTweetsWordcloud.vue'
 
   const loading = ref<boolean> (false)
   const error = ref<boolean> (false)
@@ -43,7 +43,7 @@
       Nobody was smart enough to guess &#127773;
     </div> 
     <div v-else class="flex flex-col">
-      <TimeFilter :from="from" :to="to" @change-from="(n) => {from = n; fetchList()}" @change-to="(n) => {to = n; fetchList()}"/>
+      <FilterTandW :from="from" :to="to" @change-from="(n) => {from = n; fetchList()}" @change-to="(n) => {to = n; fetchList()}"/>
       <div class="flex flex-col" v-for="(item,index) in list" :key="index">
         <GuesserListItem :data="item" :index="index" class="flex flex-1"/>
       </div>

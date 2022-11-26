@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { createPopper } from "@popperjs/core";
 import ApiRepository from '../api/api-repository';
 import { SemipolarSpinner } from 'epic-spinners';
+import FilterA from './FilterAerogram.vue'
 
 const error = ref<boolean>(false)
 const loading = ref<boolean>(true)
@@ -15,10 +16,16 @@ const nAttempts = ref<number>(0)
 const canvas = ref(null)
 const see = ref(false)
 const popoverRef = ref(null)
+const from = ref<string>("")
+const to = ref<string>("")
 
 const fetchData = async () => {
   const response = await ApiRepository.getResults(props.id.toString())
-  
+
+  if(from.value != "" && to.value != ""){
+    response = await ApiRepository.getResultsFiltered(props.id.toString(), from.value.toString(), to.value.toString())
+  }
+
   if (response.esit) {
     nFail.value = response.data!.negatives;             // failed attempts
     nSucc.value = response.data!.positives;             // succeded attempts
@@ -91,12 +98,15 @@ const popover = () => {
 </script>
 
 <template>
-
   <div class="bg-foreground font-semibold text-lg rounded-lg p-4 place-self-center z-0" >
 
     <div v-if="loading">
       <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
     </div>
+    <div v-else class="flex flex-col justify-items-end">
+      <FilterA :from="from" :to="to" @change-from="(n) => {from = n; fetchList()}" @change-to="(n) => {to = n; fetchList()}" />
+    </div>
+
     <div v-show="!loading && !error" class="flex items-center">
       <div class="items-center mx-3">
         <div class="text-white m-2">{{nAttempts}} tried</div>

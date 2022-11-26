@@ -22,12 +22,7 @@ export default defineComponent({
 
   data() {
     return {
-      dates: null,          /** to save dates values */
-      sDate: String(null),    /** to save start date */
-      eDate: String(null),    /** to save end date */
-      choosenDates: false,  /** to verify if dates has been chosen */
-      equalDates: ref(false),    /** to verify if dates are equals */
-      diffDates: ref(false),     /** to verify if dates are equals */
+      date: null,          /** to save the date */
       openD: false,         /** to close dates popup */
 
       sTime: String(null),  /** to same start time value */
@@ -35,8 +30,12 @@ export default defineComponent({
       eTime: String(null),  /** to same end time value */
       openET: false,          /** to close end time popup */
 
-      DatesTimes: false,
-      openClose: false,   /** to open/close filters card */
+      sDateTime: String(null),    /** to save start date-time*/
+      eDateTime: String(null),    /** to save end date-time */
+
+      choosenDate: false,         /** to verify if date has been chosen */
+      choosenDatesTimes: false,   /** to verify if times and date have been chosen */
+      openClose: false,           /** to open/close filters card */
     };
   },
 
@@ -46,29 +45,19 @@ export default defineComponent({
       this.openClose = !this.openClose;
     },
 
-    /** DATES */
+    /** DATE */
     closeD() {                          /** to close dates popup */
       this.openD = false;
     },
-    selectDates(){                      /** to confirm selected dates */
-      if (this.dates != null) {              // entered dates
-        this.sDate = this.dates[0];
-        this.eDate = this.dates[1];
-      }   // ELSE -> didnt enter dates -> by default: today
+    disabledAfterToday(date) {          /** to disabilitate days after today in dates popup */
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-      if(this.sDate === this.eDate){        // equal dates
-        this.choosenDates = true;
-        this.equalDates = true;
-      }
-      else {                                // different dates
-        this.sDate = this.sDate + "T00:00:00.000Z";
-        this.eDate = this.eDate + "T00:00:00.000Z";
-        this.equalDates = false;
-        this.diffDates = true;
-      }
-
-      console.log("start date: " + this.sDate);
-      console.log("end date: " + this.eDate);
+      return date > today;
+    },
+    selectDate(){                      /** to confirm date was select */
+      this.choosenDate = true;
+      console.log("date: " + this.date);
     },
 
     /** TIMES */
@@ -78,14 +67,8 @@ export default defineComponent({
     closeET() {                          /** to close end time popup */
       this.openET = false;
     },
-    disabledAfterToday(date) {          /** to disabilitate days after today in dates popup */
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      return date > today;
-    },
     selectTimes(){
-      if(this.sDate == this.eDate && this.sTime != null && this.eTime != null){                 /* entered same valid date: check on entered times */ 
+      if(this.date != null){                                                    /* entered valid date */ 
         if(this.sTime.substring(0, 2) === this.eTime.substring(0, 2))  {            // sTime HH == eTime HH (same hours)
           if(this.sTime.substring(3) > this.eTime.substring(3)){                      // sTime mm > eTime mm -> switch of the two dates
             let box = this.sTime;
@@ -100,21 +83,30 @@ export default defineComponent({
             this.eTime = box;
           }
         }
-        this.sDate = this.sDate + "T" + this.sTime + ":00.000Z";
-        this.eDate = this.eDate + "T" + this.eTime + ":00.000Z";
+        this.sDateTime = this.date + "T" + this.sTime + ":00Z";
+        this.eDateTime = this.date + "T" + this.eTime + ":00Z";
 
-        this.DatesTimes = true;
+        this.choosenDatesTimes = true;
       }
     },
 
     /** GENERAL */
     sendData() {                        /** confirm button */
       this.openCloseFunction();
+
       console.log("from: " + this.from);
       console.log("to: " + this.to);
 
-      console.log("start date: " + this.sDate);
-      console.log("end date: " + this.eDate);
+      console.log("start date: " + this.sDateTime);
+      console.log("end date: " + this.eDateTime);
+
+      this.date = null;
+      this.sTime = String(null);
+      this.eTime = String(null);
+      this.sDateTime = String(null);
+      this.eDateTime = String(null);
+      this.choosenDate = false;
+      this.choosenDatesTimes = false;
     },
     
   },
@@ -134,20 +126,18 @@ export default defineComponent({
 
   <div v-if="openClose" class="z-10 bg-foreground shadow font-semibold text-md rounded-lg m-4 mr-0 p-4 place-self-end">    
     <div class="flex flex-row items-stretch" aria-labelledby="dropdownDividerButton">
-      <label for="Dates" class="justify-self-start self-center text-white w-9">dates</label>
-      <div class="flex justify-self-start" id="Dates">
+      <label for="Date" class="justify-self-start self-center text-white w-9">date</label>
+      <div class="flex justify-self-start" id="Date">
         <date-picker 
           class = "m-2 ml-3"
-          range
           type="date"
-          v-model:value="dates"
+          v-model:value="date"
           v-model:open="openD"
           value-type="format"
           format="YYYY-MM-DD"
-          placeholder="select start and end date"
+          placeholder="select the date"
           :clearable="true"
-          :disabled-date="disabledAfterToday"
-          @change="!equalDates">
+          :disabled-date="disabledAfterToday">
             <template #footer>
               <button class="mx-btn mx-btn-text" @click="closeD()">close</button>
             </template>
@@ -156,12 +146,12 @@ export default defineComponent({
     </div>
     <div class="flex justify-center">
       <button class="font-semibold text-white bg-foreground hover:text-lgreen text-center text-sm" type="button"
-        @click="selectDates()">
-        select dates
+        @click="selectDate()">
+        select date
       </button>
     </div>
 
-    <div v-if="equalDates" class="flex flex-row items-stretch">
+    <div v-if="choosenDate" class="flex flex-row items-stretch">
       <label for="Times" class="justify-self-start self-center text-white w-9">times</label>
       <div class="flex flex-row justify-self-start" id="Times">
         <date-picker 
@@ -192,17 +182,18 @@ export default defineComponent({
             </template>
         </date-picker>
       </div>
-      <div class="flex justify-center">
-        <button class="font-semibold text-white bg-foreground hover:text-lgreen text-center text-sm" type="button" @click="selectTimes()">
-          select times
-        </button>
-      </div>
+    </div>
+    <div class="flex justify-center">
+      <button class="font-semibold text-white bg-foreground hover:text-lgreen text-center text-sm" type="button"
+        @click="selectTimes()">
+        select times
+      </button>
     </div>
 
-    <div v-if="diffDates || DatesTimes" class="flex justify-end mt-3">
+    <div v-if="choosenDatesTimes" class="flex justify-end">
       <button
-        class="font-semibold text-white border border-lgreen bg-foreground hover:bg-lgreen rounded-lg p-2 text-center text-sm"
-        type="button" @click="$emit('changeFrom', sDate); $emit('changeTo', eDate); sendData()">
+        class="font-semibold text-white border-b border-lgreen bg-foreground hover:bg-lgreen rounded-lg p-2 text-center text-sm"
+        type="button" @click="$emit('changeFrom', sDateTime); $emit('changeTo', eDateTime); sendData()">
         confirm
       </button>
     </div>

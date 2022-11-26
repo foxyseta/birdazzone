@@ -6,7 +6,6 @@ import ErrorWidget from '../components/ErrorWidget.vue'
 import WordCloud from '../components/WordCloud.vue'
 import AerogramCard from '../components/AerogramCard.vue'
 import GuesserList from '../components/GuesserList.vue'
-import TimeFilter from '../components/TimeFilter.vue'
 import { SemipolarSpinner } from 'epic-spinners';
 
 const loading = ref<boolean> (true)
