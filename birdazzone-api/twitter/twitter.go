@@ -117,7 +117,7 @@ func GetRecentTweetsFromQuery(query string, startTime string, endTime string, ma
 	return getTweets(
 		"https://api.twitter.com/2/tweets/search/recent",
 		[]any{},
-		util.Pair[string, string]{First: "query", Second: query},
+		util.Pair[string, string]{First: "query", Second: query + " -is:retweet"},
 		util.Pair[string, string]{First: "start_time", Second: startTime},
 		util.Pair[string, string]{First: "end_time", Second: endTime},
 		util.Pair[string, string]{First: "max_results", Second: strconv.Itoa(maxResults)},
