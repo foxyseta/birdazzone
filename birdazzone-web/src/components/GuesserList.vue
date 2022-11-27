@@ -7,11 +7,11 @@ import { SemipolarSpinner } from 'epic-spinners';
 
 const loading = ref<boolean> (false)
 const list = ref<Tweet[]>([])
-const props = defineProps<{gameId: number}>()
+const props = defineProps<{gameId: string}>()
 
 const fetchList = async () => {
   loading.value = true
-  const resp = await ApiRepository.getListOfGuesser(props.gameId.toString())
+  const resp = await ApiRepository.getListOfGuesser(props.gameId)
     if (resp.esit) {
       list.value = resp.data!.entries
       loading.value = false

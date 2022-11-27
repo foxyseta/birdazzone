@@ -9,8 +9,9 @@ import BirdazzoneButton from '../components/BirdazzoneButton.vue'
 import ErrorWidget from '@/components/ErrorWidget.vue'
 import GuesserList from '@/components/GuesserList.vue'
 import { SemipolarSpinner } from 'epic-spinners';
+import Test from '@/components/Test.vue';
 
-const props = defineProps<{id: number}>()
+const props = defineProps<{id: string}>()
 
 const loading = ref<boolean> (true)
 const error = ref<boolean> (false)
@@ -19,7 +20,7 @@ const showList = ref<boolean>(true)
 
 const fetchGame = async () => {
     loading.value = true
-    const resp = await ApiRepository.getTvGameById(props.id.toString())
+    const resp = await ApiRepository.getTvGameById(props.id)
     if (resp.esit) {
       game.value = resp.data
       loading.value = false
@@ -56,10 +57,11 @@ onBeforeMount(fetchGame)
     <!-- Content -->
     <div class="w-full flex justify-evenly flex-wrap">
       <div v-show="showList">
-        <GuesserList  :game-id="props.id"/>
+        <GuesserList :game-id="props.id"/>
       </div>
       <div v-show="!showList" >
-        <GuesserMap :tv-game-id="props.id" />
+        <!--<GuesserMap :game-id="props.id" />-->
+        <Test />
       </div>
       <div class="flex flex-col justify-start">
         <div class="mt-3">

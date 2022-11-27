@@ -6,7 +6,7 @@ import { SemipolarSpinner } from 'epic-spinners';
 
 const error = ref<boolean>(false)
 const loading = ref<boolean>(true)
-const props = defineProps<{ id: number }>()
+const props = defineProps<{ id: string}>()
 const nFail = ref<number>(0)
 const nSucc = ref<number>(0)
 const fail = ref<number>(0)
@@ -17,7 +17,7 @@ const see = ref(false)
 const popoverRef = ref(null)
 
 const fetchData = async () => {
-  const response = await ApiRepository.getResults(props.id.toString())
+  const response = await ApiRepository.getResults(props.id)
   
   if (response.esit) {
     nFail.value = response.data!.negatives;             // failed attempts
@@ -60,9 +60,7 @@ onMounted(async () => {
   const start = 3/2*Math.PI;
 
   const succPerc = (2 * Math.PI - spaceBetween) *success.value;     // 2PI : 1 =  x : success
-  console.log(success.value)
   const failPerc = (2 * Math.PI - spaceBetween) - succPerc;
-  console.log(failPerc)
 
   context.beginPath();    // success
   context.lineCap = 'round';
