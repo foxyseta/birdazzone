@@ -5,7 +5,8 @@
 "@babel/parser@^7.16.4":
   version "7.19.6"
   resolved "https://registry.npmjs.org/@babel/parser/-/parser-7.19.6.tgz"
-  integrity sha512-h1IUp81s2JYJ3mRkdxJgs4UvmSsRvDrx5ICSJbPvtWYv5i1nTBGcBpnog+89rAFMwvvru6E5NUHdBe01UeSzYA==
+  integrity sha51mattia.girolimetto@danfoss.com1
+2-h1IUp81s2JYJ3mRkdxJgs4UvmSsRvDrx5ICSJbPvtWYv5i1nTBGcBpnog+89rAFMwvvru6E5NUHdBe01UeSzYA==
 
 "@babel/runtime@^7.12.5", "@babel/runtime@^7.14.0":
   version "7.20.1"
@@ -2915,7 +2916,6 @@ vue-tsc@^1.0.8:
     "@volar/vue-language-core" "1.0.8"
     "@volar/vue-typescript" "1.0.8"
 
-<<<<<<< HEAD
 vue@^3.0.0:
   version "3.2.45"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.2.45.tgz#94a116784447eb7dbd892167784619fef379b3c8"
@@ -2926,19 +2926,6 @@ vue@^3.0.0:
     "@vue/runtime-dom" "3.2.45"
     "@vue/server-renderer" "3.2.45"
     "@vue/shared" "3.2.45"
-=======
-vue3-openlayers@^0.1.70:
-  version "0.1.70"
-  resolved "https://registry.yarnpkg.com/vue3-openlayers/-/vue3-openlayers-0.1.70.tgz#146d82ca38736c33dbdf998019c2193eb87b3eee"
-  integrity sha512-CxjetaWuMxj3Po9pExCiAnhMPX5jpL6tfMmfXfXoUeOmUyrXaVuHAhXWKYCySWmPFNP7mgdYQCCPVksMIKlzjg==
-  dependencies:
-    file-saver "^2.0.5"
-    jspdf "^2.3.1"
-    ol "^6.14.1"
-    ol-contextmenu "^4.1.0"
-    ol-ext "^3.2.24"
-    proj4 "^2.7.5"
->>>>>>> origin/feat/map
 
 vue@^3.2.41:
   version "3.2.41"
