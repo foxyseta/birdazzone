@@ -16,32 +16,54 @@ const nAttempts = ref<number>(0)
 const canvas = ref(null)
 const see = ref(false)
 const popoverRef = ref(null)
-const from = ref<string>("")
-const to = ref<string>("")
+const from = ref<string>(String(null))
+const to = ref<string>(String(null))
 
 const fetchData = async () => {
-  const response = await ApiRepository.getResults(props.id.toString())
+  //console.log("aerogram card from = " + from.value);
+  //console.log("aerogram card to = " + to.value);
 
-  if(from.value != "" && to.value != ""){
-    response = await ApiRepository.getResultsFiltered(props.id.toString(), from.value.toString(), to.value.toString())
+  if (from.value == null || to.value == null){
+    const response = await ApiRepository.getResults(props.id.toString())
+
+    if (response.esit) {
+      nFail.value = response.data!.negatives;             // failed attempts
+      nSucc.value = response.data!.positives;             // succeded attempts
+      nAttempts.value = nFail.value + nSucc.value;        // total attempts
+
+      success.value = (() => {        // success percentage
+        if (nAttempts.value == 0)
+          return 0;
+        else
+          return nSucc.value / nAttempts.value;   // x : 1 = nSucc : nAttempts
+      })();
+
+      fail.value = 1-success.value;   // fail percentage
+
+    } else {
+      error.value = true
+    }
   }
+  else{
+    const response = await ApiRepository.getResultsFiltered(props.id.toString(), from.value.toString(), to.value.toString())
+    
+    if (response.esit) {
+      nFail.value = response.data!.negatives;             // failed attempts
+      nSucc.value = response.data!.positives;             // succeded attempts
+      nAttempts.value = nFail.value + nSucc.value;        // total attempts
 
-  if (response.esit) {
-    nFail.value = response.data!.negatives;             // failed attempts
-    nSucc.value = response.data!.positives;             // succeded attempts
-    nAttempts.value = nFail.value + nSucc.value;        // total attempts
+      success.value = (() => {        // success percentage
+        if (nAttempts.value == 0)
+          return 0;
+        else
+          return nSucc.value / nAttempts.value;   // x : 1 = nSucc : nAttempts
+      })();
 
-    success.value = (() => {        // success percentage
-      if (nAttempts.value == 0)
-        return 0;
-      else
-        return nSucc.value / nAttempts.value;   // x : 1 = nSucc : nAttempts
-    })();
+      fail.value = 1 - success.value;   // fail percentage
 
-    fail.value = 1-success.value;   // fail percentage
-
-  } else {
-    error.value = true
+    } else {
+      error.value = true
+    }
   }
 }
 
@@ -104,7 +126,7 @@ const popover = () => {
       <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
     </div>
     <div v-else class="flex flex-col justify-items-end">
-      <FilterA :from="from" :to="to" @change-from="(n) => {from = n; fetchList()}" @change-to="(n) => {to = n; fetchList()}" />
+      <FilterA :from="from" :to="to" @change-from-to="(f, t) => {from = f; to = t; fetchData()}" />
     </div>
 
     <div v-show="!loading && !error" class="flex items-center">

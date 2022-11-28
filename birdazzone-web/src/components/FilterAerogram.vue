@@ -9,7 +9,7 @@ import ErrorWidget from './ErrorWidget.vue';
 
 export default defineComponent({
   components: { DatePicker },
-  props: {
+  /*props: {
     from: {
       type: String,
       default: '',
@@ -18,7 +18,7 @@ export default defineComponent({
       type: String,
       default: '',
     }
-  },
+  },*/
 
   data() {
     return {
@@ -36,6 +36,11 @@ export default defineComponent({
     /** GENERAL */
     openCloseFunction() {               /** to open/close filters card */
       this.openClose = !this.openClose;
+    },
+    sendData() {                        /** confirm button */
+      this.openCloseFunction();
+      //console.log("sendData start date: " + this.sDate);
+      //console.log("sendData end date: " + this.eDate);
     },
 
     /** DATES */
@@ -55,27 +60,12 @@ export default defineComponent({
         this.choosenDates = true;
       }   // ELSE -> didnt enter dates -> by default: today
 
-      console.log("start date: " + this.sDate);
-      console.log("end date: " + this.eDate);
-
+      //console.log("selectDates start date: " + this.sDate);
+      //console.log("selectDates end date: " + this.eDate);
     },
-
-    /** GENERAL */
-    sendData() {                        /** confirm button */
-      this.openCloseFunction();
-
-      console.log("from: " + this.from);
-      console.log("to: " + this.to);
-
-      console.log("start date: " + this.sDate);
-      console.log("end date: " + this.eDate);
-
-      this.dates = null;
-      this.sDate = String(null);
-      this.eDate = String(null);
+    modifyDates(){
       this.choosenDates = false;
     },
-    
   },
 });
 
@@ -91,7 +81,7 @@ export default defineComponent({
     </button>
   </div>
 
-  <div v-if="openClose" class="z-10 bg-foreground shadow font-semibold text-md rounded-lg m-2 mr-0 place-self-end">    
+  <div v-if="openClose" class="z-10 bg-foreground font-semibold text-md rounded-lg m-2 mr-0 place-self-end">    
     <div class="flex flex-row items-stretch" aria-labelledby="dropdownDividerButton">
       <label for="Dates" class="justify-self-start self-center text-white text-sm w-9">dates</label>
       <div class="flex justify-self-start" id="Dates">
@@ -106,24 +96,29 @@ export default defineComponent({
           placeholder="select start and end date"
           :clearable="true"
           :disabled-date="disabledAfterToday"
-          @change="selectDates()">
+          :disabled="choosenDates">
             <template #footer>
               <button class="mx-btn mx-btn-text" @click="closeD()">close</button>
             </template>
         </date-picker>
       </div>
     </div>
-    <!--<div class="flex justify-center">
-      <button class="font-semibold text-white bg-foreground hover:text-lgreen text-center text-sm" type="button"
-        @click="selectDates()">
+    <div v-if="choosenDates" class="flex justify-center">
+      <button class="font-semibold text-white hover:text-lgreen text-center text-sm" type="button"
+        @click="modifyDates()">
+        modify dates
+      </button>
+    </div>
+    <div v-else class="flex justify-center">
+      <button class="font-semibold text-white hover:text-lgreen text-center text-sm" type="button" @click="selectDates()">
         select dates
       </button>
-    </div>-->
+    </div>
 
     <div v-if="choosenDates" class="flex justify-end">
       <button
         class="font-semibold text-white border-b border-lgreen bg-foreground hover:bg-lgreen rounded-lg p-2 text-center text-sm"
-        type="button" @click="$emit('changeFrom', sDate); $emit('changeTo', eDate); sendData()">
+        type="button" @click="$emit('changeFromTo', sDate, eDate); sendData()">
         confirm
       </button>
     </div>
