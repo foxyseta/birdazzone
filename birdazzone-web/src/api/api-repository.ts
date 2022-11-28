@@ -13,6 +13,8 @@ export default class ApiRepository {
   private static readonly _TV_GAMES_ID = "/tvgames/{0}"
   private static readonly _RESULTS_ID = "/tvgames/{0}/results"
   private static readonly _TV_GAMES_ID_ATTEMPTS = "/tvgames/{0}/attempts?pageLength={1}&pageIndex={2}"
+  private static readonly _RESULTS_ID_FILTERED = "/tvgames/{0}/results?from={1}&to={2}"
+  private static readonly _TV_GAMES_ID_ATTEMPTS_FILTERED = "/tvgames/{0}/attempts?from={1}&to={2}&pageIndex=1&pageLength=10"
   private static readonly _TV_GAMES_ID_ATTEMPTS_STATS = "/tvgames/{0}/attempts/stats"
   private static readonly _TV_GAMES_ID_SOLUTION = "/tvgames/{0}/solution"
 
@@ -25,8 +27,14 @@ export default class ApiRepository {
   public static readonly getListOfGuesser = (id: string, index: string, itemPerPage: string): Promise<ApiResponse<ApiList<Tweet>>> =>
     ApiManager.get<ApiList<Tweet>>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS, id, itemPerPage, index))
 
+  public static readonly getListOfGuesserFiltered = (id: string, from: string, to: string): Promise<ApiResponse<ApiList<Tweet>>> =>
+    ApiManager.get<ApiList<Tweet>>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_FILTERED, id, from, to))
+
   public static readonly getResults = (id: string): Promise<ApiResponse<Results>> =>
     ApiManager.get<Results>(this.stringFormat(this._BASE_URL + this._RESULTS_ID, id))
+
+  public static readonly getResultsFiltered = (id: string, from: string, to: string): Promise<ApiResponse<Results>> =>
+    ApiManager.get<Results>(this.stringFormat(this._BASE_URL + this._RESULTS_ID_FILTERED, id, from, to))
 
   public static readonly getTvGameAttemptsStat = (id: string): Promise<ApiResponse<ChartEntry[]>> =>
     ApiManager.get<ChartEntry[]>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS, id))

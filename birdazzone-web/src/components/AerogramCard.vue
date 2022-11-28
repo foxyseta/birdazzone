@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { createPopper } from "@popperjs/core";
 import ApiRepository from '../api/api-repository';
 import { SemipolarSpinner } from 'epic-spinners';
+import FilterA from './FilterAerogram.vue'
 
 const error = ref<boolean>(false)
 const loading = ref<boolean>(true)
@@ -15,26 +16,51 @@ const nAttempts = ref<number>(0)
 const canvas = ref(null)
 const see = ref(false)
 const popoverRef = ref(null)
+const from = ref<string>()
+const to = ref<string>()
 
 const fetchData = async () => {
-  const response = await ApiRepository.getResults(props.id.toString())
-  
-  if (response.esit) {
-    nFail.value = response.data!.negatives;             // failed attempts
-    nSucc.value = response.data!.positives;             // succeded attempts
-    nAttempts.value = nFail.value + nSucc.value;        // total attempts
+  if (!from.value || !to.value){
+    const response = await ApiRepository.getResults(props.id.toString())
 
-    success.value = (() => {    // percentage 
-      if (nAttempts.value == 0)
-        return 0;
-      else
-        return nSucc.value / nAttempts.value;   // x : 1 = nSucc : nAttempts
-    })();
+    if (response.esit) {
+      nFail.value = response.data!.negatives;             // failed attempts
+      nSucc.value = response.data!.positives;             // succeded attempts
+      nAttempts.value = nFail.value + nSucc.value;        // total attempts
 
-    fail.value = 1-success.value;
+      success.value = (() => {        // success percentage
+        if (nAttempts.value == 0)
+          return 0;
+        else
+          return nSucc.value / nAttempts.value;   // x : 1 = nSucc : nAttempts
+      })();
 
-  } else {
-    error.value = true
+      fail.value = 1-success.value;   // fail percentage
+
+    } else {
+      error.value = true
+    }
+  }
+  else{
+    const response = await ApiRepository.getResultsFiltered(props.id.toString(), from.value.toString(), to.value.toString())
+    
+    if (response.esit) {
+      nFail.value = response.data!.negatives;             // failed attempts
+      nSucc.value = response.data!.positives;             // succeded attempts
+      nAttempts.value = nFail.value + nSucc.value;        // total attempts
+
+      success.value = (() => {        // success percentage
+        if (nAttempts.value == 0)
+          return 0;
+        else
+          return nSucc.value / nAttempts.value;   // x : 1 = nSucc : nAttempts
+      })();
+
+      fail.value = 1 - success.value;   // fail percentage
+
+    } else {
+      error.value = true
+    }
   }
 }
 
@@ -91,12 +117,15 @@ const popover = () => {
 </script>
 
 <template>
-
   <div class="bg-foreground font-semibold text-lg rounded-lg p-4 place-self-center z-0" >
 
     <div v-if="loading">
       <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
     </div>
+    <div v-else class="flex flex-col justify-items-end">
+      <FilterA :from="from" :to="to" @change-from-to="(f, t) => {from = f; to = t; fetchData()}" />
+    </div>
+
     <div v-show="!loading && !error" class="flex items-center">
       <div class="items-center mx-3">
         <div class="text-white m-2">{{nAttempts}} tried</div>

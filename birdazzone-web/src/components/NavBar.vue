@@ -13,7 +13,7 @@ const items = ref<NavItem[]>([
     url: GAMES_PATH,
     title: "TV GAMES",
     active: window.location.pathname === GAMES_PATH,
-    icon: "/chain.svg"
+    icon: "/tv.svg"
   },
   {
     url: CHESS_PATH, 

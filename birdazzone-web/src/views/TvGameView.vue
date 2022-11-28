@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import ApiRepository from '@/api/api-repository';
-import type { TvGame } from '@/api/interfaces/tv-game';
+import ApiRepository from '../api/api-repository'
+import type { TvGame } from '../api/interfaces/tv-game'
 import { ref, onBeforeMount } from 'vue'
-import WordCloud from '@/components/WordCloud.vue'
-import AerogramCard from '@/components/AerogramCard.vue'
-import ErrorWidget from '@/components/ErrorWidget.vue'
-import GuesserList from '@/components/GuesserList.vue'
+import ErrorWidget from '../components/ErrorWidget.vue'
+import WordCloud from '../components/WordCloud.vue'
+import AerogramCard from '../components/AerogramCard.vue'
+import GuesserList from '../components/GuesserList.vue'
 import { SemipolarSpinner } from 'epic-spinners';
 
 const loading = ref<boolean> (true)
@@ -45,7 +45,7 @@ onBeforeMount(fetchGame)
         {{game?.name.toUpperCase()}}
       </div>
       <div class="w-full flex justify-evenly">
-        <GuesserList :game-id="props.id"/>
+        <GuesserList :game-id="props.id" />
         <div class="flex flex-col justify-start">
           <AerogramCard :id="props.id" />
           <WordCloud :tv-game-id="props.id" />
