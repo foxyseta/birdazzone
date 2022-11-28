@@ -9,7 +9,6 @@ import BirdazzoneButton from '../components/BirdazzoneButton.vue'
 import ErrorWidget from '@/components/ErrorWidget.vue'
 import GuesserList from '@/components/GuesserList.vue'
 import { SemipolarSpinner } from 'epic-spinners';
-import Test from '@/components/Test.vue';
 
 const props = defineProps<{id: string}>()
 
@@ -61,7 +60,7 @@ onBeforeMount(fetchGame)
       </div>
       <div v-show="!showList" >
         <!--<GuesserMap :game-id="props.id" />-->
-        <Test />
+        <GuesserMap/>
       </div>
       <div class="flex flex-col justify-start">
         <div class="mt-3">
