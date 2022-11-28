@@ -16,14 +16,11 @@ const nAttempts = ref<number>(0)
 const canvas = ref(null)
 const see = ref(false)
 const popoverRef = ref(null)
-const from = ref<string>(String(null))
-const to = ref<string>(String(null))
+const from = ref<string>()
+const to = ref<string>()
 
 const fetchData = async () => {
-  //console.log("aerogram card from = " + from.value);
-  //console.log("aerogram card to = " + to.value);
-
-  if (from.value == null || to.value == null){
+  if (!from.value || !to.value){
     const response = await ApiRepository.getResults(props.id.toString())
 
     if (response.esit) {

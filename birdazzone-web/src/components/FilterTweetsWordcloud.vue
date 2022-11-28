@@ -9,29 +9,19 @@ import ErrorWidget from './ErrorWidget.vue';
 
 export default defineComponent({
   components: { DatePicker },
-  /*props: {
-    from: {
-      type: String,
-      default: '',
-    },
-    to: {
-      type: String,
-      default: '',
-    }
-  },*/
-
+  
   data() {
     return {
       date: null,          /** to save the date */
       openD: false,         /** to close date popup */
 
-      sTime: String(null),  /** to same start time value */
+      sTime: null,  /** to same start time value */
       openST: false,          /** to close start time popup */
-      eTime: String(null),  /** to same end time value */
+      eTime: null,  /** to same end time value */
       openET: false,          /** to close end time popup */
 
-      sDateTime: String(null),    /** to save start date-time*/
-      eDateTime: String(null),    /** to save end date-time */
+      sDateTime: null as string | null,    /** to save start date-time*/
+      eDateTime: null as string | null,    /** to save end date-time */
 
       choosenDate: false,         /** to verify if date has been chosen */
       choosenDateTimes: false,   /** to verify if times and date have been chosen */
@@ -45,10 +35,10 @@ export default defineComponent({
       this.openClose = !this.openClose;
       if(this.openClose){
         this.date = null;
-        this.sTime = String(null);
-        this.eTime = String(null);
-        this.sDateTime = String(null);
-        this.eDateTime = String(null);
+        this.sTime = null;
+        this.eTime = null;
+        this.sDateTime = null;
+        this.eDateTime = null;
         this.choosenDate = false;
         this.choosenDateTimes = false;
       }
@@ -84,25 +74,22 @@ export default defineComponent({
       this.openET = false;
     },
     selectTimes(){
-      console.log("date: " + this.date);
-      console.log("sTime: " + this.sTime);
-      console.log("eTime: " + this.eTime);
-
-      if (this.date != null && this.sTime != 'null' && this.eTime != 'null'){            
-        if(this.sTime.substring(0, 2) === this.eTime.substring(0, 2))  {            // sTime HH == eTime HH (same hours)
-          if(this.sTime.substring(3) > this.eTime.substring(3)){                      // sTime mm > eTime mm -> switch of the two dates
+      if(this.date !== null && this.sTime !== null && this.eTime !== null){            
+        if ((this.sTime as string).substring(0, 2) === (this.eTime as string).substring(0, 2))  {            // sTime HH == eTime HH (same hours)
+          if((this.sTime as string).substring(3) > (this.eTime as string).substring(3)){                      // sTime mm > eTime mm -> switch of the two dates
             let box = this.sTime;
             this.sTime = this.eTime;
             this.eTime = box;
           }
         }
         else{                                                                      // sTime HH != eTime HH (different hours)
-          if(this.sTime.substring(0, 2) > this.eTime.substring(0, 2)){                  // sTime HH > eTime HH -> switch of the two
+          if((this.sTime as string).substring(0, 2) > (this.eTime as string).substring(0, 2)){                  // sTime HH > eTime HH -> switch of the two
             let box = this.sTime;
             this.sTime = this.eTime;
             this.eTime = box;
           }
         }
+        
         this.sDateTime = this.date + "T" + this.sTime + ":00Z";
         this.eDateTime = this.date + "T" + this.eTime + ":00Z";
 
@@ -117,11 +104,7 @@ export default defineComponent({
     /** GENERAL */
     sendData() {                        /** confirm button */
       this.openCloseFunction();
-
-      console.log("start date: " + this.sDateTime);
-      console.log("end date: " + this.eDateTime);
     },
-    
   },
 });
 

@@ -10,11 +10,11 @@
   const list = ref<Tweet[]>([])
   const props = defineProps<{gameId: number}>()
 
-  const from = ref<string>("")
-  const to = ref<string>("")
+  const from = ref<string>()
+  const to = ref<string>()
   
   const fetchList = async () => {
-    if(from.value == "" || to.value == ""){
+    if(!from.value || !to.value){
       const resp = await ApiRepository.getListOfGuesser(props.gameId.toString())
       if (resp.esit) {
         list.value = resp.data!.entries

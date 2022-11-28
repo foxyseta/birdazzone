@@ -9,22 +9,12 @@ import ErrorWidget from './ErrorWidget.vue';
 
 export default defineComponent({
   components: { DatePicker },
-  /*props: {
-    from: {
-      type: String,
-      default: '',
-    },
-    to: {
-      type: String,
-      default: '',
-    }
-  },*/
-
+  
   data() {
     return {
       dates: null,          /** to save dates values */
-      sDate: String(null),    /** to save start date */
-      eDate: String(null),    /** to save end date */
+      sDate: null,    /** to save start date */
+      eDate: null,    /** to save end date */
       choosenDates: false,  /** to verify if dates has been chosen */
       openD: false,         /** to close dates popup */
 
@@ -36,11 +26,13 @@ export default defineComponent({
     /** GENERAL */
     openCloseFunction() {               /** to open/close filters card */
       this.openClose = !this.openClose;
+      this.dates = null; 
+      this.sDate = null; 
+      this.eDate = null; 
+      this.choosenDates = false;
     },
     sendData() {                        /** confirm button */
       this.openCloseFunction();
-      //console.log("sendData start date: " + this.sDate);
-      //console.log("sendData end date: " + this.eDate);
     },
 
     /** DATES */
@@ -59,9 +51,6 @@ export default defineComponent({
         this.eDate = this.dates[1];
         this.choosenDates = true;
       }   // ELSE -> didnt enter dates -> by default: today
-
-      //console.log("selectDates start date: " + this.sDate);
-      //console.log("selectDates end date: " + this.eDate);
     },
     modifyDates(){
       this.choosenDates = false;
