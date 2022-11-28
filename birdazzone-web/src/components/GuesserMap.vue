@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import ApiRepository from '@/api/api-repository';
 import type { Coordinates } from '@/api/interfaces/tweet';
-import { onBeforeMount, onMounted, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 
-const w = ref(0)
+const props = defineProps<{gameId: string}>()
+
 const ROME = [ 12.706374170037495, 42.21140846575139 ]
 
 const center = ref<number[]>(ROME)
 const zoom = ref<number>(6)
 const rotation = ref(0)
-const coordinate =ref(ROME)
 const fillColor =ref( '#1eb980')
 const strokeColor =ref( 'white')
 const strokeWidth =ref(3)
@@ -20,8 +20,9 @@ const coordinates = ref<number[][]>([]) // [lat, long]
 const unpackCoordinates = (coordinates: Coordinates) => [coordinates.latitude, coordinates.longitude]
 
 const fetchCoordinates = async () => {
-  const response = await ApiRepository.getListOfGuesser("0")
+  const response = await ApiRepository.getListOfGuesser(props.gameId, "0", "100")
   if (response.esit) {
+    // @ts-ignore
     coordinates.value = response.data!.entries.map(tweet => tweet.coordinates).filter(c => c).map(unpackCoordinates) // Remove undefined and nulls
     console.log(response.data!.entries.map(tweeet => tweeet.coordinates))
     coordinates.value.push(ROME)
@@ -41,8 +42,10 @@ onBeforeMount(async () => {
 
 <template>
 
+<div class="flex justify-center">
+
 <div class="p-5 bg-foreground shadow rounded-xl">
-    <ol-map :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true" style="width: 40rem; height: 40rem">
+    <ol-map :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true" style="height: 50rem; width: 50rem">
 
       <ol-zoom-control />
 
@@ -70,4 +73,5 @@ onBeforeMount(async () => {
 
     </ol-map>
   </div>
+</div>
 </template>

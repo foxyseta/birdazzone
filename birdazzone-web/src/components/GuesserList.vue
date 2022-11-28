@@ -9,7 +9,7 @@ import CardPerPage from './ItemPerPage.vue';
 
   const loading = ref<boolean> (false)
   const list = ref<Tweet[]>([])
-  const props = defineProps<{gameId: number}>()
+  const props = defineProps<{gameId: string}>()
   const max = ref<number>(0)
   const actualPage = ref<number>(1)
   const itemPerPage = ref<number>(5)
@@ -17,7 +17,7 @@ import CardPerPage from './ItemPerPage.vue';
 
   const fetchList = async () => {
     loading.value = true
-    const resp = await ApiRepository.getListOfGuesser(props.gameId.toString(),actualPage.value.toString(), itemPerPage.value.toString())
+    const resp = await ApiRepository.getListOfGuesser(props.gameId, actualPage.value.toString(), itemPerPage.value.toString())
       if (resp.esit) {
         list.value = resp.data!.entries
         max.value = resp.data!.numberOfPages

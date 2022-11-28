@@ -19,6 +19,9 @@ const popoverRef = ref(null)
 const from = ref<string>()
 const to = ref<string>()
 
+const CANVAS_SIZE = 450
+const CIRCLE_RADIUS = 200
+
 const fetchData = async () => {
   if (!from.value || !to.value){
     const response = await ApiRepository.getResults(props.id.toString())
@@ -80,7 +83,7 @@ onMounted(async () => {
   const centerX = canvas.value.width / 2;
   // @ts-ignore
   const centerY = canvas.value.height / 2;
-  const radius = 50;
+  const radius = CIRCLE_RADIUS;
 
   const spaceBetween = 0.33;
   const start = 3/2*Math.PI;
@@ -132,7 +135,7 @@ const popover = () => {
       </div>
 
       <div class="relative z-10">
-        <canvas @mouseover="popover()" class="mr-3 z-10" ref="canvas" width="150" height="150"></canvas>
+        <canvas @mouseover="popover()" class="mr-3 z-10" ref="canvas" :width="CANVAS_SIZE" :height="CANVAS_SIZE"></canvas>
         <div ref="popoverRef" v-bind:class="{'hidden': !see, 'block': see}"
           class="absolute inset-0 text-sm font-semibold text-center rounded-lg bg-lblack p-2">
           <div class="items-center">

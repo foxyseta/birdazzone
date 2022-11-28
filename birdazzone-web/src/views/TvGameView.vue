@@ -2,20 +2,21 @@
 import ApiRepository from '../api/api-repository'
 import type { TvGame } from '../api/interfaces/tv-game'
 import { ref, onBeforeMount } from 'vue'
-import WordCloud from '../components/WordCloud.vue'
 import GuesserMap from '../components/GuesserMap.vue'
-import AerogramCard from '../components/AerogramCard.vue'
 import BirdazzoneButton from '../components/BirdazzoneButton.vue'
 import ErrorWidget from '@/components/ErrorWidget.vue'
-import GuesserList from '@/components/GuesserList.vue'
-import { SemipolarSpinner } from 'epic-spinners';
+import ListTab from './tabs/ListTab.vue'
+import ChartTab from './tabs/ChartTab.vue'
 
 const props = defineProps<{id: string}>()
 
 const loading = ref<boolean> (true)
 const error = ref<boolean> (false)
 const game = ref<TvGame>()
-const showList = ref<boolean>(true)
+
+const showListTab = ref<boolean>(true)
+const showMapTab = ref<boolean>(false)
+const showChartTab = ref<boolean>(false)
 
 const fetchGame = async () => {
     loading.value = true
@@ -28,10 +29,26 @@ const fetchGame = async () => {
     } else {
       error.value = true
     }
-  }
+}
 
-const showMap = () => { showList.value = false }
-const hideMap = () => { showList.value = true }
+const showList = () => {
+  showListTab.value = true
+  showChartTab.value = false
+  showMapTab.value = false
+}
+
+const showChart = () => {
+  showListTab.value = false 
+  showChartTab.value = true
+  showMapTab.value = false
+}
+
+const showMap = () => {
+  showListTab.value = false 
+  showChartTab.value = false
+  showMapTab.value = true
+}
+
 
 onBeforeMount(fetchGame)
 </script>
@@ -49,25 +66,23 @@ onBeforeMount(fetchGame)
 
     <!-- Buttons -->
     <div class="flex justify-start w-100 m-3">
-      <BirdazzoneButton :text="'LIST'" :active="showList" @click="hideMap">ciao</BirdazzoneButton>
-      <BirdazzoneButton :text="'MAP'" :active="!showList" @click="showMap">ciao</BirdazzoneButton>
+      <BirdazzoneButton :text="'LIST'" :active="showListTab" @click="showList">ciao</BirdazzoneButton>
+      <BirdazzoneButton :text="'MAP'" :active="showMapTab" @click="showMap">ciao</BirdazzoneButton>
+      <BirdazzoneButton :text="'CHARTS'" :active="showChartTab" @click="showChart">ciao</BirdazzoneButton>
     </div>
 
     <!-- Content -->
-    <div class="w-full flex justify-evenly flex-wrap">
-      <div v-show="showList">
-        <GuesserList :game-id="props.id"/>
+    <div class="h-screen">
+      <div v-show="showListTab">
+        <ListTab :game-id="props.id" />
       </div>
-      <div v-show="!showList" >
-        <!--<GuesserMap :game-id="props.id" />-->
-        <GuesserMap/>
+      <div v-show="showMapTab" >
+        <GuesserMap :game-id="props.id"/>
       </div>
-      <div class="flex flex-col justify-start">
-        <div class="mt-3">
-          <AerogramCard :id="props.id" />
-          <WordCloud :tv-game-id="props.id" />
-        </div>
+      <div v-show="showChartTab" >
+        <ChartTab :game-id="props.id"/>
       </div>
+
     </div>
   </div>
 </template>
