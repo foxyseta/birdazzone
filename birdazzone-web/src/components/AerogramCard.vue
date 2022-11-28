@@ -7,7 +7,7 @@ import FilterA from './FilterAerogram.vue'
 
 const error = ref<boolean>(false)
 const loading = ref<boolean>(true)
-const props = defineProps<{ id: number }>()
+const props = defineProps<{ id: string}>()
 const nFail = ref<number>(0)
 const nSucc = ref<number>(0)
 const fail = ref<number>(0)
@@ -86,9 +86,7 @@ onMounted(async () => {
   const start = 3/2*Math.PI;
 
   const succPerc = (2 * Math.PI - spaceBetween) *success.value;     // 2PI : 1 =  x : success
-  console.log(success.value)
   const failPerc = (2 * Math.PI - spaceBetween) - succPerc;
-  console.log(failPerc)
 
   context.beginPath();    // success
   context.lineCap = 'round';
