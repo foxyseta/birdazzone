@@ -48,7 +48,7 @@ export default defineComponent({
     closeD() {                          /** to close dates popup */
       this.openD = false;
     },
-    disabledAfterToday(date) {          /** to disabilitate days after today in dates popup */
+    disabledAfterToday(date: Date) {          /** to disabilitate days after today in dates popup */
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
