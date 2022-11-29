@@ -16,11 +16,11 @@ const nAttempts = ref<number>(0)
 const canvas = ref(null)
 const see = ref(false)
 const popoverRef = ref(null)
-const from = ref<string>()
-const to = ref<string>()
+const from = ref<string | null>()
+const to = ref<string | null>()
 
-const CANVAS_SIZE = 450
-const CIRCLE_RADIUS = 200
+const CANVAS_SIZE = 350
+const CIRCLE_RADIUS = 140
 
 const fetchData = async () => {
   if (!from.value || !to.value){
@@ -93,7 +93,7 @@ onMounted(async () => {
 
   context.beginPath();    // success
   context.lineCap = 'round';
-  context.lineWidth = 13;
+  context.lineWidth = 20;
   context.arc(centerX, centerY, radius, start, start + succPerc, false);
   context.strokeStyle = '#1eb980';
   context.stroke();
@@ -102,7 +102,7 @@ onMounted(async () => {
   context.beginPath();    // fail
   context.arc(centerX, centerY, radius, start + succPerc + spaceBetween, start + succPerc + failPerc, false);
   context.strokeStyle = '#ff937f';
-  context.lineWidth = 13;
+  context.lineWidth = 20;
   context.stroke();
   context.closePath();
 });
@@ -118,38 +118,41 @@ const popover = () => {
 </script>
 
 <template>
-  <div class="bg-foreground font-semibold text-lg rounded-lg p-4 place-self-center z-0" >
+  <div class="flex flex-col">
+  <div v-show="!loading && !error" class="flex flex-col justify-items-start mt-6 mb-4">
+    <FilterA :from="from" :to="to" @change-from-to="(f, t) => {from = f; to = t; fetchData()}" />
+  </div>
+
+  <div class="bg-foreground font-semibold text-lg rounded-lg p-3 ml-4 z-0 w-auto" >
 
     <div v-if="loading">
       <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
     </div>
-    <div v-else class="flex flex-col justify-items-end">
-      <FilterA :from="from" :to="to" @change-from-to="(f, t) => {from = f; to = t; fetchData()}" />
-    </div>
 
     <div v-show="!loading && !error" class="flex items-center">
-      <div class="items-center mx-3">
+      <div class="items-center mx-4">
         <div class="text-white m-2">{{nAttempts}} tried</div>
         <div class="m-2"><div class="text-lgreen inline">{{nSucc}}</div><div class="text-white inline"> succeded</div></div>
         <div class="m-2"><div class="text-lred inline">{{nFail}}</div><div class="text-white inline"> failed</div></div>
       </div>
 
-      <div class="relative z-10">
-        <canvas @mouseover="popover()" class="mr-3 z-10" ref="canvas" :width="CANVAS_SIZE" :height="CANVAS_SIZE"></canvas>
+      <div class="relative z-10 mt-0">
+        <canvas @mouseover="popover()" class="z-10" ref="canvas" :width="CANVAS_SIZE" :height="CANVAS_SIZE"></canvas>
         <div ref="popoverRef" v-bind:class="{'hidden': !see, 'block': see}"
-          class="absolute inset-0 text-sm font-semibold text-center rounded-lg bg-lblack p-2">
+          class="absolute text-sm font-semibold text-center rounded-lg bg-lblack p-2">
           <div class="items-center">
               <div class="text-lred">failed</div>
               <div class="text-lgreen">succeded</div>
           </div>
         </div>
-        <div class="bottom-0 left-0 w-full ml-6">
-          <div class="space-x-6">
+        <div class="bottom-0 left-0 w-full">
+          <div class="flex space-x-6 justify-center">
             <div class="text-lred inline">{{ (fail * 100).toFixed(0) }}%</div>
             <div class="text-lgreen inline">{{ (success * 100).toFixed(0) }}%</div>
           </div>
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>

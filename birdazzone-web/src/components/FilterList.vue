@@ -111,7 +111,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="flex justify-end">
+  <div class="flex justify-start">
     <button class="font-semibold text-white text-sm border border-lgreen bg-foreground hover:bg-lgreen rounded-lg px-4 py-2 text-center inline-flex items-center" type="button" @click="openCloseFunction()">
       <svg class="mr-2 w-4 h-4" alt="arrow down" aria-hidden="true" fill="none" stroke="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -120,7 +120,7 @@ export default defineComponent({
     </button>
   </div>
 
-  <div v-if="openClose" class="z-10 bg-foreground shadow font-semibold text-md rounded-lg m-4 mr-0 p-4 place-self-end">    
+  <div v-if="openClose" class="z-10 bg-foreground shadow font-semibold text-md rounded-lg m-4 ml-2 p-4 place-self-start">    
     <div class="flex flex-row items-stretch justify-center">
       <label for="Date" class="justify-self-center self-center text-sm text-white w-7">date</label>
       <div class="flex justify-self-center" id="Date">
@@ -155,7 +155,7 @@ export default defineComponent({
     </div>
 
     <div v-if="choosenDate" class="flex flex-row items-stretch justify-between p-5 pt-2 pb-0">
-      <label for="Times" class="justify-self-center self-start text-sm text-white w-7 pt-9">times</label>
+      <label for="Times" class="justify-self-center self-start text-sm text-white w-10 pt-9">times</label>
       <div class="flex flex-col justify-self-center" id="Times">
         <date-picker 
           class = "m-2 mr-4"

@@ -2,6 +2,7 @@
 import ApiRepository from '@/api/api-repository';
 import type { Coordinates } from '@/api/interfaces/tweet';
 import { onBeforeMount, ref } from 'vue'
+import FilterMap from './FilterList.vue'
 
 const props = defineProps<{gameId: string}>()
 
@@ -16,21 +17,39 @@ const strokeWidth =ref(3)
 const radius =ref(10)
 const projection = ref("EPSG:4326")
 const coordinates = ref<number[][]>([]) // [lat, long]
+const from = ref<string | null>()
+const to = ref<string | null>()
 
 const unpackCoordinates = (coordinates: Coordinates) => [coordinates.latitude, coordinates.longitude]
 
 const fetchCoordinates = async () => {
-  const response = await ApiRepository.getListOfGuesser(props.gameId, "0", "100")
-  if (response.esit) {
-    // @ts-ignore
-    coordinates.value = response.data!.entries.map(tweet => tweet.coordinates).filter(c => c).map(unpackCoordinates) // Remove undefined and nulls
-    console.log(response.data!.entries.map(tweeet => tweeet.coordinates))
-    coordinates.value.push(ROME)
-    coordinates.value.push([ROME[0], ROME[1] +2])
-    coordinates.value.push([ROME[0] +0.1, ROME[1] +0.1])
-    console.log(coordinates.value)
-  } else {
+  if(!from.value || !to.value){
+    const response = await ApiRepository.getListOfGuesser(props.gameId, "0", "100")
+    if (response.esit) {
+      // @ts-ignore
+      coordinates.value = response.data!.entries.map(tweet => tweet.coordinates).filter(c => c).map(unpackCoordinates) // Remove undefined and nulls
+      console.log(response.data!.entries.map(tweeet => tweeet.coordinates))
+      coordinates.value.push(ROME)
+      coordinates.value.push([ROME[0], ROME[1] +2])
+      coordinates.value.push([ROME[0] +0.1, ROME[1] +0.1])
+      console.log(coordinates.value)
+    } else {
 
+    }
+  }
+  else{
+    const response = await ApiRepository.getListOfGuesserFiltered(props.gameId, from.value.toString(), to.value.toString(), "0", "100")
+    if (response.esit) {
+      // @ts-ignore
+      coordinates.value = response.data!.entries.map(tweet => tweet.coordinates).filter(c => c).map(unpackCoordinates) // Remove undefined and nulls
+      console.log(response.data!.entries.map(tweeet => tweeet.coordinates))
+      coordinates.value.push(ROME)
+      coordinates.value.push([ROME[0], ROME[1] + 2])
+      coordinates.value.push([ROME[0] + 0.1, ROME[1] + 0.1])
+      console.log(coordinates.value)
+    } else {
+
+    }
   }
 }
 
@@ -42,9 +61,12 @@ onBeforeMount(async () => {
 
 <template>
 
-<div class="flex justify-center">
+<div class="flex">
+  <div class="flex flex-col m-6 mr-8 ml-20">
+    <FilterMap :from="from" :to="to" @change-from-to="(f, t) => {from = f; to = t; fetchCoordinates()}" />
+  </div>
 
-<div class="p-5 bg-foreground shadow rounded-xl">
+  <div class="flex mt-6 p-5 bg-foreground shadow rounded-xl justify-center">
     <ol-map :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true" style="height: 50rem; width: 50rem">
 
       <ol-zoom-control />

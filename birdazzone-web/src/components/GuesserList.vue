@@ -5,11 +5,11 @@
   import type { Tweet } from '@/api/interfaces/tweet';
   import { SemipolarSpinner } from 'epic-spinners';
   import PaginationBar from '../components/PaginationBar.vue';
-import CardPerPage from './ItemPerPage.vue';
+  import CardPerPage from './ItemPerPage.vue';
 
   const loading = ref<boolean> (false)
   const list = ref<Tweet[]>([])
-  const props = defineProps<{gameId: string}>()
+  const props = defineProps<{gameId: string, from: string | null, to: string | null}>()
   const max = ref<number>(0)
   const actualPage = ref<number>(1)
   const itemPerPage = ref<number>(5)
@@ -17,13 +17,24 @@ import CardPerPage from './ItemPerPage.vue';
 
   const fetchList = async () => {
     loading.value = true
-    const resp = await ApiRepository.getListOfGuesser(props.gameId, actualPage.value.toString(), itemPerPage.value.toString())
+    if(!props.from || !props.to){
+      const resp = await ApiRepository.getListOfGuesser(props.gameId, actualPage.value.toString(), itemPerPage.value.toString())
       if (resp.esit) {
         list.value = resp.data!.entries
         max.value = resp.data!.numberOfPages
         loading.value = false
         firstLoad.value = false
       }
+    }
+    else{
+      const resp = await ApiRepository.getListOfGuesserFiltered(props.gameId, props.from, props.to, actualPage.value.toString(), itemPerPage.value.toString())
+      if (resp.esit) {
+        list.value = resp.data!.entries
+        max.value = resp.data!.numberOfPages
+        loading.value = false
+        firstLoad.value = false
+      }
+    }
   }
 
   onBeforeMount(fetchList)
