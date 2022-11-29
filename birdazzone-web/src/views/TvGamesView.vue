@@ -27,7 +27,7 @@ onBeforeMount(fetchTvGames)
   <div v-else class="text-center">
     <h1 class="text-4xl font-black text-lgreen">TV GAMES</h1>
   </div>
-  <div class="flex flex-col justify-evenly">
+  <div class="flex flex-col justify-evenly h-screen">
     <div v-for="game in games">
       <RouterLink :to="`/tv-games/${game.id}`">
         <div class="rounded shadow bg-foreground py-9 px-9">

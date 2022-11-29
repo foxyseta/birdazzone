@@ -6,7 +6,7 @@ import type { ChartEntry } from '@/api/interfaces/chart-entry';
 import type { Solution } from '@/api/interfaces/solution';
 import { SemipolarSpinner } from 'epic-spinners';
 
-const props = defineProps<{tvGameId: number}>()
+const props = defineProps<{tvGameId: string}>()
 const svgString = ref<string>()
 const loading = ref<boolean>(true)
 
@@ -37,10 +37,10 @@ const generateCloudOptions = (entries: ChartEntry[], solution: Solution): WordCl
 })
 
 const fetchSolution = async (): Promise<Solution|undefined> => 
-  (await ApiRepository.getTvGameSolutionById(props.tvGameId.toString())).data
+  (await ApiRepository.getTvGameSolutionById(props.tvGameId)).data
 
 const fetchStats = async (): Promise<ChartEntry[]|undefined> => 
-  (await ApiRepository.getTvGameAttemptsStat(props.tvGameId.toString())).data
+  (await ApiRepository.getTvGameAttemptsStat(props.tvGameId)).data
 
 const fetchCloud = async (opts: WordCloudOptions) => {
   const response = await ApiRepository.postWordCloudData(opts)

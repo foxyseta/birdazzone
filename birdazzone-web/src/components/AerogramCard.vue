@@ -3,10 +3,11 @@ import { ref, onMounted } from 'vue'
 import { createPopper } from "@popperjs/core";
 import ApiRepository from '../api/api-repository';
 import { SemipolarSpinner } from 'epic-spinners';
+import FilterA from './FilterAerogram.vue'
 
 const error = ref<boolean>(false)
 const loading = ref<boolean>(true)
-const props = defineProps<{ id: number }>()
+const props = defineProps<{ id: string}>()
 const nFail = ref<number>(0)
 const nSucc = ref<number>(0)
 const fail = ref<number>(0)
@@ -15,26 +16,54 @@ const nAttempts = ref<number>(0)
 const canvas = ref(null)
 const see = ref(false)
 const popoverRef = ref(null)
+const from = ref<string>()
+const to = ref<string>()
+
+const CANVAS_SIZE = 450
+const CIRCLE_RADIUS = 200
 
 const fetchData = async () => {
-  const response = await ApiRepository.getResults(props.id.toString())
-  
-  if (response.esit) {
-    nFail.value = response.data!.negatives;             // failed attempts
-    nSucc.value = response.data!.positives;             // succeded attempts
-    nAttempts.value = nFail.value + nSucc.value;        // total attempts
+  if (!from.value || !to.value){
+    const response = await ApiRepository.getResults(props.id.toString())
 
-    success.value = (() => {    // percentage 
-      if (nAttempts.value == 0)
-        return 0;
-      else
-        return nSucc.value / nAttempts.value;   // x : 1 = nSucc : nAttempts
-    })();
+    if (response.esit) {
+      nFail.value = response.data!.negatives;             // failed attempts
+      nSucc.value = response.data!.positives;             // succeded attempts
+      nAttempts.value = nFail.value + nSucc.value;        // total attempts
 
-    fail.value = 1-success.value;
+      success.value = (() => {        // success percentage
+        if (nAttempts.value == 0)
+          return 0;
+        else
+          return nSucc.value / nAttempts.value;   // x : 1 = nSucc : nAttempts
+      })();
 
-  } else {
-    error.value = true
+      fail.value = 1-success.value;   // fail percentage
+
+    } else {
+      error.value = true
+    }
+  }
+  else{
+    const response = await ApiRepository.getResultsFiltered(props.id.toString(), from.value.toString(), to.value.toString())
+    
+    if (response.esit) {
+      nFail.value = response.data!.negatives;             // failed attempts
+      nSucc.value = response.data!.positives;             // succeded attempts
+      nAttempts.value = nFail.value + nSucc.value;        // total attempts
+
+      success.value = (() => {        // success percentage
+        if (nAttempts.value == 0)
+          return 0;
+        else
+          return nSucc.value / nAttempts.value;   // x : 1 = nSucc : nAttempts
+      })();
+
+      fail.value = 1 - success.value;   // fail percentage
+
+    } else {
+      error.value = true
+    }
   }
 }
 
@@ -54,15 +83,13 @@ onMounted(async () => {
   const centerX = canvas.value.width / 2;
   // @ts-ignore
   const centerY = canvas.value.height / 2;
-  const radius = 50;
+  const radius = CIRCLE_RADIUS;
 
   const spaceBetween = 0.33;
   const start = 3/2*Math.PI;
 
   const succPerc = (2 * Math.PI - spaceBetween) *success.value;     // 2PI : 1 =  x : success
-  console.log(success.value)
   const failPerc = (2 * Math.PI - spaceBetween) - succPerc;
-  console.log(failPerc)
 
   context.beginPath();    // success
   context.lineCap = 'round';
@@ -91,12 +118,15 @@ const popover = () => {
 </script>
 
 <template>
-
   <div class="bg-foreground font-semibold text-lg rounded-lg p-4 place-self-center z-0" >
 
     <div v-if="loading">
       <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
     </div>
+    <div v-else class="flex flex-col justify-items-end">
+      <FilterA :from="from" :to="to" @change-from-to="(f, t) => {from = f; to = t; fetchData()}" />
+    </div>
+
     <div v-show="!loading && !error" class="flex items-center">
       <div class="items-center mx-3">
         <div class="text-white m-2">{{nAttempts}} tried</div>
@@ -105,7 +135,7 @@ const popover = () => {
       </div>
 
       <div class="relative z-10">
-        <canvas @mouseover="popover()" class="mr-3 z-10" ref="canvas" width="150" height="150"></canvas>
+        <canvas @mouseover="popover()" class="mr-3 z-10" ref="canvas" :width="CANVAS_SIZE" :height="CANVAS_SIZE"></canvas>
         <div ref="popoverRef" v-bind:class="{'hidden': !see, 'block': see}"
           class="absolute inset-0 text-sm font-semibold text-center rounded-lg bg-lblack p-2">
           <div class="items-center">

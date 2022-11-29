@@ -1,21 +1,26 @@
 <script setup lang="ts">
-import ApiRepository from '@/api/api-repository';
-import type { TvGame } from '@/api/interfaces/tv-game';
+import ApiRepository from '../api/api-repository'
+import type { TvGame } from '../api/interfaces/tv-game'
 import { ref, onBeforeMount } from 'vue'
-import WordCloud from '@/components/WordCloud.vue'
-import AerogramCard from '@/components/AerogramCard.vue'
+import GuesserMap from '../components/GuesserMap.vue'
+import BirdazzoneButton from '../components/BirdazzoneButton.vue'
 import ErrorWidget from '@/components/ErrorWidget.vue'
-import GuesserList from '@/components/GuesserList.vue'
-import { SemipolarSpinner } from 'epic-spinners';
+import ListTab from './tabs/ListTab.vue'
+import ChartTab from './tabs/ChartTab.vue'
+
+const props = defineProps<{id: string}>()
 
 const loading = ref<boolean> (true)
 const error = ref<boolean> (false)
 const game = ref<TvGame>()
-const props = defineProps<{id: number}>()
+
+const showListTab = ref<boolean>(true)
+const showMapTab = ref<boolean>(false)
+const showChartTab = ref<boolean>(false)
 
 const fetchGame = async () => {
     loading.value = true
-    const resp = await ApiRepository.getTvGameById(props.id.toString())
+    const resp = await ApiRepository.getTvGameById(props.id)
     if (resp.esit) {
       game.value = resp.data
       loading.value = false
@@ -26,6 +31,25 @@ const fetchGame = async () => {
     }
 }
 
+const showList = () => {
+  showListTab.value = true
+  showChartTab.value = false
+  showMapTab.value = false
+}
+
+const showChart = () => {
+  showListTab.value = false 
+  showChartTab.value = true
+  showMapTab.value = false
+}
+
+const showMap = () => {
+  showListTab.value = false 
+  showChartTab.value = false
+  showMapTab.value = true
+}
+
+
 onBeforeMount(fetchGame)
 </script>
 <template>
@@ -33,24 +57,32 @@ onBeforeMount(fetchGame)
   <div v-if="error" class="flex justify-center items-center w-full">
     <ErrorWidget />
   </div>
-
-  <div v-else class="w-full">
-    <!-- Loading -->
-    <div class="w-full h-full flex justify-center items-center" v-if="loading">
-      <semipolar-spinner :animation-duration="2000" :size="50" color="#1eb980" />
+  <!-- Success -->
+  <div v-else class="pl-4 w-full flex flex-col justify-start">
+    <!-- Title -->
+    <div class="shadow-4xl rounded-lg text-white bg-lgreen text-4xl font-semibold py-3 px-9 my-8 m-3">
+      {{game?.name.toUpperCase()}}
     </div>
-    <!-- Success -->
-    <div v-else class="flex flex-col items-center">
-      <div class="rounded-lg text-white bg-lgreen text-4xl font-semibold py-3 px-9 my-8 m-3">
-        {{game?.name.toUpperCase()}}
+
+    <!-- Buttons -->
+    <div class="flex justify-start w-100 m-3">
+      <BirdazzoneButton :text="'LIST'" :active="showListTab" @click="showList">ciao</BirdazzoneButton>
+      <BirdazzoneButton :text="'MAP'" :active="showMapTab" @click="showMap">ciao</BirdazzoneButton>
+      <BirdazzoneButton :text="'CHARTS'" :active="showChartTab" @click="showChart">ciao</BirdazzoneButton>
+    </div>
+
+    <!-- Content -->
+    <div class="h-screen">
+      <div v-show="showListTab">
+        <ListTab :game-id="props.id" />
       </div>
-      <div class="w-full flex justify-evenly">
-        <GuesserList :game-id="props.id"/>
-        <div class="flex flex-col justify-start">
-          <AerogramCard :id="props.id" />
-          <WordCloud :tv-game-id="props.id" />
-        </div>
+      <div v-show="showMapTab" >
+        <GuesserMap :game-id="props.id"/>
       </div>
+      <div v-show="showChartTab" >
+        <ChartTab :game-id="props.id"/>
+      </div>
+
     </div>
   </div>
 </template>
