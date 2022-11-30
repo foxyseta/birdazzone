@@ -8,20 +8,24 @@ interface NavItem {
   icon: string
   active: boolean
 }
+
 const items = ref<NavItem[]>([
   {
     url: GAMES_PATH,
     title: "TV GAMES",
-    active: window.location.pathname === GAMES_PATH,
+    active: true,
     icon: "/tv.svg"
   },
   {
     url: CHESS_PATH, 
     title: "CHESS",
-    active: window.location.pathname === CHESS_PATH,
+    active: false,
     icon: "/chess.svg"
   }
 ])
+
+const select = (url: string) => 
+  items.value.forEach(x => x.active = (x.url === url))
 
 </script>
 <template>
@@ -36,7 +40,7 @@ const items = ref<NavItem[]>([
          <li>
             <div class="my-3" v-for="item in items">
             <RouterLink :to="item.url">
-              <div class="flex text-white items-center p-2 font-normal rounded-lg">
+              <div @click="select(item.url)" class="flex text-white items-center p-2 font-normal rounded-lg">
                 <div v-if="item.active" class="flex items-center" >
                   <img :src="item.icon" alt="An icon for the current category" class="white-filter icon" /> 
                   <h2 class="ml-3 font-bold text-white">{{ item.title }}</h2>
