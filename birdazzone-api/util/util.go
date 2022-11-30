@@ -90,6 +90,11 @@ func StringToDate(d string) (time.Time, error) {
 	return t, err
 }
 
+func StringToDateTime(d string) (time.Time, error) {
+	t, err := time.Parse(time.RFC3339, d)
+	return t, err
+}
+
 func DateToString(d time.Time) string {
 	return d.UTC().Format(time.RFC3339)
 }
