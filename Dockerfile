@@ -6,13 +6,13 @@ WORKDIR /app
 
 COPY go.mod ./
 COPY go.sum ./
-COPY docs ./docs
 RUN go mod download
 
 COPY . ./
 
+RUN apk add --no-cache --virtual .build-deps bash gcc musl-dev openssl git
 RUN go install github.com/swaggo/swag/cmd/swag@latest
-RUN swag init
+RUN swag init #--parseDependency
 
 RUN go build -o /birdazzone-api
 

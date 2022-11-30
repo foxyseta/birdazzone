@@ -1,13 +1,20 @@
 package gametracker
 
-import "git.hjkl.gq/team13/birdazzone-api/model"
+import (
+	"time"
 
-type GameSolutionGetter func() (string, error)
+	"git.hjkl.gq/team13/birdazzone-api/model"
+)
+
+type GameSolutionGetter func(time.Time) (model.GameKey, error)
+type LastGameSolutionGetter func() (model.GameKey, error)
 
 type GameTracker struct {
-	Game     model.Game
-	Query    string
-	Solution GameSolutionGetter
+	Game         model.Game
+	Query        string
+	Solution     GameSolutionGetter
+	LastSolution LastGameSolutionGetter
+	Start        int
 }
 
 func (gt *GameTracker) String() string {

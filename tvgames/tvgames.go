@@ -1,6 +1,7 @@
 package tvgames
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -9,16 +10,19 @@ import (
 	"unicode"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
+	"git.hjkl.gq/team13/birdazzone-api/tvgames/birdazzone"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/gametracker"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/ghigliottina"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
 	"github.com/gin-gonic/gin"
+	geojson "github.com/paulmach/go.geojson"
 	"github.com/swaggo/swag/example/celler/httputil"
 )
 
 var gameTrackers = []gametracker.GameTracker{
 	ghigliottina.GetGhigliottinaTracker(),
+	birdazzone.GetBirdazzoneTracker(),
 }
 
 var gameTrackersById = map[int]*gametracker.GameTracker{}
@@ -37,22 +41,23 @@ func TvGamesGroup(group *gin.RouterGroup) {
 }
 
 // getTvGames godoc
-// @Summary     Get all TV games
-// @Tags        tvgames
-// @Produce     json
-// @Success     200 {array} model.Game
-// @Router      /tvgames	[get]
+// @Summary Get all TV games
+// @Tags    tvgames
+// @Produce json
+// @Success 200 {array} model.Game
+// @Router  /tvgames [get]
 func getTvGames(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, games)
 }
 
 // getTvGameById godoc
-// @Summary     Get TV game
-// @Tags        tvgames
-// @Produce     json
-// @Success     200 {object} model.Game
-// @Param       id	path	int	true	"ID to search"
-// @Router      /tvgames/{id} [get]
+// @Summary Get TV game
+// @Tags    tvgames
+// @Produce json
+// @Param   id  path     int true "ID to search"
+// @Success 200 {object} model.Game
+// @Failure 404 {object} model.Error "game id not found"
+// @Router  /tvgames/{id} [get]
 func getTvGameById(ctx *gin.Context) {
 	game, err := util.IdToObject(ctx, gamesById)
 	if err == nil {
@@ -61,30 +66,55 @@ func getTvGameById(ctx *gin.Context) {
 }
 
 // gameSolution godoc
-// @Summary     Retrieve game's solution
-// @Tags        tvgames
-// @Produce     json
-// @Param       id	path	string	true	"Game to query"
-// @Success     200 {string} string
-// @Failure     404	{string}	string  "game id not found"
-// @Router      /tvgames/{id}/solution [get]
+// @Summary Retrieve game's solution
+// @Tags    tvgames
+// @Produce json
+// @Param   id   path     string true  "Game to query"
+// @Param   date query    string false "Date to query; if not specified, last game instance is considered" Format(date)
+// @Success 200  {object} model.GameKey
+// @Success 204  {string} string      "No game instance has been played"
+// @Failure 400  {object} model.Error "integer parsing error (id) or error while parsing to date"
+// @Failure 404  {object} model.Error "game id not found"
+// @Failure 500  {object} model.Error "(internal server error)"
+// @Router  /tvgames/{id}/solution [get]
 func gameSolution(ctx *gin.Context) {
+
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
 		return
 	}
-	solution := gameTracker.Solution
-	if solution != nil {
-		s, err := gameTracker.Solution()
-		if err == nil {
-			ctx.JSON(http.StatusOK, gin.H{"solution": s})
+
+	date_str, hasDate := ctx.GetQuery("date")
+	var date time.Time
+	var sol model.GameKey
+	if hasDate {
+		date, err = util.StringToDate(date_str)
+		if err != nil {
+			httputil.NewError(ctx, http.StatusBadRequest,
+				fmt.Errorf("date %s is not well-formed (YYYY-MM-DD)", date_str))
+			return
+		}
+		if gameTracker.Solution != nil {
+			sol, err = gameTracker.Solution(date)
 		} else {
-			httputil.NewError(ctx, http.StatusInternalServerError, err)
+			httputil.NewError(ctx, http.StatusInternalServerError,
+				fmt.Errorf("missing solution getter for %T", gameTracker))
 		}
 	} else {
-		httputil.NewError(ctx, http.StatusInternalServerError,
-			fmt.Errorf("Missing solution getter for %T", gameTracker))
+		if gameTracker.Solution != nil {
+			sol, err = gameTracker.LastSolution()
+		} else {
+			httputil.NewError(ctx, http.StatusInternalServerError,
+				fmt.Errorf("missing last solution getter for %T", gameTracker))
+		}
 	}
+
+	if err == nil {
+		ctx.JSON(http.StatusOK, sol)
+	} else {
+		httputil.NewError(ctx, http.StatusInternalServerError, err)
+	}
+
 }
 
 func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, error) {
@@ -94,13 +124,13 @@ func getAttempts(ctx *gin.Context, successesOnly bool) (*twitter.ProfileTweets, 
 	}
 	query := gameTracker.Query
 	if successesOnly {
-		solution, err := gameTracker.Solution()
+		solution, err := gameTracker.LastSolution() // TODO: implement filter based on time
 		if err != nil {
 			return nil, err
 		}
-		query += " " + solution
+		query += " " + solution.Key
 	}
-	return twitter.GetTweetsFromHashtag(query, util.LastInstantAtGivenTime(time.Now(), 18))
+	return twitter.GetManyRecentTweetsFromQuery(query, util.LastInstantAtGivenTime(time.Now(), gameTracker.Start), "")
 }
 
 func toLowerAlphaOnly(r rune) rune {
@@ -143,24 +173,38 @@ func tweetTextToAttempt(text string) string {
 }
 
 // gameAttempts godoc
-// @Summary     Retrieve game's attempts
-// @Tags        tvgames
-// @Produce     json
-// @Param       id path string true "Game to query"
-// @Param       pageIndex query int false "Number of the page to query" minimum(1) default(1)
-// @Param       pageLength query int false "Length of the page to query" minimum(1) default(10)
-// @Success     200 {object} model.Page[model.Tweet]
-// @Failure     400	{string}	string  "integer parsing error (pageIndex)"
-// @Failure     400	{string}	string  "pageIndex < 1"
-// @Failure     400	{string}	string  "integer parsing error (pageLength)"
-// @Failure     400	{string}	string  "pageLength < 1"
-// @Failure     404	{string}	string  "game id not found"
-// @Router      /tvgames/{id}/attempts [get]
+// @Summary Retrieve game's attempts
+// @Tags    tvgames
+// @Produce json
+// @Param   id         path     string true  "Game to query"
+// @Param   from       query    string false "Starting instant of the time interval used to filter the tweets. If not specified, the beginning of the last game instance is used"                                                                                    Format(date-time)
+// @Param   to         query    string false "Ending instant of the time interval used to filter the tweets. Must be later than but in the same day of the starting instant. If not specified, the ending of the game happening during the starting instant is used" Format(date-time)
+// @Param   pageIndex  query    int    false "Index of the page to query"                                                                                                                                                                                            minimum(1) default(1)
+// @Param   pageLength query    int    false "Length of the page to query"                                                                                                                                                                                           minimum(1) default(10)
+// @Success 200        {object} model.Page[model.Tweet]
+// @Success 204        {string} string      "No game instance has been played"
+// @Failure 400        {object} model.Error "integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id)"
+// @Failure 404        {object} model.Error "game id not found"
+// @Failure 500        {object} model.Error "(internal server error)"
+// @Router  /tvgames/{id}/attempts [get]
 func gameAttempts(ctx *gin.Context) {
 	var pageIndex, pageLength int
 	pageIndex, err := strconv.Atoi(ctx.DefaultQuery("pageIndex", "1"))
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex)"))
+		return
+	}
+	if pageIndex < 1 {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageIndex < 1"))
+		return
+	}
 	pageLength, err = strconv.Atoi(ctx.DefaultQuery("pageLength", "1"))
 	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageLength)"))
+		return
+	}
+	if pageLength < 1 {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageLength < 1"))
 		return
 	}
 	result, err := getAttempts(ctx, true)
@@ -170,16 +214,27 @@ func gameAttempts(ctx *gin.Context) {
 	}
 	tweets := result.Data
 	util.Reverse(&tweets)
+	// users
 	usersById := make(map[string]twitter.Profile, len(result.Includes.Users))
 	for _, user := range result.Includes.Users {
 		usersById[user.ID] = user
+	}
+	// places
+	placesById := make(map[string]twitter.Place, len(result.Includes.Places))
+	for _, place := range result.Includes.Places {
+		placesById[place.ID] = place
 	}
 	n := len(tweets)
 	from := util.Max(0, util.Min(pageLength*(pageIndex-1), n-1))
 	res := make([]model.Tweet, util.Min(from+pageLength, n)-from)
 	for i := range res {
 		tweet := tweets[from+i]
-		res[i] = model.MakeTweet(tweet, usersById[tweet.AuthorId])
+		var geometry *geojson.Geometry
+		if tweet.Geo != nil {
+			geo := placesById[tweet.Geo.PlaceId].Geo
+			geometry = &geo
+		}
+		res[i] = model.MakeTweet(tweet, usersById[tweet.AuthorId], geometry)
 	}
 	ctx.JSON(http.StatusOK, model.Page[model.Tweet]{Entries: res, NumberOfPages: (n + pageLength - 1) / pageLength})
 }
@@ -194,7 +249,7 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 		return nil, err
 	}
 	tweets := result.Data
-	solution, err := gameTracker.Solution()
+	solution, err := gameTracker.LastSolution() // TODO: implement filter based on time
 	if err != nil {
 		return nil, err
 	}
@@ -202,8 +257,8 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	for _, tweet := range tweets {
 		text := strings.ToLower(tweet.Text)
 		var attempt string
-		if strings.Contains(text, solution) {
-			attempt = solution
+		if strings.Contains(text, solution.Key) {
+			attempt = solution.Key
 		} else {
 			attempt = tweetTextToAttempt(text)
 		}
@@ -226,42 +281,51 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	return chart, nil
 }
 
-// gameAttempts godoc
-// @Summary     Retrieve game's attempts' frequencies
-// @Tags        tvgames
-// @Produce     json
-// @Param       id path string true "Game to query"
-// @Success     200 {object} model.Chart
-// @Failure     404	{string}	string  "game id not found"
-// @Router      /tvgames/{id}/attempts/stats [get]
+// gameAttemptsStats godoc
+// @Summary Retrieve game's attempts' frequencies
+// @Tags    tvgames
+// @Produce json
+// @Param   id   path     string true  "Game to query"
+// @Param   from query    string false "Starting instant of the time interval used to filter the tweets. If not specified, the beginning of the last game instance is used"                                                                                    Format(date-time)
+// @Param   to   query    string false "Ending instant of the time interval used to filter the tweets. Must be later than but in the same day of the starting instant. If not specified, the ending of the game happening during the starting instant is used" Format(date-time)
+// @Success 200  {object} model.Chart
+// @Success 204  {string} string      "No game instance has been played"
+// @Failure 400  {object} model.Error "integer parsing error (id)"
+// @Failure 404  {object} model.Error "game id not found"
+// @Router  /tvgames/{id}/attempts/stats [get]
 func gameAttemptsStats(ctx *gin.Context) {
 	chart, err := getAttemptsStats(ctx)
 	if err == nil {
 		ctx.JSON(http.StatusOK, chart)
-	} else {
-		httputil.NewError(ctx, http.StatusInternalServerError, err)
 	}
 }
 
-// gameAttempts godoc
-// @Summary     Retrieve game's number of successes and failures
-// @Tags        tvgames
-// @Produce     json
-// @Param       id path string true "Game to query"
-// @Success     200 {object} model.BooleanChart
-// @Failure     404	{string}	string  "game id not found"
-// @Router      /tvgames/{id}/results [get]
+// gameResults godoc
+// @Summary Retrieve game's number of successes and failures, grouped in time interval bins
+// @Tags    tvgames
+// @Produce json
+// @Param   id   path     string             true  "Game to query"
+// @Param   from query    string             false "Starting date of the time interval used to filter the tweets. If not specified, the last game instance's date is used"                             Format(date)
+// @Param   to   query    string             false "Ending date of the time interval used to filter the tweets. Cannot be earlier than the starting date. If not specified, the starting date is used" Format(date)
+// @Param   each query    int                false "Number of seconds for the duration of each time interval bin the retrieved tweets are to be grouped by"                                            minimum(1)
+// @Success 200  {array}  model.BooleanChart "A array of boolean charts comparing successes and failures in the game. Each boolean chart is labeled as the starting instant of its time interval bin"
+// @Success 204  {string} string             "No game instance has been played"
+// @Failure 400  {object} model.Error        "integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"
+// @Failure 404  {object} model.Error        "game id not found"
+// @Router  /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err == nil {
-		result, err := getAttempts(ctx, false)
+		var result *twitter.ProfileTweets
+		result, err = getAttempts(ctx, false)
 		if err == nil {
 			tweets := result.Data
-			solution, err := gameTracker.Solution()
+			var solution model.GameKey
+			solution, err = gameTracker.LastSolution()
 			if err == nil {
 				successes := 0
 				for _, tweet := range tweets {
-					if strings.Contains(strings.ToLower(tweet.Text), solution) {
+					if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
 						successes++
 					}
 				}
@@ -279,13 +343,25 @@ func gameResults(ctx *gin.Context) {
 	httputil.NewError(ctx, http.StatusInternalServerError, err)
 }
 
-func init() {
+func assignIds() {
+	for i := range gameTrackers {
+		gameTrackers[i].Game.Id = i
+	}
+}
+
+func initDataStructures() {
 	games = make([]model.Game, len(gameTrackers))
 	i := 0
-	for k, v := range gameTrackers {
-		gameTrackersById[k] = &v
+	for k := range gameTrackers {
+		v := &gameTrackers[k]
+		gameTrackersById[k] = v
 		games[i] = v.Game
-		gamesById[k] = &v.Game
+		gamesById[k] = &(v.Game)
 		i += 1
 	}
+}
+
+func init() {
+	assignIds()
+	initDataStructures()
 }

@@ -2,23 +2,25 @@ package twitter
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
 	"strconv"
 
 	"git.hjkl.gq/team13/birdazzone-api/util"
+	geojson "github.com/paulmach/go.geojson"
 )
 
 const BaseUrl = "https://api.twitter.com/2/"
-const BearerToken = "AAAAAAAAAAAAAAAAAAAAAE4higEAAAAAIAkazaLrT4LHjJx2XFPsdVzEPe8%3DE7HE9wBq5B5b0m4F8uGmcslObTmQFccb9gppULjUwTNBGj1Td3"
 
 type Profile struct {
 	ID              string `json:"id"`
 	Name            string `json:"name"`
 	Username        string `json:"username"`
+	Location        string `json:"location"`
 	ProfileImageUrl string `json:"profile_image_url"`
+}
+
+type Place struct {
+	ID  string           `json:"id"`
+	Geo geojson.Geometry `json:"geo"`
 }
 
 // Basic user profile data
@@ -37,13 +39,20 @@ type ProfileTweet struct {
 	EditHistoryTweetIds []string `json:"edit_history_tweet_ids"`
 	ID                  string   `json:"id"`
 	Text                string   `json:"text"`
+	Geo                 *struct {
+		PlaceId string `json:"place_id"`
+	} `json:"geo"`
+	Coordinates *struct {
+		Coordinates []float32 `json:"coordinates"`
+	} `json:"coordinates"`
 }
 
 // List of tweets from a single profile
 type ProfileTweets struct {
 	Data     []ProfileTweet `json:"data"`
 	Includes struct {
-		Users []Profile `json:"users"`
+		Users  []Profile `json:"users"`
+		Places []Place   `json:"places"`
 	} `json:"includes"`
 	Meta struct {
 		NextToken   string `json:"next_token"`
@@ -57,58 +66,13 @@ func toCompleteUrl(partialUrl string) string {
 	return BaseUrl + partialUrl
 }
 
-func getRequest(
-	urlTemplate string,
-	pathParams []any,
-	queryParams ...util.Pair[string, string],
-) ([]byte, error) {
-	if pathParams == nil {
-		pathParams = []any{}
-	}
-	client := &http.Client{}
-
-	// path parameters
-	for i := range pathParams {
-		pathParams[i] = url.PathEscape(fmt.Sprint(pathParams[i]))
-	}
-	req, err := http.NewRequest("GET", fmt.Sprintf(urlTemplate, pathParams...), nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Authorization", "Bearer "+BearerToken)
-
-	// query parameters
-	if queryParams != nil {
-		q := req.URL.Query()
-		for _, queryParam := range queryParams {
-			q.Add(
-				queryParam.First,
-				queryParam.Second,
-			)
-		}
-		req.URL.RawQuery = q.Encode()
-	}
-	// println(req.URL.String())
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("From Twitter API: %s", resp.Status)
-	}
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	return []byte(string(body)), nil
-}
-
 func GetUser(username string) (*UIDLookup, error) {
-	res, err := getRequest("https://api.twitter.com/2/users/by/username/%s",
+	res, err := util.GetRequest("https://api.twitter.com/2/users/by/username/%s",
+		true,
 		[]any{username},
 		util.Pair[string, string]{
 			First:  "user.fields",
-			Second: "id,name,username,profile_image_url",
+			Second: "id,name,username,location,profile_image_url",
 		},
 	)
 	if err != nil {
@@ -127,7 +91,7 @@ func getTweets(
 	pathParams []any,
 	queryParams ...util.Pair[string, string],
 ) (*ProfileTweets, error) {
-	res, err := getRequest(urlTemplate, pathParams, queryParams...)
+	res, err := util.GetRequest(urlTemplate, true, pathParams, queryParams...)
 	if err != nil {
 		return nil, err
 	}
@@ -149,15 +113,21 @@ func GetTweetsFromUser(id string, maxResults int, startTime string) (*ProfileTwe
 	)
 }
 
-func GetTweetsFromHashtag(query string, startTime string) (*ProfileTweets, error) {
+func GetRecentTweetsFromQuery(query string, startTime string, endTime string, maxResults int) (*ProfileTweets, error) {
 	return getTweets(
 		"https://api.twitter.com/2/tweets/search/recent",
 		[]any{},
 		util.Pair[string, string]{First: "query", Second: query},
 		util.Pair[string, string]{First: "start_time", Second: startTime},
-		util.Pair[string, string]{First: "max_results", Second: "100"},
+		util.Pair[string, string]{First: "end_time", Second: endTime},
+		util.Pair[string, string]{First: "max_results", Second: strconv.Itoa(maxResults)},
 		util.Pair[string, string]{First: "tweet.fields", Second: "author_id,created_at,public_metrics,text"},
-		util.Pair[string, string]{First: "expansions", Second: "author_id"},
-		util.Pair[string, string]{First: "user.fields", Second: "id,name,profile_image_url,username"},
+		util.Pair[string, string]{First: "expansions", Second: "author_id,geo.place_id"},
+		util.Pair[string, string]{First: "user.fields", Second: "id,name,profile_image_url,username,location"},
+		util.Pair[string, string]{First: "place.fields", Second: "id,geo"},
 	)
+}
+
+func GetManyRecentTweetsFromQuery(query string, startTime string, endTime string) (*ProfileTweets, error) {
+	return GetRecentTweetsFromQuery(query, startTime, endTime, 100)
 }

@@ -15,7 +15,7 @@ year 2022/23 at the University of Bologna.
 ## Authors
 
 - P. Ceroni
-- G. Crestanello 
+- G. Crestanello
 - F. Grisendi
 - M. Girolimetto
 - S. Volpe

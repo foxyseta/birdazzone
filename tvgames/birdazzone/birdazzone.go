@@ -1,8 +1,7 @@
-package ghigliottina
+package birdazzone
 
 import (
 	"errors"
-	"regexp"
 	"strings"
 	"time"
 
@@ -12,39 +11,39 @@ import (
 	"git.hjkl.gq/team13/birdazzone-api/util"
 )
 
-var ghigliottinaTracker = gametracker.GameTracker{
+var birdazzoneTracker = gametracker.GameTracker{
 	Game: model.Game{
-		Name:    "Ghigliottina",
-		Hashtag: "#ghigliottina#leredita",
-		Logo:    "/public/leredita.png"},
-	Query:        "(#ghigliottina OR #leredita) -from:quizzettone -is:retweet",
+		Name:    "Birdazzone",
+		Hashtag: "#birdazzone",
+		Logo:    "/public/birdazzone.png"},
+	Query:        "#birdazzone -from:birdazzone -is:retweet",
 	Solution:     givenSolution,
 	LastSolution: lastSolution,
-	Start:        18,
+	Start:        4,
 }
 
-func GetGhigliottinaTracker() gametracker.GameTracker {
-	return ghigliottinaTracker
+func GetBirdazzoneTracker() gametracker.GameTracker {
+	return birdazzoneTracker
 }
 
 func solution(startTime string, endTime string) (model.GameKey, error) {
-	tweets, err := twitter.GetRecentTweetsFromQuery("La #parola della #ghigliottina de #leredita di oggi -is:retweet", startTime, endTime, 10)
+	tweets, err := twitter.GetRecentTweetsFromQuery("La soluzione al #birdazzone di oggi", startTime, endTime, 10)
 
 	if err != nil {
 		return model.GameKey{}, err
 	}
 	if tweets.Meta.ResultCount == 0 {
-		return model.GameKey{}, errors.New("couldn't find Ghigliottina solution")
+		return model.GameKey{}, errors.New("couldn't find Birdazzone solution")
 	}
-	m := regexp.MustCompile(`La #parola della #ghigliottina de #leredita di oggi è:\s([A-Z]|[a-z])+`)
-	a := strings.ToLower(strings.Trim(m.FindString(tweets.Data[0].Text), "La #parola della #ghigliottina de #leredita di oggi è: "))
+	text := tweets.Data[0].Text
+	a := strings.ToLower(text[strings.LastIndex(text, " ")+1:])
 	if len(a) > 0 {
 		return model.GameKey{
 			Key:  a,
 			Date: tweets.Data[0].CreatedAt,
 		}, nil
 	}
-	return model.GameKey{}, errors.New("couldn't find Ghigliottina solution")
+	return model.GameKey{}, errors.New("couldn't find Birdazzone solution")
 }
 
 func givenSolution(dt time.Time) (model.GameKey, error) {

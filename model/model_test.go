@@ -5,6 +5,7 @@ import (
 
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
+	geojson "github.com/paulmach/go.geojson"
 )
 
 func TestPageQueryString(t *testing.T) {
@@ -23,9 +24,9 @@ func TestBooleanChartString(t *testing.T) {
 	if bc.String() != util.NilRepresentation {
 		t.Fatalf("%s differs from %s", bc.String(), util.NilRepresentation)
 	}
-	bc = &BooleanChart{52, 21}
-	if bc.String() != "[52 VS 21]" {
-		t.Fatalf("%s differs from \"[52 VS 21]\"", bc.String())
+	bc = &BooleanChart{"Votes", 52, 21}
+	if bc.String() != "Votes: 52 VS 21" {
+		t.Fatalf("%s differs from \"Votes: 52 VS 21\"", bc.String())
 	}
 }
 
@@ -45,9 +46,20 @@ func TestGameString(t *testing.T) {
 	if g.String() != util.NilRepresentation {
 		t.Fatalf("%s differs from %s", g.String(), util.NilRepresentation)
 	}
-	g = &Game{0, "My game", "mygame"}
+	g = &Game{0, "My game", "mygame", "game-logo.png"}
 	if g.String() != "#0 (My game #mygame)" {
 		t.Fatalf("%s differs from \"#0 (My game #mygame)\"", g.String())
+	}
+}
+
+func TestGameKeyString(t *testing.T) {
+	var gk *GameKey
+	if gk.String() != util.NilRepresentation {
+		t.Fatalf("%s differs from %s", gk.String(), util.NilRepresentation)
+	}
+	gk = &GameKey{"crown", "2022-10-20"}
+	if gk.String() != "2022-10-20: 'crown'" {
+		t.Fatalf("%s differs from \"2022-10-20: 'crown'\"", gk.String())
 	}
 }
 
@@ -93,7 +105,102 @@ func TestMetricsString(t *testing.T) {
 	}
 }
 
+func TestOpenStreetMapCoordinatesString(t *testing.T) {
+	var c *openStreetMapCoordinates
+	if c.String() != util.NilRepresentation {
+		t.Fatalf("%s differs from %s", c.String(), util.NilRepresentation)
+	}
+	c = &openStreetMapCoordinates{Lat: "2", Lon: "6"}
+	if c.String() != "(2, 6)" {
+		t.Fatalf("%s differs from \"(2, 6)\"", c.String())
+	}
+}
+
+func TestCoordinatesString(t *testing.T) {
+	var c *Coordinates
+	if c.String() != util.NilRepresentation {
+		t.Fatalf("%s differs from %s", c.String(), util.NilRepresentation)
+	}
+	c = &Coordinates{Latitude: 2, Longitude: 6}
+	if c.String() != "(2.000000, 6.000000)" {
+		t.Fatalf("%s differs from \"(2.000000, 6.000000)\"", c.String())
+	}
+}
+
+func TestStringToCoordinatesOnEmptyString(t *testing.T) {
+	_, err := StringToCoordinates("")
+	if err == nil {
+		t.Fatal("Error expected")
+	}
+}
+
+func TestStringToCoordinateOnNonsensicalString(t *testing.T) {
+	_, err := StringToCoordinates("Place that does not really exist")
+	if err == nil {
+		t.Fatal("Error expected")
+	}
+}
+
+func TestStringToCoordinateOnBologna(t *testing.T) {
+	r, err := StringToCoordinates("Bologna")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if (int)(r.Latitude) != 44 {
+		t.Fatalf("Got latitude %f instead of 44", r.Latitude)
+	}
+	if (int)(r.Longitude) != 11 {
+		t.Fatalf("Got longitude %f instead of 11", r.Longitude)
+	}
+}
+
+func TestMakeCoordinatesOnNull(t *testing.T) {
+	if MakeCoordinates(nil, twitter.Profile{}) != nil {
+		t.Fatal("Expected null result")
+	}
+}
+
+func TestMakeCoordinatesOnNullWithUserLocation(t *testing.T) {
+	c := MakeCoordinates(nil, twitter.Profile{Location: "Bologna"})
+	if c == nil {
+		t.Fatal("Null result")
+	}
+	if (int)(c.Latitude) != 44 {
+		t.Fatalf("Got latitude %f instead of 44", c.Latitude)
+	}
+	if (int)(c.Longitude) != 11 {
+		t.Fatalf("Got longitude %f instead of 11", c.Longitude)
+	}
+}
+
+func TestMakeCoordinatesOnPoint(t *testing.T) {
+	c := MakeCoordinates(geojson.NewPointGeometry([]float64{5, -3}), twitter.Profile{})
+	if c == nil {
+		t.Fatal("Null result")
+	}
+	if (int)(c.Latitude) != 5 {
+		t.Fatalf("Got latitude %f instead of 5", c.Latitude)
+	}
+	if (int)(c.Longitude) != -3 {
+		t.Fatalf("Got longitude %f instead of -3", c.Longitude)
+	}
+}
+
+func TestMakeCoordinatesOnBoundingBox(t *testing.T) {
+	c := MakeCoordinates(&geojson.Geometry{Type: "unknown", BoundingBox: []float64{1, 2, 3, 4}}, twitter.Profile{})
+	if c == nil {
+		t.Fatal("Null result")
+	}
+	if (int)(c.Latitude) != 2 {
+		t.Fatalf("Got latitude %f instead of 2", c.Latitude)
+	}
+	if (int)(c.Longitude) != 3 {
+		t.Fatalf("Got longitude %f instead of 3", c.Longitude)
+	}
+}
+
 func TestMakeTweet(t *testing.T) {
+	geo := geojson.NewPointGeometry([]float64{1, 2})
 	tweet := MakeTweet(twitter.ProfileTweet{
 		CreatedAt: "today",
 		PublicMetrics: struct {
@@ -111,6 +218,7 @@ func TestMakeTweet(t *testing.T) {
 		Username:        "mariorossi",
 		ProfileImageUrl: "a.org/img.png",
 	},
+		geo,
 	)
 	if tweet.CreatedAt != "today" {
 		t.Fatal("Wrong creation instant")
