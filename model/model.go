@@ -8,7 +8,7 @@ import (
 
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
-	"github.com/paulmach/go.geojson"
+	geojson "github.com/paulmach/go.geojson"
 	// "github.com/swaggo/swag/example/celler/httputil"
 )
 

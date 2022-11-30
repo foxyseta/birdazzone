@@ -1,6 +1,7 @@
 package tvgames
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -26,19 +27,31 @@ func testAPICall(t *testing.T, call func(*gin.Context)) {
 	if util.GetTestingResponseRecorder().Code != http.StatusOK {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, util.GetTestingResponseRecorder().Code)
 	}
-	// test solution with yesterday's date
-	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}, {Key: "date", Value: util.DateToString(time.Now().AddDate(0, 0, -1))}}
-	call(util.GetTestingGinContext())
-	if util.GetTestingResponseRecorder().Code != http.StatusOK {
-		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, util.GetTestingResponseRecorder().Code)
-	}
 	// predicted failure (id: -1 should return Code 400)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Params = []gin.Param{{Key: "id", Value: "-1"}}
-	getTvGameById(c)
+	call(c)
 	if w.Code != http.StatusNotFound {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusNotFound, w.Code)
+	}
+	//TODO TEST WITH QUERY PARAM DATE
+
+}
+
+func TestGameAttemptsWParams(t *testing.T) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+
+	c.Params = []gin.Param{{Key: "id", Value: "0"}}
+	//ti := time.Now().AddDate(0, 0, -1)
+	fmt.Println(c.Request)
+
+	//c.Request.URL, _ = url.Parse("?from=" + util.DateToString(time.Date(ti.Year(), ti.Month(), ti.Day(), 0, 0, 0, 0, time.UTC)))
+	//c.Request.URL.Query().Set("from", util.DateToString(time.Date(ti.Year(), ti.Month(), ti.Day(), 0, 0, 0, 0, time.UTC)))
+	gameAttempts(c)
+	if w.Code != http.StatusOK {
+		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusOK, w.Code)
 	}
 }
 
@@ -51,19 +64,46 @@ func TestGameSolution(t *testing.T) {
 }
 
 func testGetAttempts(t *testing.T, successesOnly bool) {
+	//id=0
 	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
-	result, err := getAttempts(util.GetTestingGinContext(), successesOnly)
+	result, err := getAttempts(util.GetTestingGinContext(), successesOnly, "", "")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if result == nil || result.Data == nil {
 		t.Fatal("Nil result")
 	}
+	//id=-1
+	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "-1"}}
+	_, err = getAttempts(util.GetTestingGinContext(), successesOnly, "", "")
+	if err == nil {
+		t.Fatal("Didn't get expected error")
+	}
+	//test from
+	d := time.Now().AddDate(0, 0, -1)
+	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
+	result, err = getAttempts(util.GetTestingGinContext(), successesOnly, util.DateToString(d), "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result == nil || result.Data == nil {
+		t.Fatal("Nil result")
+	}
+	//test from and to
+	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
+	result, err = getAttempts(util.GetTestingGinContext(), successesOnly, util.DateToString(d), util.DateToString(time.Date(d.Year(), d.Month(), d.Day(), 23, 59, 0, 0, time.UTC)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result == nil || result.Data == nil {
+		t.Fatal("Nil result")
+	}
+
 }
 
 func TestGetAttemptsWrongParam(t *testing.T) {
 	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "zebra"}}
-	_, err := getAttempts(util.GetTestingGinContext(), true)
+	_, err := getAttempts(util.GetTestingGinContext(), true, "", "")
 	if err == nil {
 		t.FailNow()
 	}
