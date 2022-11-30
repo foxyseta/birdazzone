@@ -147,7 +147,7 @@ func getAttempts(ctx *gin.Context, successesOnly bool, fromStr string, toStr str
 		if sol.Date != t.Format("YYYY-MM-DD") {
 			return &twitter.ProfileTweets{Data: []twitter.ProfileTweet{}}, nil
 		}
-		if sol.Date < toStr || toStr == "" { //from && !to
+		if sol.Date < toStr || toStr == "" { // from && !to
 			toStr = sol.Date
 		}
 		return twitter.GetManyRecentTweetsFromQuery(query, fromStr, toStr)
