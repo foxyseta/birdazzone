@@ -115,6 +115,35 @@ func TestIdToObjectParsingError(t *testing.T) {
 	}
 }
 
+func TestStringToDate(t *testing.T) {
+	date, err := StringToDate("2022-11-01")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if date != time.Date(2022, time.November, 1, 0, 0, 0, 0, time.UTC) {
+		t.Fatal("Error in formatting to date")
+	}
+	date, err = StringToDate("2022-10-33")
+	if err == nil {
+		t.Fatal("Expected error but got: " + date.String())
+	}
+	date, err = StringToDate("2022-10-011")
+	if err == nil {
+		t.Fatal("Expected error but got: " + date.String())
+	}
+	date, err = StringToDate("2022-1a-22")
+	if err == nil {
+		t.Fatal("Expected error but got: " + date.String())
+	}
+}
+
+func TestDateToString(t *testing.T) {
+	s := DateToString(time.Date(2022, time.November, 12, 18, 55, 12, 12, time.UTC))
+	if s != "2022-11-12T18:55:12Z" {
+		t.Fatal("Error in formatting time: " + s)
+	}
+}
+
 func TestIdToObjectNotFound(t *testing.T) {
 	ctx := GetTestingGinContext()
 	ctx.AddParam("id", "2")
@@ -131,6 +160,25 @@ func TestIdToObject(t *testing.T) {
 	_, err := IdToObject(ctx, map[int]int{0: 1, 1: 0})
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestGetRequestOnNilPathParams(t *testing.T) {
+	GetTestingGinEngine()
+	_, err := GetRequest("/swagger/index.html", false, nil, Pair[string, string]{First: "a", Second: "b"})
+	if err == nil {
+		t.FailNow()
+	}
+}
+
+func TestGetRequestOnWrongPath(t *testing.T) {
+	GetTestingGinEngine()
+	response, err := GetRequest("/wrongPage.html", false, nil)
+	if response != nil {
+		t.Fatalf("Non-null response")
+	}
+	if err == nil {
+		t.Fatalf("Non-null error")
 	}
 }
 
