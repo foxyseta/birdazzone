@@ -2,25 +2,27 @@
 import ApiRepository from '@/api/api-repository';
 import type { Coordinates } from '@/api/interfaces/tweet';
 import { onBeforeMount, ref } from 'vue'
+import { SemipolarSpinner } from 'epic-spinners';
 
 const props = defineProps<{gameId: string}>()
 
 const ROME = [ 12.706374170037495, 42.21140846575139 ]
 
+const loading = ref<boolean>(false)
 const center = ref<number[]>(ROME)
 const zoom = ref<number>(6)
-const rotation = ref(0)
-const fillColor =ref( '#1eb980')
-const strokeColor =ref( 'white')
-const strokeWidth =ref(3)
-const radius =ref(10)
-const projection = ref("EPSG:4326")
+const rotation = ref<number>(0)
+const fillColor = ref<string>('#1eb980')
+const strokeColor = ref<string>('white')
+const strokeWidth = ref<number>(3)
+const radius = ref<number>(10)
+const projection = ref<string>("EPSG:4326")
 const coordinates = ref<number[][]>([]) // [lat, long]
 
 const unpackCoordinates = (coordinates: Coordinates) => [coordinates.latitude, coordinates.longitude]
 
 const fetchCoordinates = async () => {
-  const response = await ApiRepository.getListOfGuesser(props.gameId, "0", "100")
+  const response = await ApiRepository.getListOfGuesser(props.gameId, "1", "200")
   if (response.esit) {
     // @ts-ignore
     coordinates.value = response.data!.entries.map(tweet => tweet.coordinates).filter(c => c).map(unpackCoordinates) // Remove undefined and nulls
@@ -28,23 +30,26 @@ const fetchCoordinates = async () => {
     coordinates.value.push(ROME)
     coordinates.value.push([ROME[0], ROME[1] +2])
     coordinates.value.push([ROME[0] +0.1, ROME[1] +0.1])
-    console.log(coordinates.value)
   } else {
 
   }
 }
 
 onBeforeMount(async () => {
-  fetchCoordinates()
+  loading.value = true
+  await fetchCoordinates()
+  loading.value = false
 })
 
 </script>
 
 <template>
 
-<div class="flex justify-center">
-
-<div class="p-5 bg-foreground shadow rounded-xl">
+<div class="h-100 flex justify-center">
+  <div v-if="loading" class="flex p-5 h-100 align-center justify-center">
+      <semipolar-spinner :animation-duration="2000" :size="50" color="#1eb980" />
+  </div>
+<div v-else class="p-5 bg-foreground shadow rounded-xl">
     <ol-map :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true" style="height: 50rem; width: 50rem">
 
       <ol-zoom-control />

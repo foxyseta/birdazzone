@@ -4,7 +4,7 @@ import Footer from "./components/Footer.vue"
 </script>
 
 <template>
-  <div class="flex h-100">
+  <div class="flex">
     <NavBar/>
     <RouterView/>
   </div>
