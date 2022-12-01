@@ -134,24 +134,23 @@ func getAttempts(ctx *gin.Context, successesOnly bool, fromStr string, toStr str
 			query += " " + lastSol.Key
 		}
 		return twitter.GetManyRecentTweetsFromQuery(query, "", lastSol.Date)
-	} else {
-		//from enabled
-		t, _ := util.StringToDateTime(fromStr)
-		sol, err := gameTracker.Solution(t)
-		if successesOnly {
-			if err != nil {
-				return nil, err
-			}
-			query += " " + sol.Key
-		}
-		if sol.Date != t.Format("YYYY-MM-DD") {
-			return &twitter.ProfileTweets{Data: []twitter.ProfileTweet{}}, nil
-		}
-		if sol.Date < toStr || toStr == "" { // from && !to
-			toStr = sol.Date
-		}
-		return twitter.GetManyRecentTweetsFromQuery(query, fromStr, toStr)
 	}
+	//from enabled
+	t, _ := util.StringToDateTime(fromStr)
+	sol, err := gameTracker.Solution(t)
+	if successesOnly {
+		if err != nil {
+			return nil, err
+		}
+		query += " " + sol.Key
+	}
+	if sol.Date != t.Format("YYYY-MM-DD") {
+		return &twitter.ProfileTweets{Data: []twitter.ProfileTweet{}}, nil
+	}
+	if sol.Date < toStr || toStr == "" { // from && !to
+		toStr = sol.Date
+	}
+	return twitter.GetManyRecentTweetsFromQuery(query, fromStr, toStr)
 }
 
 func toLowerAlphaOnly(r rune) rune {
@@ -193,6 +192,64 @@ func tweetTextToAttempt(text string) string {
 	return ""
 }
 
+func getGameAttemptsParameters(ctx *gin.Context) (int, int, string, string, error) {
+	var pageIndex, pageLength int
+	pageIndex, err := strconv.Atoi(ctx.DefaultQuery("pageIndex", "1"))
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex)"))
+		return 0, 0, "", "", err
+	}
+	if pageIndex < 1 {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageIndex < 1"))
+		return 0, 0, "", "", err
+	}
+	pageLength, err = strconv.Atoi(ctx.DefaultQuery("pageLength", "1"))
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageLength)"))
+		return 0, 0, "", "", err
+	}
+	if pageLength < 1 {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageLength < 1"))
+		return 0, 0, "", "", err
+	}
+
+	fromStr, hasFrom := ctx.GetQuery("from")
+	toStr, hasTo := ctx.GetQuery("to")
+	var fromTime, toTime time.Time
+	if hasFrom {
+		fromTime, err = util.StringToDateTime(fromStr)
+		if err != nil {
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (to)"))
+			return 0, 0, "", "", err
+		}
+		fromStr = util.DateToString(fromTime)
+		if hasTo {
+			toTime, err = util.StringToDateTime(toStr)
+			if err != nil {
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (from)"))
+				return 0, 0, "", "", err
+			}
+			toStr = util.DateToString(toTime)
+			if fromStr > toStr {
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from > to"))
+				return 0, 0, "", "", err
+			}
+			if toStr > util.DateToString(time.Now()) {
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("to > now"))
+				return 0, 0, "", "", err
+			}
+			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from and to are not in the same day"))
+				return 0, 0, "", "", err
+			}
+		}
+	} else {
+		fromStr = ""
+		toStr = ""
+	}
+	return pageIndex, pageLength, fromStr, toStr, nil
+}
+
 // gameAttempts godoc
 // @Summary Retrieve game's attempts
 // @Tags    tvgames
@@ -209,61 +266,10 @@ func tweetTextToAttempt(text string) string {
 // @Failure 500        {object} model.Error "(internal server error)"
 // @Router  /tvgames/{id}/attempts [get]
 func gameAttempts(ctx *gin.Context) {
-	var pageIndex, pageLength int
-	pageIndex, err := strconv.Atoi(ctx.DefaultQuery("pageIndex", "1"))
+	pageIndex, pageLength, fromStr, toStr, err := getGameAttemptsParameters(ctx)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex)"))
 		return
 	}
-	if pageIndex < 1 {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageIndex < 1"))
-		return
-	}
-	pageLength, err = strconv.Atoi(ctx.DefaultQuery("pageLength", "1"))
-	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageLength)"))
-		return
-	}
-	if pageLength < 1 {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageLength < 1"))
-		return
-	}
-
-	fromStr, hasFrom := ctx.GetQuery("from")
-	toStr, hasTo := ctx.GetQuery("to")
-	var fromTime, toTime time.Time
-	if hasFrom {
-		fromTime, err = util.StringToDateTime(fromStr)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (to)"))
-			return
-		}
-		fromStr = util.DateToString(fromTime)
-		if hasTo {
-			toTime, err = util.StringToDateTime(toStr)
-			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (from)"))
-				return
-			}
-			toStr = util.DateToString(toTime)
-			if fromStr > toStr {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from > to"))
-				return
-			}
-			if toStr > util.DateToString(time.Now()) {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("to > now"))
-				return
-			}
-			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from and to are not in the same day"))
-				return
-			}
-		}
-	} else {
-		fromStr = ""
-		toStr = ""
-	}
-
 	result, err := getAttempts(ctx, true, fromStr, toStr)
 	if err != nil {
 		httputil.NewError(ctx, http.StatusNoContent, errors.New("no game instance has been played"))
@@ -442,8 +448,8 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 // @Param   from query    string             false "Starting date of the time interval used to filter the tweets. If not specified, the last game instance's date is used"                             Format(date)
 // @Param   to   query    string             false "Ending date of the time interval used to filter the tweets. Cannot be earlier than the starting date. If not specified, the starting date is used" Format(date)
 // @Param   each query    int                false "Number of seconds for the duration of each time interval bin the retrieved tweets are to be grouped by"                                            minimum(1)
-// @Success 200  {array}  model.BooleanChart "A array of boolean charts comparing successes and failures in the game. Each boolean chart is labeled as the starting instant of its time interval bin"
-// @Success 204  {string} string             "No game instance has been played"
+// @Success 200  {array}  model.BooleanChart "An array of boolean charts comparing successes and failures in the game. Each boolean chart is labeled as the starting instant of its time interval bin"
+// @Success 204  {string} string             "no game instance has been played"
 // @Failure 400  {object} model.Error        "integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"
 // @Failure 404  {object} model.Error        "game id not found"
 // @Router  /tvgames/{id}/results [get]
@@ -460,11 +466,11 @@ func gameResults(ctx *gin.Context) {
 		if hasEach {
 			each, err = strconv.Atoi(eachStr)
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (each)"))
 				return
 			}
 			if each < 1 {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("each < 1"))
 				return
 			}
 		}
@@ -472,7 +478,7 @@ func gameResults(ctx *gin.Context) {
 		if hasFrom {
 			fromTime, err = util.StringToDate(fromStr)
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (from)"))
 				return
 			}
 			fromStr = util.DateToString(fromTime)
@@ -480,16 +486,16 @@ func gameResults(ctx *gin.Context) {
 				//from && to
 				toTime, err = util.StringToDate(toStr)
 				if err != nil {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
+					httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (to)"))
 					return
 				}
 				toStr = util.DateToString(toTime)
 				if fromStr > toStr {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
+					httputil.NewError(ctx, http.StatusBadRequest, errors.New("from > to"))
 					return
 				}
 				if toStr > util.DateToString(time.Now()) {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"))
+					httputil.NewError(ctx, http.StatusBadRequest, errors.New("to > now"))
 					return
 				}
 			} else {
