@@ -147,7 +147,7 @@ func getAttempts(ctx *gin.Context, successesOnly bool, fromStr string, toStr str
 		if sol.Date != t.Format("YYYY-MM-DD") {
 			return &twitter.ProfileTweets{Data: []twitter.ProfileTweet{}}, nil
 		}
-		if sol.Date < toStr || toStr == "" { //from && !to
+		if sol.Date < toStr || toStr == "" { // from && !to
 			toStr = sol.Date
 		}
 		return twitter.GetManyRecentTweetsFromQuery(query, fromStr, toStr)
@@ -212,20 +212,20 @@ func gameAttempts(ctx *gin.Context) {
 	var pageIndex, pageLength int
 	pageIndex, err := strconv.Atoi(ctx.DefaultQuery("pageIndex", "1"))
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex)"))
 		return
 	}
 	if pageIndex < 1 {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageIndex < 1"))
 		return
 	}
 	pageLength, err = strconv.Atoi(ctx.DefaultQuery("pageLength", "1"))
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageLength)"))
 		return
 	}
 	if pageLength < 1 {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageLength < 1"))
 		return
 	}
 
@@ -235,27 +235,27 @@ func gameAttempts(ctx *gin.Context) {
 	if hasFrom {
 		fromTime, err = util.StringToDateTime(fromStr)
 		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (to)"))
 			return
 		}
 		fromStr = util.DateToString(fromTime)
 		if hasTo {
 			toTime, err = util.StringToDateTime(toStr)
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (from)"))
 				return
 			}
 			toStr = util.DateToString(toTime)
 			if fromStr > toStr {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from > to"))
 				return
 			}
 			if toStr > util.DateToString(time.Now()) {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("to > now"))
 				return
 			}
 			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from and to are not in the same day"))
 				return
 			}
 		}
@@ -307,23 +307,23 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	if hasFrom {
 		fromTime, err = util.StringToDateTime(fromStr)
 		if err != nil {
-			return nil, errors.New("integer parsing error (id) or error while parsing to date")
+			return nil, errors.New("date parsing error (from)")
 		}
 		fromStr = util.DateToString(fromTime)
 		if hasTo {
 			toTime, err = util.StringToDateTime(toStr)
 			if err != nil {
-				return nil, errors.New("integer parsing error (id) or error while parsing to date")
+				return nil, errors.New("date parsing error (to)")
 			}
 			toStr = util.DateToString(toTime)
 			if fromStr > toStr {
-				return nil, errors.New("integer parsing error (id) or error while parsing to date")
+				return nil, errors.New("from > to")
 			}
 			if toStr > util.DateToString(time.Now()) {
-				return nil, errors.New("integer parsing error (id) or error while parsing to date")
+				return nil, errors.New("to > now")
 			}
 			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				return nil, errors.New("integer parsing error (id) or error while parsing to date")
+				return nil, errors.New("from and to are not in the same day")
 			}
 		}
 	} else {
@@ -394,6 +394,44 @@ func gameAttemptsStats(ctx *gin.Context) {
 	} else {
 		httputil.NewError(ctx, http.StatusBadRequest, err)
 	}
+}
+
+func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, each int, chart []model.BooleanChart, err error, updateNextTime bool) []model.BooleanChart {
+	if err == nil {
+		successes := 0
+		fails := 0
+		lt, _ := util.StringToDateTime((*tweets)[0].CreatedAt)
+		lastTime := util.DateToString(time.Date(lt.Year(), lt.Month(), lt.Day(), lt.Hour(), lt.Minute(), lt.Second()+each, 0, time.UTC))
+		for _, tweet := range *tweets {
+			if tweet.CreatedAt <= lastTime {
+				if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
+					successes++
+				} else {
+					fails++
+				}
+			} else {
+				nt, _ := util.StringToDateTime(lastTime)
+				nextTime := util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
+				chart = append(chart, model.BooleanChart{Label: lastTime + "#" + nextTime, Positives: successes, Negatives: fails})
+				nt, _ = util.StringToDateTime(tweet.CreatedAt)
+				if updateNextTime {
+					nextTime = util.DateToString(nt)
+				}
+				lastTime = util.DateToString(nt)
+				successes = 0
+				fails = 0
+				if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
+					successes++
+				} else {
+					fails++
+				}
+			}
+
+		}
+		nextTime, _ := util.StringToDateTime((*tweets)[len(*tweets)-1].CreatedAt)
+		chart = append(chart, model.BooleanChart{Label: lastTime + "#" + util.DateToString(nextTime), Positives: successes, Negatives: fails})
+	}
+	return chart
 }
 
 // gameResults godoc
@@ -468,37 +506,7 @@ func gameResults(ctx *gin.Context) {
 				var solution model.GameKey
 				solution, err = gameTracker.LastSolution()
 				if err == nil {
-					successes := 0
-					fails := 0
-					lt, _ := util.StringToDateTime(tweets[0].CreatedAt)
-					lastTime := util.DateToString(time.Date(lt.Year(), lt.Month(), lt.Day(), lt.Hour(), lt.Minute(), lt.Second()+each, 0, time.UTC))
-					for _, tweet := range tweets {
-						if tweet.CreatedAt <= lastTime {
-							if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
-								successes++
-							} else {
-								fails++
-							}
-						} else {
-							nt, _ := util.StringToDateTime(lastTime)
-							nextTime := util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
-							chart = append(chart, model.BooleanChart{Label: lastTime + "#" + nextTime, Positives: successes, Negatives: fails})
-							nt, _ = util.StringToDateTime(tweet.CreatedAt)
-							nextTime = util.DateToString(nt)
-							lastTime = nextTime
-							successes = 0
-							fails = 0
-							if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
-								successes++
-							} else {
-								fails++
-							}
-						}
-
-					}
-					nextTime, _ := util.StringToDateTime(tweets[len(tweets)-1].CreatedAt)
-					chart = append(chart, model.BooleanChart{Label: lastTime + "#" + util.DateToString(nextTime), Positives: successes, Negatives: fails})
-
+					chart = gameResultsHelper(solution, &tweets, each, chart, err, true)
 					ctx.JSON(
 						http.StatusOK,
 						chart,
@@ -515,37 +523,7 @@ func gameResults(ctx *gin.Context) {
 				tweets := result.Data
 				var solution model.GameKey
 				solution, err = gameTracker.Solution(fromTime)
-				if err == nil {
-					successes := 0
-					fails := 0
-					lt, _ := util.StringToDateTime(tweets[0].CreatedAt)
-					lastTime := util.DateToString(time.Date(lt.Year(), lt.Month(), lt.Day(), lt.Hour(), lt.Minute(), lt.Second()+each, 0, time.UTC))
-					for _, tweet := range tweets {
-						if tweet.CreatedAt <= lastTime {
-							if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
-								successes++
-							} else {
-								fails++
-							}
-						} else {
-							nt, _ := util.StringToDateTime(lastTime)
-							nextTime := util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
-							chart = append(chart, model.BooleanChart{Label: lastTime + "#" + nextTime, Positives: successes, Negatives: fails})
-							nt, _ = util.StringToDateTime(tweet.CreatedAt)
-							lastTime = util.DateToString(nt)
-							successes = 0
-							fails = 0
-							if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
-								successes++
-							} else {
-								fails++
-							}
-						}
-
-					}
-					nextTime, _ := util.StringToDateTime(tweets[len(tweets)-1].CreatedAt)
-					chart = append(chart, model.BooleanChart{Label: lastTime + "#" + util.DateToString(nextTime), Positives: successes, Negatives: fails})
-				}
+				chart = gameResultsHelper(solution, &tweets, each, chart, err, false)
 			}
 			fromTime = fromTime.AddDate(0, 0, 1)
 		}

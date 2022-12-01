@@ -8,7 +8,6 @@ import (
 	"git.hjkl.gq/team13/birdazzone-api/model"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/gametracker"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
-	"git.hjkl.gq/team13/birdazzone-api/util"
 )
 
 var birdazzoneTracker = gametracker.GameTracker{
@@ -37,24 +36,13 @@ func solution(startTime string, endTime string) (model.GameKey, error) {
 	}
 	text := tweets.Data[0].Text
 	a := strings.ToLower(text[strings.LastIndex(text, " ")+1:])
-	if len(a) > 0 {
-		return model.GameKey{
-			Key:  a,
-			Date: tweets.Data[0].CreatedAt,
-		}, nil
-	}
-	return model.GameKey{}, errors.New("couldn't find Birdazzone solution")
+	return gametracker.MakeGameKey("Birdazzone", a, tweets.Data[0].CreatedAt)
 }
 
 func givenSolution(dt time.Time) (model.GameKey, error) {
-	startTime := util.LastInstantAtGivenTime(dt, 0)
-	endTime := util.LastInstantAtGivenTime(dt.AddDate(0, 0, 1), 0)
-	if endTime > util.DateToString(time.Now()) {
-		endTime = ""
-	}
-	return solution(startTime, endTime)
+	return gametracker.GivenSolution(dt, solution)
 }
 
 func lastSolution() (model.GameKey, error) {
-	return solution("", "")
+	return gametracker.LastSolution(solution)
 }

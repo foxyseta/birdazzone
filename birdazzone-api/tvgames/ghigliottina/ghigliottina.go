@@ -9,7 +9,6 @@ import (
 	"git.hjkl.gq/team13/birdazzone-api/model"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames/gametracker"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
-	"git.hjkl.gq/team13/birdazzone-api/util"
 )
 
 var ghigliottinaTracker = gametracker.GameTracker{
@@ -38,24 +37,13 @@ func solution(startTime string, endTime string) (model.GameKey, error) {
 	}
 	m := regexp.MustCompile(`La #parola della #ghigliottina de #leredita di oggi è:\s([A-Z]|[a-z])+`)
 	a := strings.ToLower(strings.Trim(m.FindString(tweets.Data[0].Text), "La #parola della #ghigliottina de #leredita di oggi è: "))
-	if len(a) > 0 {
-		return model.GameKey{
-			Key:  a,
-			Date: tweets.Data[0].CreatedAt,
-		}, nil
-	}
-	return model.GameKey{}, errors.New("couldn't find Ghigliottina solution")
+	return gametracker.MakeGameKey("Ghigliottina", a, tweets.Data[0].CreatedAt)
 }
 
 func givenSolution(dt time.Time) (model.GameKey, error) {
-	startTime := util.LastInstantAtGivenTime(dt, 0)
-	endTime := util.LastInstantAtGivenTime(dt.AddDate(0, 0, 1), 0)
-	if endTime > util.DateToString(time.Now()) {
-		endTime = ""
-	}
-	return solution(startTime, endTime)
+	return gametracker.GivenSolution(dt, solution)
 }
 
 func lastSolution() (model.GameKey, error) {
-	return solution("", "")
+	return gametracker.LastSolution(solution)
 }
