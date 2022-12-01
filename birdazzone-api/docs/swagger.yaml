@@ -3,6 +3,9 @@ definitions:
   model.BooleanChart:
     description: A pair made of one positive counter and one negative counter
     properties:
+      label:
+        example: "2022-11-17T18:10:00Z"
+        type: string
       negatives:
         example: 318
         minimum: 0
@@ -11,9 +14,6 @@ definitions:
         example: 209
         minimum: 0
         type: integer
-      string:
-        example: Votes
-        type: string
     type: object
   model.ChartEntry:
     description: A possible value inside a chart, alongside its absolute frequency
