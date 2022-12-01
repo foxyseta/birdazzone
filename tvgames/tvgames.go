@@ -508,8 +508,7 @@ func gameResults(ctx *gin.Context) {
 				}
 			} else {
 				//from && !to
-				now := time.Now()
-				toTime = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+				toTime = time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 23, 59, 59, 0, time.UTC)
 			}
 		} else {
 			//!from && !to
