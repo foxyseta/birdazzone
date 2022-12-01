@@ -185,6 +185,20 @@ func TestIdToObject(t *testing.T) {
 	}
 }
 
+func TestGetRequest(t *testing.T) {
+	_, err := GetRequest("https://api.twitter.com/2/users/by/username/%s",
+		true,
+		[]any{"KimKardashian"},
+		Pair[string, string]{
+			First:  "user.fields",
+			Second: "id,name,username,location,profile_image_url",
+		},
+	)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+}
+
 func TestGetRequestOnNilPathParams(t *testing.T) {
 	GetTestingGinEngine()
 	_, err := GetRequest("/swagger/index.html", false, nil, Pair[string, string]{First: "a", Second: "b"})

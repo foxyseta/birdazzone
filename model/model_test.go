@@ -199,6 +199,13 @@ func TestMakeCoordinatesOnBoundingBox(t *testing.T) {
 	}
 }
 
+func TestMakeCoordinatesOnUnsupportedShape(t *testing.T) {
+	c := MakeCoordinates(&geojson.Geometry{}, twitter.Profile{})
+	if c != nil {
+		t.Fatalf("Unexpected result")
+	}
+}
+
 func TestMakeTweet(t *testing.T) {
 	geo := geojson.NewPointGeometry([]float64{1, 2})
 	tweet := MakeTweet(twitter.ProfileTweet{
