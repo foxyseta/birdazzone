@@ -41,7 +41,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "tvgames"
+                    "fantacitorio"
                 ],
                 "summary": "Get Fantacitorio teams as tweets",
                 "parameters": [
@@ -49,8 +49,7 @@
                         "type": "string",
                         "description": "Optional username to search for",
                         "name": "username",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -61,6 +60,18 @@
                             "items": {
                                 "type": "string"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect syntax for a username",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "No user with such username",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
