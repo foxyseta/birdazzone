@@ -72,13 +72,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Incorrect syntax for a username",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.Error"
                         }
                     },
                     "404": {
                         "description": "No user with such username",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/model.Error"
                         }
                     }
                 }

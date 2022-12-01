@@ -29,8 +29,8 @@ func getPoliticians(ctx *gin.Context) {
 // @Produce json
 // @Param   username query    string false "Optional username to search for"
 // @Success 200      {array}  string
-// @Failure 400      {string} string "Incorrect syntax for a username"
-// @Failure 404      {string} string "No user with such username"
+// @Failure 400      {object} model.Error "Incorrect syntax for a username"
+// @Failure 404      {object} model.Error "No user with such username"
 // @Router  /fantacitorio/teams [get]
 func getTeams(ctx *gin.Context) {
 	// TODO: implement me (TG-177)
