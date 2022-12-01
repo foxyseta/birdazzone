@@ -20,6 +20,59 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/fantacitorio/politicians": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fantacitorio"
+                ],
+                "summary": "Get all Fantacitorio politicians and their scores",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Politician"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/fantacitorio/teams": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tvgames"
+                ],
+                "summary": "Get Fantacitorio teams as tweets",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Optional username to search for",
+                        "name": "username",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/hello": {
             "get": {
                 "produces": [
@@ -505,6 +558,20 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Politician": {
+            "description": "A politician part of the Fantacitorio game",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Matteo Salvini"
+                },
+                "score": {
+                    "type": "integer",
+                    "example": 350
+                }
+            }
+        },
         "model.Tweet": {
             "description": "A post published on Twitter",
             "type": "object",
@@ -518,6 +585,12 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string",
                     "format": "date-time"
+                },
+                "medias": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "metrics": {
                     "$ref": "#/definitions/model.Metrics"
