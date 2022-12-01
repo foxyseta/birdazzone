@@ -5,6 +5,9 @@ import type { TvGame } from '@/api/interfaces/tv-game';
 import ErrorWidget from '../components/ErrorWidget.vue';
 
 const error = ref<boolean>(false)
+const errorTitle = ref<string>()
+const errorText = ref<string>()
+
 const games = ref<TvGame[]>([])
 
 const fetchTvGames = async () => {
@@ -14,6 +17,8 @@ const fetchTvGames = async () => {
     games.value = response.data!
   } else {
     error.value = true
+    errorTitle.value = 'Error!'
+    errorText.value = 'something went wrong!'
   }
 }
 
@@ -22,7 +27,7 @@ onBeforeMount(fetchTvGames)
 <template>
   <!-- Error -->
   <div v-if="error">
-    <ErrorWidget />   
+    <ErrorWidget :open="true" :title="errorTitle" :text="errorText"/>   
   </div>
   <div v-else class="text-center">
     <h1 class="text-4xl font-black text-lgreen">TV GAMES</h1>
