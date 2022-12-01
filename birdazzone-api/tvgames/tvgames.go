@@ -149,7 +149,8 @@ func getAttempts(ctx *gin.Context, successesOnly bool, fromStr string, toStr str
 		}
 		query += " " + sol.Key
 	}
-	if sol.Date != t.Format("YYYY-MM-DD") {
+	solDate, _ := util.StringToDate(sol.Date)
+	if solDate.Format("YYYY-MM-DD") != t.Format("YYYY-MM-DD") {
 		return &twitter.ProfileTweets{Data: []twitter.ProfileTweet{}}, nil
 	}
 	if sol.Date < toStr || toStr == "" { // from && !to
