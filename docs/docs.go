@@ -48,7 +48,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "tvgames"
+                    "fantacitorio"
                 ],
                 "summary": "Get Fantacitorio teams as tweets",
                 "parameters": [
@@ -56,8 +56,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Optional username to search for",
                         "name": "username",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -68,6 +67,18 @@ const docTemplate = `{
                             "items": {
                                 "type": "string"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect syntax for a username",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "No user with such username",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
