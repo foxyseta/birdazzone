@@ -31,6 +31,11 @@ var games []model.Game
 
 var gamesById = map[int]*model.Game{}
 
+const fromDateParsingErrorMessage = "date parsing error (from)"
+const toDateParsingErrorMessage = "date parsing error (to)"
+const fromGreaterThanToErrorMessage = "from > to"
+const toGreaterThenNowErrorMessage = "to > now"
+
 func TvGamesGroup(group *gin.RouterGroup) {
 	group.GET("/", getTvGames)
 	group.GET("/:id", getTvGameById)
@@ -219,23 +224,23 @@ func getGameAttemptsParameters(ctx *gin.Context) (int, int, string, string, erro
 	if hasFrom {
 		fromTime, err = util.StringToDateTime(fromStr)
 		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (to)"))
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromDateParsingErrorMessage))
 			return 0, 0, "", "", err
 		}
 		fromStr = util.DateToString(fromTime)
 		if hasTo {
 			toTime, err = util.StringToDateTime(toStr)
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (from)"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New(toDateParsingErrorMessage))
 				return 0, 0, "", "", err
 			}
 			toStr = util.DateToString(toTime)
 			if fromStr > toStr {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from > to"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromGreaterThanToErrorMessage))
 				return 0, 0, "", "", err
 			}
 			if toStr > util.DateToString(time.Now()) {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("to > now"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New(toGreaterThenNowErrorMessage))
 				return 0, 0, "", "", err
 			}
 			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
@@ -313,20 +318,20 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	if hasFrom {
 		fromTime, err = util.StringToDateTime(fromStr)
 		if err != nil {
-			return nil, errors.New("date parsing error (from)")
+			return nil, errors.New(fromDateParsingErrorMessage)
 		}
 		fromStr = util.DateToString(fromTime)
 		if hasTo {
 			toTime, err = util.StringToDateTime(toStr)
 			if err != nil {
-				return nil, errors.New("date parsing error (to)")
+				return nil, errors.New(toDateParsingErrorMessage)
 			}
 			toStr = util.DateToString(toTime)
 			if fromStr > toStr {
-				return nil, errors.New("from > to")
+				return nil, errors.New(fromGreaterThanToErrorMessage)
 			}
 			if toStr > util.DateToString(time.Now()) {
-				return nil, errors.New("to > now")
+				return nil, errors.New(toGreaterThenNowErrorMessage)
 			}
 			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
 				return nil, errors.New("from and to are not in the same day")
@@ -478,7 +483,7 @@ func gameResults(ctx *gin.Context) {
 		if hasFrom {
 			fromTime, err = util.StringToDate(fromStr)
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (from)"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromDateParsingErrorMessage))
 				return
 			}
 			fromStr = util.DateToString(fromTime)
@@ -486,16 +491,16 @@ func gameResults(ctx *gin.Context) {
 				//from && to
 				toTime, err = util.StringToDate(toStr)
 				if err != nil {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (to)"))
+					httputil.NewError(ctx, http.StatusBadRequest, errors.New(toDateParsingErrorMessage))
 					return
 				}
 				toStr = util.DateToString(toTime)
 				if fromStr > toStr {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New("from > to"))
+					httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromGreaterThanToErrorMessage))
 					return
 				}
 				if toStr > util.DateToString(time.Now()) {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New("to > now"))
+					httputil.NewError(ctx, http.StatusBadRequest, errors.New(toGreaterThenNowErrorMessage))
 					return
 				}
 			} else {
