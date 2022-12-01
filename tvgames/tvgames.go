@@ -412,6 +412,7 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 		successes := 0
 		fails := 0
 		lt, _ := util.StringToDateTime((*tweets)[0].CreatedAt)
+		startTime := util.DateToString(lt)
 		lastTime := util.DateToString(time.Date(lt.Year(), lt.Month(), lt.Day(), lt.Hour(), lt.Minute(), lt.Second()+each, 0, time.UTC))
 		for _, tweet := range *tweets {
 			if tweet.CreatedAt <= lastTime {
@@ -421,14 +422,15 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 					fails++
 				}
 			} else {
-				nt, _ := util.StringToDateTime(lastTime)
+				// nt, _ := util.StringToDateTime(lastTime)
 				// nextTime := util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
-				chart = append(chart, model.BooleanChart{Label: lastTime, Positives: successes, Negatives: fails})
-				nt, _ = util.StringToDateTime(tweet.CreatedAt)
+				nt, _ := util.StringToDateTime(tweet.CreatedAt)
 				if updateNextTime {
 					// nextTime = util.DateToString(nt)
 				}
-				lastTime = util.DateToString(nt)
+				chart = append(chart, model.BooleanChart{Label: startTime, Positives: successes, Negatives: fails})
+				startTime = lastTime
+				lastTime = util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
 				successes = 0
 				fails = 0
 				if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
@@ -440,7 +442,7 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 
 		}
 		// nextTime, _ := util.StringToDateTime((*tweets)[len(*tweets)-1].CreatedAt)
-		chart = append(chart, model.BooleanChart{Label: lastTime, Positives: successes, Negatives: fails})
+		chart = append(chart, model.BooleanChart{Label: startTime, Positives: successes, Negatives: fails})
 	}
 	return chart
 }
