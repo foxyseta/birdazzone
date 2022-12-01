@@ -212,20 +212,20 @@ func gameAttempts(ctx *gin.Context) {
 	var pageIndex, pageLength int
 	pageIndex, err := strconv.Atoi(ctx.DefaultQuery("pageIndex", "1"))
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex)"))
 		return
 	}
 	if pageIndex < 1 {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageIndex < 1"))
 		return
 	}
 	pageLength, err = strconv.Atoi(ctx.DefaultQuery("pageLength", "1"))
 	if err != nil {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageLength)"))
 		return
 	}
 	if pageLength < 1 {
-		httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("pageLength < 1"))
 		return
 	}
 
@@ -235,27 +235,27 @@ func gameAttempts(ctx *gin.Context) {
 	if hasFrom {
 		fromTime, err = util.StringToDateTime(fromStr)
 		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+			httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (to)"))
 			return
 		}
 		fromStr = util.DateToString(fromTime)
 		if hasTo {
 			toTime, err = util.StringToDateTime(toStr)
 			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("date parsing error (from)"))
 				return
 			}
 			toStr = util.DateToString(toTime)
 			if fromStr > toStr {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from > to"))
 				return
 			}
 			if toStr > util.DateToString(time.Now()) {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("to > now"))
 				return
 			}
 			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (pageIndex) or pageIndex < 1 or integer parsing error (pageLength) or pageIndex < pageLength or integer parsing error (id) or error while parsing to date"))
+				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from and to are not in the same day"))
 				return
 			}
 		}
@@ -307,23 +307,23 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	if hasFrom {
 		fromTime, err = util.StringToDateTime(fromStr)
 		if err != nil {
-			return nil, errors.New("integer parsing error (id) or error while parsing to date")
+			return nil, errors.New("date parsing error (from)")
 		}
 		fromStr = util.DateToString(fromTime)
 		if hasTo {
 			toTime, err = util.StringToDateTime(toStr)
 			if err != nil {
-				return nil, errors.New("integer parsing error (id) or error while parsing to date")
+				return nil, errors.New("date parsing error (to)")
 			}
 			toStr = util.DateToString(toTime)
 			if fromStr > toStr {
-				return nil, errors.New("integer parsing error (id) or error while parsing to date")
+				return nil, errors.New("from > to")
 			}
 			if toStr > util.DateToString(time.Now()) {
-				return nil, errors.New("integer parsing error (id) or error while parsing to date")
+				return nil, errors.New("to > now")
 			}
 			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				return nil, errors.New("integer parsing error (id) or error while parsing to date")
+				return nil, errors.New("from and to are not in the same day")
 			}
 		}
 	} else {
