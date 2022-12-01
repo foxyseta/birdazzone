@@ -9,7 +9,7 @@ import ErrorWidget from './ErrorWidget.vue';
 
 export default defineComponent({
   components: { DatePicker },
-  
+
   data() {
     return {
       dates: null,          /** to save dates values */
@@ -39,11 +39,11 @@ export default defineComponent({
     closeD() {                          /** to close dates popup */
       this.openD = false;
     },
-    disabledAfterToday(date: Date) {          /** to disabilitate days after today in dates popup */
+    disabledDates(date: Date) {          /** to disabilitate days after today and before last week in dates popup */
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-       return date > today;
+      return date > today || date < new Date(today.getTime() - 6 * 24 * 3600 * 1000);
     },
     selectDates(){                      /** to confirm selected dates */
       if (this.dates != null) {              // entered dates
@@ -84,7 +84,7 @@ export default defineComponent({
           format="YYYY-MM-DD"
           placeholder="select start and end date"
           :clearable="true"
-          :disabled-date="disabledAfterToday"
+          :disabled-date="disabledDates"
           :disabled="choosenDates">
             <template #footer>
               <button class="mx-btn mx-btn-text" @click="closeD()">close</button>

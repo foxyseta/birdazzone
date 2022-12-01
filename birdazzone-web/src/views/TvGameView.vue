@@ -7,6 +7,7 @@ import BirdazzoneButton from '../components/BirdazzoneButton.vue'
 import ErrorWidget from '@/components/ErrorWidget.vue'
 import ListTab from './tabs/ListTab.vue'
 import ChartTab from './tabs/ChartTab.vue'
+import MapTab from './tabs/MapTab.vue'
 
 const props = defineProps<{id: string}>()
 
@@ -55,7 +56,7 @@ onBeforeMount(fetchGame)
 <template>
   <!-- Error -->
   <div v-if="error" class="flex justify-center items-center w-full">
-    <ErrorWidget />
+    <ErrorWidget :title="'ERROR'" :text="'Something went wrong, please check your internet access.'"/>
   </div>
   <!-- Success -->
   <div v-else class="pl-4 w-full flex flex-col justify-start">
@@ -77,7 +78,7 @@ onBeforeMount(fetchGame)
         <ListTab :game-id="props.id" />
       </div>
       <div v-show="showMapTab" >
-        <GuesserMap :game-id="props.id"/>
+        <MapTab :game-id="props.id"/>
       </div>
       <div v-show="showChartTab" >
         <ChartTab :game-id="props.id"/>

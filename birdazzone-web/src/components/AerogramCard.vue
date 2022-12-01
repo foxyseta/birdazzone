@@ -2,12 +2,15 @@
 import { ref, onMounted } from 'vue'
 import { createPopper } from "@popperjs/core";
 import ApiRepository from '../api/api-repository';
+import ErrorWidget from './ErrorWidget.vue'
 import { SemipolarSpinner } from 'epic-spinners';
-import FilterA from './FilterAerogram.vue'
 
 const error = ref<boolean>(false)
+const errorTitle = ref<string>()
+const errorText = ref<string>()
+
 const loading = ref<boolean>(true)
-const props = defineProps<{ id: string}>()
+const props = defineProps<{ id: string, key: number, from: string|null, to: string|null}>()
 const nFail = ref<number>(0)
 const nSucc = ref<number>(0)
 const fail = ref<number>(0)
@@ -16,8 +19,8 @@ const nAttempts = ref<number>(0)
 const canvas = ref(null)
 const see = ref(false)
 const popoverRef = ref(null)
-const from = ref<string | null>()
-const to = ref<string | null>()
+const from = ref<string | null>(props.from)
+const to = ref<string | null>(props.to)
 
 const CANVAS_SIZE = 350
 const CIRCLE_RADIUS = 140
@@ -27,8 +30,8 @@ const fetchData = async () => {
     const response = await ApiRepository.getResults(props.id.toString())
 
     if (response.esit) {
-      nFail.value = response.data!.negatives;             // failed attempts
-      nSucc.value = response.data!.positives;             // succeded attempts
+      nFail.value = response.data![0].negatives;             // failed attempts
+      nSucc.value = response.data![0].positives;             // succeded attempts
       nAttempts.value = nFail.value + nSucc.value;        // total attempts
 
       success.value = (() => {        // success percentage
@@ -41,15 +44,24 @@ const fetchData = async () => {
       fail.value = 1-success.value;   // fail percentage
 
     } else {
-      error.value = true
+      if (response.statusCode === 204) {
+        error.value = true
+        errorTitle.value = 'There are no tweets!'
+        errorText.value = 'No game instance has been played!'
+      }
+      else {
+        error.value = true
+        errorTitle.value = 'Error!'
+        errorText.value = 'something went wrong!'
+      }
     }
   }
   else{
     const response = await ApiRepository.getResultsFiltered(props.id.toString(), from.value.toString(), to.value.toString())
     
     if (response.esit) {
-      nFail.value = response.data!.negatives;             // failed attempts
-      nSucc.value = response.data!.positives;             // succeded attempts
+      nFail.value = response.data![0].negatives;             // failed attempts
+      nSucc.value = response.data![0].positives;             // succeded attempts
       nAttempts.value = nFail.value + nSucc.value;        // total attempts
 
       success.value = (() => {        // success percentage
@@ -62,10 +74,20 @@ const fetchData = async () => {
       fail.value = 1 - success.value;   // fail percentage
 
     } else {
-      error.value = true
+      if (response.statusCode === 204) {
+        error.value = true
+        errorTitle.value = 'There are no tweets!'
+        errorText.value = 'No game instance has been played!'
+      }
+      else {
+        error.value = true
+        errorTitle.value = 'Error!'
+        errorText.value = 'something went wrong!'
+      }
     }
   }
 }
+
 
 onMounted(async () => {
   loading.value = true
@@ -118,10 +140,13 @@ const popover = () => {
 </script>
 
 <template>
-  <div class="flex flex-col">
-  <div v-show="!loading && !error" class="flex flex-col justify-items-start mt-6 mb-4">
-    <FilterA :from="from" :to="to" @change-from-to="(f, t) => {from = f; to = t; fetchData()}" />
+  <!-- Error -->
+  <div v-if="error" class="flex justify-center items-center w-full">
+    <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
   </div>
+  
+  <!-- Non error -->
+  <div class="flex flex-col">
 
   <div class="bg-foreground font-semibold text-lg rounded-lg p-3 ml-4 z-0 w-auto" >
 
@@ -153,6 +178,9 @@ const popover = () => {
         </div>
       </div>
     </div>
+  </div>
+  <div class="text-sm text-lgray ml-8 mt-3">
+    * data refere only to first 100 attempts
   </div>
   </div>
 </template>

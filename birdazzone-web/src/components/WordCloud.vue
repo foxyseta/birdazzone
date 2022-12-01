@@ -6,7 +6,7 @@ import type { ChartEntry } from '@/api/interfaces/chart-entry';
 import type { Solution } from '@/api/interfaces/solution';
 import { SemipolarSpinner } from 'epic-spinners';
 
-const props = defineProps<{tvGameId: string, from: string | null, to: string | null}>()
+const props = defineProps<{tvGameId: string, key: number, from: string | null, to: string | null}>()
 const svgString = ref<string>()
 const loading = ref<boolean>(true)
 
