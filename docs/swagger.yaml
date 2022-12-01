@@ -99,6 +99,16 @@ definitions:
         minimum: 1
         type: integer
     type: object
+  model.Politician:
+    description: A politician part of the Fantacitorio game
+    properties:
+      name:
+        example: Matteo Salvini
+        type: string
+      score:
+        example: 350
+        type: integer
+    type: object
   model.Tweet:
     description: A post published on Twitter
     properties:
@@ -109,6 +119,10 @@ definitions:
       created_at:
         format: date-time
         type: string
+      medias:
+        items:
+          type: string
+        type: array
       metrics:
         $ref: '#/definitions/model.Metrics'
       text:
@@ -138,6 +152,40 @@ info:
   title: Birdazzone API
   version: "0.1"
 paths:
+  /fantacitorio/politicians:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Politician'
+            type: array
+      summary: Get all Fantacitorio politicians and their scores
+      tags:
+      - fantacitorio
+  /fantacitorio/teams:
+    get:
+      parameters:
+      - description: Optional username to search for
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      summary: Get Fantacitorio teams as tweets
+      tags:
+      - tvgames
   /hello:
     get:
       produces:
