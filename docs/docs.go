@@ -373,6 +373,10 @@ const docTemplate = `{
             "description": "A pair made of one positive counter and one negative counter",
             "type": "object",
             "properties": {
+                "label": {
+                    "type": "string",
+                    "example": "2022-11-17T18:10:00Z"
+                },
                 "negatives": {
                     "type": "integer",
                     "minimum": 0,
@@ -382,10 +386,6 @@ const docTemplate = `{
                     "type": "integer",
                     "minimum": 0,
                     "example": 209
-                },
-                "string": {
-                    "type": "string",
-                    "example": "Votes"
                 }
             }
         },
