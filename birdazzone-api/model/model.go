@@ -41,7 +41,7 @@ type Page[T any] struct {
 
 // @Description A pair made of one positive counter and one negative counter
 type BooleanChart struct {
-	Label     string `json:"string" example:"Votes"`
+	Label     string `json:"label" example:"2022-11-17T18:10:00Z"`
 	Positives int    `json:"positives" minimum:"0" example:"209"`
 	Negatives int    `json:"negatives" minimum:"0" example:"318"`
 }
