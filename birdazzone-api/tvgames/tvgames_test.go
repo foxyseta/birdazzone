@@ -35,8 +35,6 @@ func testAPICall(t *testing.T, call func(*gin.Context)) {
 	if w.Code != http.StatusNotFound {
 		t.Fatalf("Expected to get status %d but instead got %d\n", http.StatusNotFound, w.Code)
 	}
-	//TODO TEST WITH QUERY PARAM DATE
-
 }
 
 func TestGameAttemptsWParams(t *testing.T) {

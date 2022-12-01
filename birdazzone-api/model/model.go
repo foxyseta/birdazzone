@@ -98,6 +98,19 @@ func (gk *GameKey) String() string {
 	return fmt.Sprintf("%s: '%s'", gk.Date, gk.Key)
 }
 
+// @Description A politician part of the Fantacitorio game
+type Politician struct {
+	Name  string `json:"name" example:"Matteo Salvini"`
+	Score int    `json:"score" example:"350"`
+}
+
+func (p *Politician) String() string {
+	if p == nil {
+		return util.NilRepresentation
+	}
+	return fmt.Sprintf("%s (%d pts.)", p.Name, p.Score)
+}
+
 // @Description A Twitter user
 type User struct {
 	Username        string `json:"username" example:"mariorossi"`
@@ -225,6 +238,7 @@ type Tweet struct {
 	CreatedAt   string       `json:"created_at" format:"date-time"`
 	Metrics     Metrics      `json:"metrics"`
 	Coordinates *Coordinates `json:"coordinates"`
+	Medias      []string     `json:"medias"`
 }
 
 func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile, location *geojson.Geometry) Tweet {
@@ -243,6 +257,8 @@ func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile, location *geo
 			RetweetCount: tweet.PublicMetrics.RetweetCount,
 		},
 		Coordinates: coordinates,
+		// TODO: implement me (TG-178)
+		Medias: []string{},
 	}
 }
 
