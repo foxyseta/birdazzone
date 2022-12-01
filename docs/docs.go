@@ -279,7 +279,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "A array of boolean charts comparing successes and failures in the game. Each boolean chart is labeled as the starting instant of its time interval bin",
+                        "description": "An array of boolean charts comparing successes and failures in the game. Each boolean chart is labeled as the starting instant of its time interval bin",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -288,7 +288,7 @@ const docTemplate = `{
                         }
                     },
                     "204": {
-                        "description": "No game instance has been played",
+                        "description": "no game instance has been played",
                         "schema": {
                             "type": "string"
                         }
