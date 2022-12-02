@@ -32,7 +32,7 @@
 </script>
 
 <template>
-  <div class="flex flex-row"  style="flex: 1 1 auto">
+  <div class="flex flex-row mb-10"  style="flex: 1 1 auto;">
 
     <div class="flex flex-col"  style="flex: 1 1 auto"></div>
     
@@ -41,8 +41,11 @@
           <ErrorWidget />   
       </div>
       <div v-else class="flex flex-col justify-center w-full text-center">
-        <h1 class="text-4xl mt-10 mb-14 font-black text-lgreen">TV GAMES</h1>
-      
+        <div class="flex flex-row">
+          <div class="flex flex-col"  style="flex: 1 1 auto"></div>
+          <div class="shadow-4xl rounded-lg text-white bg-lgreen text-4xl font-semibold py-3 my-8 m-3" style="flex: 1 1 auto; max-width: 15rem;">TV GAMES</div>
+          <div class="flex flex-col"  style="flex: 1 1 auto"></div>
+        </div>
         <div class="flex flex-col items-center" v-for="(game,index) in games" :key="index">
           <RouterLink :to="`/tv-games/${game.id}`" style="flex: 1 1 auto; width: 25rem;">
             <div class="flex flex-row rounded-lg m-10 bg-foreground hover:bg-lgray/50 p-4 flex-1">
