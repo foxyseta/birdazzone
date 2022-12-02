@@ -26,7 +26,7 @@ const a = (f: string | null, t: string | null) => { from.value = f; to.value = t
         <div>
             <GuesserList :game-id="props.gameId" :key="listKey" :from="from" :to="to" />
         </div>
-        <div v-if="(wordcloudKey==0)">
+        <div>
             <WordCloud :tv-game-id="props.gameId" :key="wordcloudKey" :from="from" :to="to" />
         </div>
     </div>

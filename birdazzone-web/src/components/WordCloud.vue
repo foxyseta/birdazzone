@@ -10,6 +10,12 @@ const props = defineProps<{tvGameId: string, key: number, from: string | null, t
 const svgString = ref<string>()
 const loading = ref<boolean>(true)
 
+const error = ref<boolean>(false)
+
+const from = ref<string | null>(props.from)
+const to = ref<string | null>(props.to)
+const date = ref<string | null>()
+
 const explodeChartEntry = (entry: ChartEntry, solution: Solution): string => {
   let res = ""
   const stamp = (entry.value === solution.solution)? `${entry.value}🏆`: entry.value
@@ -36,11 +42,44 @@ const generateCloudOptions = (entries: ChartEntry[], solution: Solution): WordCl
   rotation: 90
 })
 
-const fetchSolution = async (): Promise<Solution|undefined> => 
-  (await ApiRepository.getTvGameSolutionById(props.tvGameId)).data
+const fetchSolution = async (): Promise<Solution|undefined> => {
+  if(!from.value || !to.value){
+    const response = await ApiRepository.getTvGameSolutionById(props.tvGameId)
+    if (response.esit) {
+      return response.data
+    } else {
+      error.value = true
+    }
+  }
+  else{
+    date.value = from.value.substring(0, 10)  // just the relative date
+    const response = await ApiRepository.getTvGameSolutionByIdFiltered(props.tvGameId, date.value)
+    if (response.esit) {
+      return response.data
+    } else {
+      error.value = true
+    }
+  }
+}
 
-const fetchStats = async (): Promise<ChartEntry[]|undefined> => 
-  (await ApiRepository.getTvGameAttemptsStat(props.tvGameId)).data
+const fetchStats = async (): Promise<ChartEntry[] | undefined> => {
+  if (!from.value || !to.value) {
+    const response = await ApiRepository.getTvGameAttemptsStat(props.tvGameId)
+    if (response.esit) {
+      return response.data
+    } else {
+      error.value = true
+    }
+  }
+  else {
+    const response = await ApiRepository.getTvGameAttemptsStatFiltered(props.tvGameId, from.value, to.value)
+    if (response.esit) {
+      return response.data
+    } else {
+      error.value = true
+    }
+  }
+}
 
 const fetchCloud = async (opts: WordCloudOptions) => {
   const response = await ApiRepository.postWordCloudData(opts)

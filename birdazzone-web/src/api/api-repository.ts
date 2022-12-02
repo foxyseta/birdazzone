@@ -16,7 +16,9 @@ export default class ApiRepository {
   private static readonly _RESULTS_ID_FILTERED = "/tvgames/{0}/results?from={1}&to={2}&each={3}"
   private static readonly _TV_GAMES_ID_ATTEMPTS_FILTERED = "/tvgames/{0}/attempts?from={1}&to={2}&pageLength={3}&pageIndex={4}"
   private static readonly _TV_GAMES_ID_ATTEMPTS_STATS = "/tvgames/{0}/attempts/stats"
+  private static readonly _TV_GAMES_ID_ATTEMPTS_STATS_FILTERED = "/tvgames/{0}/attempts/stats?from={1}&to={2}"
   private static readonly _TV_GAMES_ID_SOLUTION = "/tvgames/{0}/solution"
+  private static readonly _TV_GAMES_ID_SOLUTION_FILTERED = "/tvgames/{0}/solution?date={1}"
 
   public static readonly getTvGames = (): Promise<ApiResponse<TvGame[]>> =>
     ApiManager.get<TvGame[]>(this._BASE_URL + this._TV_GAMES)
@@ -39,8 +41,14 @@ export default class ApiRepository {
   public static readonly getTvGameAttemptsStat = (id: string): Promise<ApiResponse<ChartEntry[]>> =>
     ApiManager.get<ChartEntry[]>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS, id))
 
+  public static readonly getTvGameAttemptsStatFiltered = (id: string, from: string, to: string): Promise<ApiResponse<ChartEntry[]>> =>
+    ApiManager.get<ChartEntry[]>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS_FILTERED, id, from, to))
+
   public static readonly getTvGameSolutionById = (id: string): Promise<ApiResponse<Solution>> =>
     ApiManager.get<Solution>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_SOLUTION, id))
+
+  public static readonly getTvGameSolutionByIdFiltered = (id: string, date: string): Promise<ApiResponse<Solution>> =>
+    ApiManager.get<Solution>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_SOLUTION_FILTERED, id, date))
 
   /// Takes a string in input containing placeholders in the form of {n}, where
   /// n is a number >= 0. Then replace all the occurence of the {n} pattern with 
