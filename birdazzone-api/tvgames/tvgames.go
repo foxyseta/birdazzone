@@ -149,8 +149,12 @@ func getAttempts(ctx *gin.Context, successesOnly bool, fromStr string, toStr str
 		}
 		query += " " + sol.Key
 	}
-	solDate, _ := util.StringToDate(sol.Date)
-	if solDate.Format("YYYY-MM-DD") != t.Format("YYYY-MM-DD") || solDate.Before(t) {
+	solDate, _ := util.StringToDateTime(sol.Date)
+
+	if solDate.Year() != t.Year() ||
+		solDate.Month() != t.Month() ||
+		solDate.Day() != t.Day() ||
+		solDate.Before(t) {
 		return &twitter.ProfileTweets{Data: []twitter.ProfileTweet{}}, nil
 	}
 	if sol.Date < toStr || toStr == "" { // from && !to
