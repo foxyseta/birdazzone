@@ -18,11 +18,11 @@
 </script>
 
 <template>
-    <div v-if="error" class="flex justify-center items-center w-full">
+    <!--div v-if="error" class="flex justify-center items-center w-full">
         <ErrorWidget />
-    </div>
+    </div-->
     <!-- Success -->
-    <div v-else class="pl-4 w-full flex flex-col justify-start">
+    <div class="pl-4 w-full flex flex-col justify-start">
         <div class="shadow-4xl rounded-lg text-white bg-lgreen text-4xl font-semibold py-3 px-9 my-8 m-3">
             FANTACITORIO
         </div>
@@ -31,12 +31,12 @@
             <BirdazzoneButton :text="'TEAMS'" :active="showTeamsTab" @click="showTeams" >ciao</BirdazzoneButton>
         </div>
 
-        <div class="h-screen">
+        <div class="h-full">
             <div v-show="showPoliticiansTab">
                 <PoliticiansList />
             </div>
             <div v-show="showTeamsTab" >
-                <!-- ?Teams? -->
+                <!-- ?Teams?/ -->
             </div>
         </div>
     </div>
