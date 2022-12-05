@@ -7,7 +7,7 @@
     showAll.value = !showAll.value
   }
   const props = defineProps<{data:Tweet, index:number}>()
-
+  
   const hours:number = new Date(props.data.created_at).getHours()
   const mins:number = new Date(props.data.created_at).getMinutes()
 
@@ -33,7 +33,6 @@
                 <img v-if="index===1" :src="'/icons/coccarda1.svg'" alt="propic"/>
                 <img v-if="index===2" :src="'/icons/coccarda2.svg'" alt="propic"/>
                 <img v-if="index===3" :src="'/icons/coccarda3.svg'" alt="propic"/>
-
             </div>
                 <div class="text-lgray text-xs">{{hours}}:{{(mins>10)?mins:'0'+mins}}</div>
             </div>

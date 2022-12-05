@@ -22,9 +22,11 @@
             1
         </div>
 
-        <div v-if="actualPage !== 1" class="flex flex-row">
-            <div v-if="actualPage === 2" @click="$emit('changeActual',actualPage)" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
-                {{actualPage}}
+        <div v-if="actualPage > 1" class="flex flex-row">
+            <div v-if="actualPage === 2">
+                <div v-if="props.max > 2"  @click="$emit('changeActual',actualPage)" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
+                    {{actualPage}}
+                </div>
             </div>
             <div v-else class="flex flex-row">
                 <div v-if="actualPage !== 3" class="text-lgray mx-2">
@@ -45,12 +47,13 @@
         <div v-if="actualPage + 2 < max" class="text-lgray mx-2">
             ...
         </div>
-
-        <div v-if="actualPage === props.max" @click="$emit('changeActual',actualPage)" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
-            {{props.max}}
-        </div>
-        <div v-else class="mx-2 p-1 text-lgreen text-center hover:bg-lgreen hover:text-foreground" @click="$emit('changeActual',props.max)" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
-            {{props.max}}
+        <div v-if="props.max !== 1">
+            <div v-if="actualPage === props.max" @click="$emit('changeActual',actualPage)" class="mx-2 p-1 text-lgreen text-center bg-lgreen text-foreground" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
+                {{props.max}}
+            </div>
+            <div v-else class="mx-2 p-1 text-lgreen text-center hover:bg-lgreen hover:text-foreground" @click="$emit('changeActual',props.max)" style=" height:2.3rem; width:2.3rem;border-radius:50%; border:solid 2px;">
+                {{props.max}}
+            </div>
         </div>
     </div>
 </template>

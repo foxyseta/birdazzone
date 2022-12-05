@@ -69,7 +69,10 @@
       }
     }
   }
-
+  function changeActual(n:number){
+    actualPage.value = n;
+    fetchList();
+  }
   onBeforeMount(fetchList)
 </script>
 
@@ -93,6 +96,6 @@
         <GuesserListItem :data="item" :index="index+(actualPage-1)*itemPerPage +1" class="flex" style="flex: 1 1 auto; width: 30rem;"/>
       </div>
     </div>
-    <PaginationBar class="mt-2" v-show="!firstLoad" :actualPage="actualPage" :max="max" @change-actual="(n) => {actualPage = n; fetchList()}"/>
+    <PaginationBar class="mt-2" v-show="!firstLoad" :actualPage="actualPage" :max="max" @change-actual="changeActual"/>
   </div>
 </template>

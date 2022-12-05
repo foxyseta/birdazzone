@@ -4,28 +4,26 @@ import type { Coordinates } from '../api/interfaces/tweet';
 import { onBeforeMount, ref } from 'vue'
 import ErrorWidget from './ErrorWidget.vue'
 import FilterMap from './FilterList.vue'
+import { SemipolarSpinner } from 'epic-spinners';
 
 const props = defineProps<{ gameId: string, key: number, from: string | null, to: string | null }>()
 
 const ROME = [ 12.706374170037495, 42.21140846575139 ]
 
-const error = ref<boolean>(false)
-const errorTitle = ref<string>()
-const errorText = ref<string>()
-
+const loading = ref<boolean>(false)
 const center = ref<number[]>(ROME)
 const zoom = ref<number>(6)
-const rotation = ref(0)
-const fillColor =ref( '#1eb980')
-const strokeColor =ref( 'white')
-const strokeWidth =ref(3)
-const radius =ref(10)
-const projection = ref("EPSG:4326")
-const coordinates = ref<number[][]>([]) // [lat, long]
+const rotation = ref<number>(0)
+const fillColor = ref<string>('#1eb980')
+const strokeColor = ref<string>('white')
+const strokeWidth = ref<number>(3)
+const radius = ref<number>(10)
+const projection = ref<string>("EPSG:4326")
+const coordinates = ref<number[][]>([]) // [long, lat]
 const from = ref<string | null>(props.from)
 const to = ref<string | null>(props.to)
 
-const unpackCoordinates = (coordinates: Coordinates) => [coordinates.latitude, coordinates.longitude]
+const unpackCoordinates = (coordinates: Coordinates) => [coordinates.longitude, coordinates.latitude]
 
 const fetchCoordinates = async () => {
   if(!from.value || !to.value){
@@ -67,7 +65,9 @@ const fetchCoordinates = async () => {
 }
 
 onBeforeMount(async () => {
-  fetchCoordinates()
+  loading.value = true
+  await fetchCoordinates()
+  loading.value = false
 })
 
 </script>
@@ -80,8 +80,11 @@ onBeforeMount(async () => {
   
   <!-- Non error -->
 
-<div class="flex">
-  <div class="flex mt-6 p-5 bg-foreground shadow rounded-xl justify-center">
+<div class="h-100 flex justify-center">
+  <div v-if="loading" class="flex p-5 h-screen align-center justify-center">
+      <semipolar-spinner :animation-duration="2000" :size="50" color="#1eb980" />
+  </div>
+<div v-else class="p-5 bg-foreground shadow rounded-xl">
     <ol-map :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true" style="height: 50rem; width: 50rem">
 
       <ol-zoom-control />

@@ -77,7 +77,7 @@ onBeforeMount(fetchGame)
     </div>
 
     <!-- Content -->
-    <div class="h-screen">
+    <div class="h-full mb-5">
       <div v-show="showListTab">
         <ListTab :game-id="props.id" />
       </div>
