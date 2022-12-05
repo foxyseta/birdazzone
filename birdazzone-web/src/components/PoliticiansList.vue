@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-    import { onBeforeMount } from "@vue/runtime-core"
     import { ref, onBeforeMount } from 'vue'
     import ErrorWidget from '@/components/ErrorWidget.vue'
     import ApiRepository from '../api/api-repository'
@@ -37,8 +36,7 @@
             "score": 400
         },
     ])
-
-    console.log(list.value)
+    
     /*const fetchPoliticiansList = async () => {
         loading.value = true
         const resp = await ApiRepository.getPoliticians()
@@ -56,9 +54,22 @@
 </script>
 
 <template>
-    <div class="flex flex-col" v-for="(item,index) in list" :key="index">
-        <div class="rounded-lg  bg-foreground p-4">
-            {{item.name}}
+    <div class="flex flex-row w-full" style="flex: 1 1 auto">
+        
+        <div class="flex flex-col" style="flex: 2 1 auto"></div>
+        
+        <div class="flex flex-col justify-center align-center" style="flex:1 1 auto">
+            <div v-for="(item,index) in list" :key="index">
+                <div class="flex flex-row rounded-lg  bg-foreground p-4 m-2 items-center">
+                    <div class="font-semibold text-white ml-2">
+                        {{item.name}}
+                    </div>
+                    <div class="font-bold text-white ml-10" style="font-size:180%">
+                        {{item.score}}
+                    </div>
+                </div>
+            </div>
         </div>
+        <div class="flex flex-col" style="flex: 2 1 auto"></div>
     </div>
 </template>
