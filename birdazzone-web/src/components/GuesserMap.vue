@@ -6,6 +6,11 @@ import ErrorWidget from './ErrorWidget.vue'
 import FilterMap from './FilterList.vue'
 import { SemipolarSpinner } from 'epic-spinners';
 
+
+const errorTitle = ref<string>()
+const errorText = ref<string>()
+const error = ref<boolean>(false)
+
 const props = defineProps<{ gameId: string, key: number, from: string | null, to: string | null }>()
 
 const ROME = [ 12.706374170037495, 42.21140846575139 ]

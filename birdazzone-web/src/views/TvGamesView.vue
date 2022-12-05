@@ -48,7 +48,7 @@ const games = ref<TvGame[]>([])
     
     <div class="flex flex-col" style="flex: 1 1 auto">
       <div v-if="error">
-          <ErrorWidget />   
+        <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
       </div>
       <div v-else class="flex flex-col justify-center w-full text-center">
         <div class="flex flex-row">
