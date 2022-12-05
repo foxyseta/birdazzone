@@ -54,7 +54,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Optional Twitter username to search for",
+                        "description": "Optional username to search for",
                         "name": "username",
                         "in": "query"
                     }
@@ -65,7 +65,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Tweet"
+                                "type": "string"
                             }
                         }
                     },
