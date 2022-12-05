@@ -8,7 +8,7 @@ import (
 
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
-	"github.com/paulmach/go.geojson"
+	geojson "github.com/paulmach/go.geojson"
 	// "github.com/swaggo/swag/example/celler/httputil"
 )
 
@@ -41,7 +41,7 @@ type Page[T any] struct {
 
 // @Description A pair made of one positive counter and one negative counter
 type BooleanChart struct {
-	Label     string `json:"string" example:"Votes"`
+	Label     string `json:"label" example:"2022-11-17T18:10:00Z"`
 	Positives int    `json:"positives" minimum:"0" example:"209"`
 	Negatives int    `json:"negatives" minimum:"0" example:"318"`
 }
@@ -96,6 +96,19 @@ func (gk *GameKey) String() string {
 		return util.NilRepresentation
 	}
 	return fmt.Sprintf("%s: '%s'", gk.Date, gk.Key)
+}
+
+// @Description A politician part of the Fantacitorio game
+type Politician struct {
+	Name  string `json:"name" example:"Matteo Salvini"`
+	Score int    `json:"score" example:"350"`
+}
+
+func (p *Politician) String() string {
+	if p == nil {
+		return util.NilRepresentation
+	}
+	return fmt.Sprintf("%s (%d pts.)", p.Name, p.Score)
 }
 
 // @Description A Twitter user
@@ -225,6 +238,7 @@ type Tweet struct {
 	CreatedAt   string       `json:"created_at" format:"date-time"`
 	Metrics     Metrics      `json:"metrics"`
 	Coordinates *Coordinates `json:"coordinates"`
+	Medias      []string     `json:"medias"`
 }
 
 func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile, location *geojson.Geometry) Tweet {
@@ -243,6 +257,8 @@ func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile, location *geo
 			RetweetCount: tweet.PublicMetrics.RetweetCount,
 		},
 		Coordinates: coordinates,
+		// TODO: implement me (TG-178)
+		Medias: []string{},
 	}
 }
 

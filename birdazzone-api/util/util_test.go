@@ -137,6 +137,28 @@ func TestStringToDate(t *testing.T) {
 	}
 }
 
+func TestStringToDateTime(t *testing.T) {
+	date, err := StringToDateTime("2022-11-01T13:52:21Z")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if date != time.Date(2022, time.November, 1, 13, 52, 21, 0, time.UTC) {
+		t.Fatal("Error in formatting to date")
+	}
+	date, err = StringToDateTime("2022-11-33T13:52:21Z")
+	if err == nil {
+		t.Fatal("Expected error but got: " + date.String())
+	}
+	date, err = StringToDateTime("2022-11-01T13:52:221Z")
+	if err == nil {
+		t.Fatal("Expected error but got: " + date.String())
+	}
+	date, err = StringToDateTime("2022-1a-01T13:52:21Z")
+	if err == nil {
+		t.Fatal("Expected error but got: " + date.String())
+	}
+}
+
 func TestDateToString(t *testing.T) {
 	s := DateToString(time.Date(2022, time.November, 12, 18, 55, 12, 12, time.UTC))
 	if s != "2022-11-12T18:55:12Z" {
@@ -160,6 +182,20 @@ func TestIdToObject(t *testing.T) {
 	_, err := IdToObject(ctx, map[int]int{0: 1, 1: 0})
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestGetRequest(t *testing.T) {
+	_, err := GetRequest("https://api.twitter.com/2/users/by/username/%s",
+		true,
+		[]any{"KimKardashian"},
+		Pair[string, string]{
+			First:  "user.fields",
+			Second: "id,name,username,location,profile_image_url",
+		},
+	)
+	if err != nil {
+		t.Fatal(err.Error())
 	}
 }
 
