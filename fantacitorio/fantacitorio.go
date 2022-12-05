@@ -22,20 +22,20 @@ func extractPoliticianPoints(text string) []model.Politician {
 	lines := strings.Split(text, "\n")
 	for i := 0; i < len(lines); i++ {
 		re := regexp.MustCompile(`[-]?\d[\d,]*[\.]?[\d{2}]*`) //regex for points
-		pointsStr := re.FindString(lines[i])
+		a := re.FindString(lines[i])
 		lines[i] = strings.ToUpper(lines[i])
 
-		if len(pointsStr) > 1 { // excludes all points made of 1 char (usually coming from links) or empty strings
-			lines[i] = strings.ReplaceAll(lines[i], pointsStr, "")
+		if len(a) > 1 { // excludes all points made of 1 char (usually coming from links) or empty strings
+			lines[i] = strings.ReplaceAll(lines[i], a, "")
 			if strings.Contains(strings.ToUpper(lines[i]), "MALUS") {
-				pointsStr = "-" + pointsStr
+				a = "-" + a
 			}
 			lines[i] = strings.ReplaceAll(lines[i], " PUNTI", "")
 			lines[i] = strings.ReplaceAll(lines[i], "MALUS DI ", "")
 			lines[i] = strings.ReplaceAll(lines[i], " PER ", "")
 			lines[i] = strings.ReplaceAll(lines[i], " - ", "")
-			fmt.Println(pointsStr + "|" + lines[i])
-			points, err := strconv.Atoi(pointsStr)
+			fmt.Println(a + "|" + lines[i])
+			points, err := strconv.Atoi(a)
 			if err == nil {
 				ret = append(ret, model.Politician{Name: lines[i], Score: points})
 			}
@@ -68,43 +68,25 @@ func getPoliticiansPoints() ([]model.Politician, error) {
 func getPoliticians(ctx *gin.Context) {
 	// TODO: implement me (TG-170, TG-171, TG-172, TG-173)
 	// LIST: https://docs.google.com/spreadsheets/d/1Y5oBN9omqOkV0WoGoLRYOgACOxKC5vksN0VoCXZ5ljY/edit#gid=1522144602
+	//c := model.Politician{Name: "test", Score: 12}
 	politicians, err := getPoliticiansPoints()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, politicians)
+	ctx.JSON(http.StatusNotImplemented, politicians)
 }
 
 // getTeams godoc
 // @Summary Get Fantacitorio teams as tweets
 // @Tags    fantacitorio
 // @Produce json
-// @Param   username query    string false "Optional Twitter username to search for"
-// @Success 200      {array}  model.Tweet
+// @Param   username query    string false "Optional username to search for"
+// @Success 200      {array}  string
 // @Failure 400      {object} model.Error "Incorrect syntax for a username"
 // @Failure 404      {object} model.Error "No user with such username"
 // @Router  /fantacitorio/teams [get]
 func getTeams(ctx *gin.Context) {
 	// TODO: implement me (TG-177)
-	username, hasName := ctx.GetQuery("username")
-	search := "#fantacitorio has:media"
-	if hasName {
-		if username == "" {
-			ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Message: "incorrect syntax for a username"})
-			return
-		}
-		search += " from:" + username
-	}
-	result, err := twitter.GetManyRecentTweetsFromQuery(search, "", "")
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
-		return
-	}
-	if result.Meta.ResultCount == 0 {
-		ctx.JSON(http.StatusNotFound, model.Error{Code: http.StatusNotFound, Message: "no user with such username"})
-		return
-	}
-	fmt.Println(result)
 	ctx.JSON(http.StatusNotImplemented, []model.Tweet{})
 }
