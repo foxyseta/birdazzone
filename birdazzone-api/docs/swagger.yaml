@@ -169,7 +169,7 @@ paths:
   /fantacitorio/teams:
     get:
       parameters:
-      - description: Optional username to search for
+      - description: Optional Twitter username to search for
         in: query
         name: username
         type: string
@@ -180,7 +180,7 @@ paths:
           description: OK
           schema:
             items:
-              type: string
+              $ref: '#/definitions/model.Tweet'
             type: array
         "400":
           description: Incorrect syntax for a username
