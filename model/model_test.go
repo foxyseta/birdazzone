@@ -63,6 +63,17 @@ func TestGameKeyString(t *testing.T) {
 	}
 }
 
+func TestPoliticianString(t *testing.T) {
+	var p *Politician
+	if p.String() != util.NilRepresentation {
+		t.Fatalf("%s differs from %s", p.String(), util.NilRepresentation)
+	}
+	p = &Politician{"Matteo Salvini", 350}
+	if p.String() != "Matteo Salvini (350 pts.)" {
+		t.Fatalf("%s differs from \"Matteo Salvini (350 pts.)\"", p.String())
+	}
+}
+
 func TestMakeUser(t *testing.T) {
 	user := MakeUser(twitter.UIDLookup{
 		Data: twitter.Profile{
@@ -196,6 +207,13 @@ func TestMakeCoordinatesOnBoundingBox(t *testing.T) {
 	}
 	if (int)(c.Longitude) != 3 {
 		t.Fatalf("Got longitude %f instead of 3", c.Longitude)
+	}
+}
+
+func TestMakeCoordinatesOnUnsupportedShape(t *testing.T) {
+	c := MakeCoordinates(&geojson.Geometry{}, twitter.Profile{})
+	if c != nil {
+		t.Fatalf("Unexpected result")
 	}
 }
 

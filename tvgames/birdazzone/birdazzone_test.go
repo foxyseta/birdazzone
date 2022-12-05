@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func TestGhihliottinaTracker(t *testing.T) {
+func TestBirdazzoneTracker(t *testing.T) {
 	res := GetBirdazzoneTracker()
 	if res.Game != birdazzoneTracker.Game {
 		t.Fatal("Wrong game")
