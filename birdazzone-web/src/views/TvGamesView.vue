@@ -50,7 +50,7 @@
           <RouterLink :to="`/tv-games/${game.id}`" style="flex: 1 1 auto; width: 25rem;">
             <div class="flex flex-row rounded-lg m-10 bg-foreground hover:bg-lgray/50 p-4 flex-1">
               <div class="flex flex-row px-3">
-                <img :src="(logo_list[game.id] ? 'http://localhost:8080' + logo_list[game.id].logo : '/icons/user.svg')" style="height: 6rem" />
+                <img :src="(logo_list[game.id] ? 'http://localhost:8080' + logo_list[game.id].logo : '/icons/user.svg')" style="height: 6rem" alt="gameIcon"/>
               </div>
               
               <div class="flex flex-col flex-1"></div>
@@ -65,31 +65,6 @@
       </div> 
     </div>
 
-    <div class="felx flex-col"  style="flex: 1 1 auto"></div>
+    <div class="flex flex-col"  style="flex: 1 1 auto"></div>
   </div>
 </template>
-
-
-
-
-
-<!--div class="flex flex-col justify-center w-full text-center">
-  <div v-if="error">
-    <ErrorWidget />   
-  </div>
-
-  <div v-else class="flex justify-center w-full text-center">
-    <h1 class="text-4xl font-black text-lgreen">TV GAMES</h1>
-    <img :src="(logo_list[0] ? 'http://localhost:8080' + logo_list[0].logo : '')" alt="ghigliottina img"/>
-  </div>
-
-  <div class="flex flex-col justify-evenly h-screen">
-    <div v-for="game in games" :key="game.name">
-      <RouterLink :to="`/tv-games/${game.id}`">
-        <div class="rounded shadow py-9 px-9">
-          <h1 class="text-white text-xl font-bold"> {{game.name}}</h1>
-        </div>
-      </RouterLink>
-    </div>
-  </div>
-</div-->
