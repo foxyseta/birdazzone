@@ -32,7 +32,7 @@
 </script>
 
 <template>
-  <div class="flex flex-row mb-10"  style="flex: 1 1 auto;">
+  <div class="flex flex-row mb-10 h-screen"  style="flex: 1 1 auto;">
 
     <div class="flex flex-col"  style="flex: 1 1 auto"></div>
     
@@ -64,7 +64,7 @@
         </div>
       </div> 
     </div>
-
     <div class="flex flex-col"  style="flex: 1 1 auto"></div>
   </div>
 </template>
+ì
