@@ -9,7 +9,7 @@ const errorText = ref<string>()
 
 const games = ref<TvGame[]>([])
 
-  //const BASE:string = `${import.meta.env.VITE_SERVER_URL}`
+  const BASE:string = `http://${import.meta.env.VITE_SERVER_URL}`
   const error = ref<boolean>(false)
   const logo_list = ref<TvGame[]>([])
 
@@ -60,7 +60,7 @@ const games = ref<TvGame[]>([])
           <RouterLink :to="`/tv-games/${game.id}`" style="flex: 1 1 auto; width: 25rem;">
             <div class="flex flex-row rounded-lg m-10 bg-foreground hover:bg-lgray/50 p-4 flex-1">
               <div class="flex flex-row px-3">
-                <img :src="(logo_list[game.id] ? 'http://localhost:8080' + logo_list[game.id].logo : '/icons/user.svg')" style="height: 6rem" alt="gameIcon"/>
+                <img :src="(logo_list[game.id] ? BASE + logo_list[game.id].logo : '/icons/user.svg')" style="height: 6rem" alt="gameIcon"/>
               </div>
               
               <div class="flex flex-col flex-1"></div>
