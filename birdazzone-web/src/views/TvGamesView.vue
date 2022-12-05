@@ -4,7 +4,6 @@
   import type { TvGame } from '@/api/interfaces/tv-game';
   import ErrorWidget from '../components/ErrorWidget.vue';
 
-const error = ref<boolean>(false)
 const errorTitle = ref<string>()
 const errorText = ref<string>()
 
@@ -12,7 +11,6 @@ const games = ref<TvGame[]>([])
 
   //const BASE:string = `${import.meta.env.VITE_SERVER_URL}`
   const error = ref<boolean>(false)
-  const games = ref<TvGame[]>([])
   const logo_list = ref<TvGame[]>([])
 
   const fetchTvGames = async () => {
