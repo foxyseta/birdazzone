@@ -17,19 +17,15 @@ const strokeColor = ref<string>('white')
 const strokeWidth = ref<number>(3)
 const radius = ref<number>(10)
 const projection = ref<string>("EPSG:4326")
-const coordinates = ref<number[][]>([]) // [lat, long]
+const coordinates = ref<number[][]>([]) // [long, lat]
 
-const unpackCoordinates = (coordinates: Coordinates) => [coordinates.latitude, coordinates.longitude]
+const unpackCoordinates = (coordinates: Coordinates) => [coordinates.longitude, coordinates.latitude]
 
 const fetchCoordinates = async () => {
   const response = await ApiRepository.getListOfGuesser(props.gameId, "1", "200")
   if (response.esit) {
     // @ts-ignore
     coordinates.value = response.data!.entries.map(tweet => tweet.coordinates).filter(c => c).map(unpackCoordinates) // Remove undefined and nulls
-    console.log(response.data!.entries.map(tweeet => tweeet.coordinates))
-    coordinates.value.push(ROME)
-    coordinates.value.push([ROME[0], ROME[1] +2])
-    coordinates.value.push([ROME[0] +0.1, ROME[1] +0.1])
   } else {
 
   }
