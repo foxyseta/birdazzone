@@ -9,7 +9,7 @@ import ErrorWidget from './ErrorWidget.vue';
 
 export default defineComponent({
   components: { DatePicker },
-  
+
   data() {
     return {
       dates: null,          /** to save dates values */
@@ -39,11 +39,11 @@ export default defineComponent({
     closeD() {                          /** to close dates popup */
       this.openD = false;
     },
-    disabledAfterToday(date: Date) {          /** to disabilitate days after today in dates popup */
+    disabledDates(date: Date) {          /** to disabilitate days after today and before last week in dates popup */
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-       return date > today;
+      return date > today || date < new Date(today.getTime() - 6 * 24 * 3600 * 1000);
     },
     selectDates(){                      /** to confirm selected dates */
       if (this.dates != null) {              // entered dates
@@ -61,7 +61,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="flex justify-end">
+  <div class="flex justify-start">
     <button class="font-semibold text-white border border-lgreen bg-foreground hover:bg-lgreen rounded-lg px-4 py-2 text-center text-sm inline-flex items-center" type="button" @click="openCloseFunction()">
       <svg class="mr-2 w-4 h-4" alt="arrow down" aria-hidden="true" fill="none" stroke="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -70,7 +70,7 @@ export default defineComponent({
     </button>
   </div>
 
-  <div v-if="openClose" class="z-10 bg-foreground font-semibold text-md rounded-lg m-2 mr-0 place-self-end">    
+  <div v-if="openClose" class="z-10 bg-foreground border border-background p-4 font-semibold text-md rounded-lg m-2 mr-0 place-self-start">    
     <div class="flex flex-row items-stretch" aria-labelledby="dropdownDividerButton">
       <label for="Dates" class="justify-self-start self-center text-white text-sm w-9">dates</label>
       <div class="flex justify-self-start" id="Dates">
@@ -84,7 +84,7 @@ export default defineComponent({
           format="YYYY-MM-DD"
           placeholder="select start and end date"
           :clearable="true"
-          :disabled-date="disabledAfterToday"
+          :disabled-date="disabledDates"
           :disabled="choosenDates">
             <template #footer>
               <button class="mx-btn mx-btn-text" @click="closeD()">close</button>

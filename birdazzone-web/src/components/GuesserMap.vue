@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import ApiRepository from '@/api/api-repository';
-import type { Coordinates } from '@/api/interfaces/tweet';
+import ApiRepository from '../api/api-repository';
+import type { Coordinates } from '../api/interfaces/tweet';
 import { onBeforeMount, ref } from 'vue'
+import ErrorWidget from './ErrorWidget.vue'
+import FilterMap from './FilterList.vue'
 import { SemipolarSpinner } from 'epic-spinners';
 
-const props = defineProps<{gameId: string}>()
+
+const errorTitle = ref<string>()
+const errorText = ref<string>()
+const error = ref<boolean>(false)
+
+const props = defineProps<{ gameId: string, key: number, from: string | null, to: string | null }>()
 
 const ROME = [ 12.706374170037495, 42.21140846575139 ]
 
@@ -18,16 +25,47 @@ const strokeWidth = ref<number>(3)
 const radius = ref<number>(10)
 const projection = ref<string>("EPSG:4326")
 const coordinates = ref<number[][]>([]) // [long, lat]
+const from = ref<string | null>(props.from)
+const to = ref<string | null>(props.to)
 
 const unpackCoordinates = (coordinates: Coordinates) => [coordinates.longitude, coordinates.latitude]
 
 const fetchCoordinates = async () => {
-  const response = await ApiRepository.getListOfGuesser(props.gameId, "1", "200")
-  if (response.esit) {
-    // @ts-ignore
-    coordinates.value = response.data!.entries.map(tweet => tweet.coordinates).filter(c => c).map(unpackCoordinates) // Remove undefined and nulls
-  } else {
-
+  if(!from.value || !to.value){
+    const response = await ApiRepository.getListOfGuesser(props.gameId, "1", "100")
+    if (response.esit) {
+      // @ts-ignore
+      coordinates.value = response.data!.entries.map(tweet => tweet.coordinates).filter(c => c).map(unpackCoordinates) // Remove undefined and nulls
+    } else {
+      if (response.statusCode === 204) {
+      error.value = true
+        errorTitle.value = 'There are no tweets!'
+        errorText.value = 'No game instance has been played!'
+      }
+      else {
+        error.value = true
+        errorTitle.value = 'Error!'
+        errorText.value = 'something went wrong!'
+      }
+    }
+  }
+  else{
+    const response = await ApiRepository.getListOfGuesserFiltered(props.gameId, from.value.toString(), to.value.toString(), "1", "100")
+    if (response.esit) {
+      // @ts-ignore
+      coordinates.value = response.data!.entries.map(tweet => tweet.coordinates).filter(c => c).map(unpackCoordinates) // Remove undefined and nulls
+    } else {
+      if (response.statusCode === 204) {
+        error.value = true
+        errorTitle.value = 'There are no tweets!'
+        errorText.value = 'No game instance has been played!'
+      }
+      else {
+        error.value = true
+        errorTitle.value = 'Error!'
+        errorText.value = 'something went wrong!'
+      }
+    }
   }
 }
 
@@ -40,6 +78,12 @@ onBeforeMount(async () => {
 </script>
 
 <template>
+  <!-- Error -->
+  <div v-if="error" class="flex justify-center items-center w-full">
+    <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
+  </div>
+  
+  <!-- Non error -->
 
 <div class="h-100 flex justify-center">
   <div v-if="loading" class="flex p-5 h-screen align-center justify-center">

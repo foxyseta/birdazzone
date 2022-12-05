@@ -4,9 +4,13 @@
   import type { TvGame } from '@/api/interfaces/tv-game';
   import ErrorWidget from '../components/ErrorWidget.vue';
 
+const errorTitle = ref<string>()
+const errorText = ref<string>()
+
+const games = ref<TvGame[]>([])
+
   //const BASE:string = `${import.meta.env.VITE_SERVER_URL}`
   const error = ref<boolean>(false)
-  const games = ref<TvGame[]>([])
   const logo_list = ref<TvGame[]>([])
 
   const fetchTvGames = async () => {
@@ -18,6 +22,8 @@
       fetchLogo()
     } else {
       error.value = true
+    errorTitle.value = 'Error!'
+    errorText.value = 'something went wrong!'
     }
   }
 
@@ -32,13 +38,17 @@
 </script>
 
 <template>
+  <!-- Error -->
+  <div v-if="error">
+    <ErrorWidget :open="true" :title="errorTitle" :text="errorText"/>   
+  </div>
   <div class="flex flex-row mb-10 h-screen"  style="flex: 1 1 auto;">
 
     <div class="flex flex-col"  style="flex: 1 1 auto"></div>
     
     <div class="flex flex-col" style="flex: 1 1 auto">
       <div v-if="error">
-          <ErrorWidget />   
+        <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
       </div>
       <div v-else class="flex flex-col justify-center w-full text-center">
         <div class="flex flex-row">
