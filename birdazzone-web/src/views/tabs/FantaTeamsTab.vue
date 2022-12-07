@@ -72,5 +72,5 @@ const tweets : Tweet[]= [
 <template>
     <h1> fanta teams tab</h1>
     <FantaSearchUser />
-    <FantaTeamsList />
+    <FantaTeamsList :tweets="tweets" />
 </template>
