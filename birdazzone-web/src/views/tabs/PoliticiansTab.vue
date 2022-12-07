@@ -1,13 +1,13 @@
 <script lang="ts" setup>
     import { ref, onBeforeMount } from 'vue'
     import ErrorWidget from '@/components/ErrorWidget.vue'
-    import ApiRepository from '../../../api/api-repository'
-    import type { Politician } from '../../../api/interfaces/politician'
+    import ApiRepository from '../../api/api-repository'
+    import type { Politician } from '../../api/interfaces/politician'
 
     const error = ref<boolean> (false)
     const loading = ref<boolean> (true)
     const list = ref<Politician[]>([
-        {
+        /*{
             "name": "Giorgia Meloni",
             "score": 1000
         },
@@ -34,10 +34,10 @@
         {
             "name": "Gianni Agnelli",
             "score": 400
-        },
+        },*/
     ])
     
-    /*const fetchPoliticiansList = async () => {
+    const fetchPoliticiansList = async () => {
         loading.value = true
         const resp = await ApiRepository.getPoliticians()
         if (resp.esit) {
@@ -48,9 +48,9 @@
         } else {
             error.value = true
         }
-    }*/
+    }
 
-    //onBeforeMount(fetchPoliticiansList)
+    onBeforeMount(fetchPoliticiansList)
 </script>
 
 <template>
@@ -59,19 +59,20 @@
             
             <div class="flex flex-col" style="flex: 2 1 auto"></div>
             
-            <div class="flex flex-col justify-center align-center" style="flex:1 1 auto; min-width:10% ">
+            <div class="flex flex-col justify-center align-center" style="flex:1 1 auto; width:20rem ">
                 <div v-for="(item,index) in list" :key="index">
                     <div class="flex flex-row my-2 text-lgray">
                         {{(index+1)}}.
-                        <div class="flex flex-row rounded-lg bg-foreground p-4 ml-3 items-center flex-1">
-                            <div class="font-semibold text-white" style="min-width:40%">
+                        <div class="flex flex-row rounded-lg bg-foreground p-4 ml-3 items-center">
+                            <div class="font-semibold text-white" style="flex: 1 1 auto;width:100%">
                                 {{item.name}}
                             </div>
-                            <div class="font-bold text-white text-right" style="flex:1 1 auto;font-size:180%">
-                                {{item.score}}
-                                <span class="text-lgray font-normal" style="font-size:50%">p.</span>
+                            <div class="flex font-bold text-white text-right align-center justify-end" style="flex:1 1 auto;font-size:180%">
+                                <input type="text" class="flex bg-foreground justify-end flex-wrap text-end" style="width:100%; " :value=item.score />
+                            
+                                <span class="flex text-lgray font-normal items-center ml-1" style="font-size:50%">p.</span>
                             </div>
-                            <div class="flex justify-end flex-1 ml-3" style="height:2rem; max-width:10%">
+                            <div class="flex justify-center ml-3" style="flex:1 0 auto;height:2rem; width:2rem">
                                 <img v-show="(index===0)" :src="'/icons/coccarda1.svg'" alt="medal1" />
                                 <img v-show="(index===1)" :src="'/icons/coccarda2.svg'" alt="medal2" />
                                 <img v-show="(index===2)" :src="'/icons/coccarda3.svg'" alt="medal3" />
