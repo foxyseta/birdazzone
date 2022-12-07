@@ -2,8 +2,11 @@
 import FantaTeamsList from '../../components/FantaTeamsList.vue';
 import FantaSearchUser from '../../components/FantaSearchUser.vue';
 import type  { Tweet } from '../../api/interfaces/tweet';
+import { useRoute } from 'vue-router';
+import { onBeforeMount, ref } from 'vue';
+import ApiRepository from '@/api/api-repository';
 
-const tweets : Tweet[]= [
+const fakeTweets : Tweet[]= [
     {
         author: {
             name: "a",
@@ -67,10 +70,36 @@ const tweets : Tweet[]= [
 
 ]
 
+const username = ref<string>()
+const tweets = ref<Tweet[]>([]) 
+const isError = ref<boolean>(false)
+const error = ref<string>()
+const loading = ref<boolean>(false)
+
+const fetchTweets = async () => {
+    loading.value = true
+    const response = await ApiRepository.getFantacitorioTeams(username.value)
+    isError.value = response.esit
+
+    if (response.esit) {
+        tweets.value = fakeTweets // TODO response.data
+    } else {
+        error.value = response.error?.message
+    }
+    loading.value = false
+}
+
+onBeforeMount(()=>fetchTweets())
+
+const onUsernameChanged = async (newUsername: string) => {
+    username.value = newUsername
+    await fetchTweets()
+}
+
 </script>
 
 <template>
     <h1> fanta teams tab</h1>
-    <FantaSearchUser />
+    <FantaSearchUser @changed="onUsernameChanged" />
     <FantaTeamsList />
 </template>
