@@ -1,8 +1,8 @@
 <script lang="ts" setup>
     import { ref, onBeforeMount } from 'vue'
     import ErrorWidget from '@/components/ErrorWidget.vue'
-    import ApiRepository from '../api/api-repository'
-    import type { Politician } from '../api/interfaces/politician'
+    import ApiRepository from '../../../api/api-repository'
+    import type { Politician } from '../../../api/interfaces/politician'
 
     const error = ref<boolean> (false)
     const loading = ref<boolean> (true)

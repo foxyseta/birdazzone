@@ -1,7 +1,7 @@
 <script lang="ts" setup>
     import BirdazzoneButton from '../components/BirdazzoneButton.vue'
     import { ref, onBeforeMount } from 'vue'
-    import PoliticiansList from '@/components/PoliticiansList.vue';
+    import PoliticiansTab from '@/views/tabs/PoliticiansTab.vue';
 
     const showPoliticiansTab = ref<boolean>(true)
     const showTeamsTab = ref<boolean>(false)
@@ -34,7 +34,7 @@
 
         <div class="h-full">
             <div v-show="showPoliticiansTab">
-                <PoliticiansList class="flex w-full" style="flex:1 1 auto;" />
+                <PoliticiansTab class="flex w-full" style="flex:1 1 auto;" />
             </div>
             <div v-show="showTeamsTab" >
                 <!-- ?Teams?/ -->
