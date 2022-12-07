@@ -19,8 +19,12 @@ func FantacitorioGroup(group *gin.RouterGroup) {
 // @Success 200 {array} model.Politician
 // @Router  /fantacitorio/politicians [get]
 func getPoliticians(ctx *gin.Context) {
-	// TODO: implement me (TG-170, TG-171, TG-172, TG-173)
-	ctx.JSON(http.StatusNotImplemented, []model.Politician{})
+	politicians, err := getPoliticiansPoints()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+	} else {
+		ctx.JSON(http.StatusOK, politicians)
+	}
 }
 
 // getTeams godoc
