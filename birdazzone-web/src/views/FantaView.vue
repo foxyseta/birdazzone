@@ -34,7 +34,7 @@
 
         <div class="h-full">
             <div v-show="showPoliticiansTab">
-                <PoliticiansTab class="flex w-full" style="flex:1 1 auto;" />
+                <PoliticiansTab class="flex" style="flex:1 1 auto; width:50%" />
             </div>
             <div v-show="showTeamsTab" >
                 <!-- ?Teams?/ -->
