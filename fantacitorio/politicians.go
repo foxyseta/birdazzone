@@ -2,40 +2,94 @@ package fantacitorio
 
 import (
 	"fmt"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
+	"github.com/timtadh/lexmachine"
+	"github.com/timtadh/lexmachine/machines"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
-func extractPoliticianPoints(text string) []model.Politician {
-	var ret []model.Politician
-	lines := strings.Split(text, "\n")
-	for i := 0; i < len(lines); i++ {
-		re := regexp.MustCompile(`[-]?\d[\d,]*[\.]?[\d{2}]*`) //regex for points
-		a := re.FindString(lines[i])
-		lines[i] = strings.ToUpper(lines[i])
+const MALUS_TOKEN = 0
+const POINTS_TOKEN = 1
+const NAME_TOKEN = 2
 
-		if len(a) > 1 { // excludes all points made of 1 char (usually coming from links) or empty strings
-			lines[i] = strings.ReplaceAll(lines[i], a, "")
-			if strings.Contains(strings.ToUpper(lines[i]), "MALUS") {
-				a = "-" + a
-			}
-			lines[i] = strings.ReplaceAll(lines[i], " PUNTI", "")
-			lines[i] = strings.ReplaceAll(lines[i], "MALUS DI ", "")
-			lines[i] = strings.ReplaceAll(lines[i], " PER ", "")
-			lines[i] = strings.ReplaceAll(lines[i], " - ", "")
-			points, err := strconv.Atoi(a)
-			if err == nil {
-				ret = append(ret, model.Politician{Name: lines[i], Score: points})
-			}
-		}
+var lexer *lexmachine.Lexer = newFantacitorioLexer()
+var properNames cases.Caser = cases.Title(language.Italian)
 
+// a lexmachine.Action function which skips the match.
+func skip(*lexmachine.Scanner, *machines.Match) (interface{}, error) {
+	return nil, nil
+}
+
+// a lexmachine.Action function with constructs a Token of the given token type by
+// the token type's name.
+func token(tokenType int) lexmachine.Action {
+	return func(s *lexmachine.Scanner, m *machines.Match) (interface{}, error) {
+		return s.Token(tokenType, string(m.Bytes), m), nil
 	}
-	return ret
+}
+
+func newFantacitorioLexer() *lexmachine.Lexer {
+	res := lexmachine.NewLexer()
+	res.Add([]byte("MALUS"), token(MALUS_TOKEN))
+	res.Add([]byte("[\\+\\-]?\\d+"), token(POINTS_TOKEN))
+	res.Add([]byte("(\\W*(PUNTI|A\\W|PRIMI|DI|PER|TOT|[@#]\\w+)\\W*)+"), skip)
+	res.Add([]byte("\\W+"), token(99))
+	res.Add([]byte("[A-Z\\'\\ ]+[A-ZÀÈÌÒÙ]"), token(NAME_TOKEN))
+	err := res.Compile()
+	if err != nil {
+		panic(err.Error())
+	}
+	return res
+}
+
+func updatePoliticiansList(points *int, names *[]string, malus *bool, res *Politicians) {
+	if *points != -1 && len(*names) > 0 {
+		if *malus && *points > 0 {
+			*points = -*points
+		}
+		for _, name := range *names {
+			*res = append(*res, model.Politician{Name: name, Score: *points})
+		}
+		*malus, *points, *names = false, -1, []string{}
+	}
+}
+
+func extractPoliticianPoints(text string) ([]model.Politician, error) {
+	text = strings.ToUpper(text)
+	println(text)
+	res := make(Politicians, 0)
+	scanner, err := lexer.Scanner([]byte(text))
+	if err != nil {
+		return nil, err
+	}
+	malus, points, names := false, -1, []string{}
+	for tok, err, eos := scanner.Next(); !eos; tok, err, eos = scanner.Next() {
+		if ui, is := err.(*machines.UnconsumedInput); is {
+			// skip the error via:
+			scanner.TC = ui.FailTC
+		} else if err != nil {
+			return nil, err
+		}
+		token := tok.(*lexmachine.Token)
+		switch token.Type {
+		case MALUS_TOKEN:
+			malus = true
+		case POINTS_TOKEN:
+			updatePoliticiansList(&points, &names, &malus, &res)
+			points, _ = strconv.Atoi(string(token.Lexeme))
+			updatePoliticiansList(&points, &names, &malus, &res)
+		case NAME_TOKEN:
+			names = append(names, properNames.String(string(token.Lexeme)))
+		}
+	}
+	updatePoliticiansList(&points, &names, &malus, &res)
+	return res, nil
 }
 
 func (this *Politicians) Len() int {
@@ -76,7 +130,11 @@ func getPoliticiansPoints() ([]model.Politician, error) {
 	var arr Politicians
 	tweets := result.Data
 	for i := 0; i < result.Meta.ResultCount; i++ {
-		arr = append(arr, extractPoliticianPoints(tweets[i].Text)...)
+		politicians, err := extractPoliticianPoints(tweets[i].Text)
+		if err != nil {
+			return nil, err
+		}
+		arr = append(arr, politicians...)
 	}
 	sortPoliticiansByPoints(&arr)
 	return arr, err
