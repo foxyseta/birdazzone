@@ -60,8 +60,10 @@ onBeforeMount(fetchGame)
   <!-- Success -->
   <div v-else class="pl-4 w-full flex flex-col justify-start">
     <!-- Title -->
-    <div class="shadow-4xl rounded-lg text-white bg-lgreen text-4xl font-semibold py-3 px-9 my-8 m-3">
-      {{game?.name.toUpperCase()}}
+    <div class="flex flex-row">
+      <div class="flex flex-col" style="flex: 1 1 auto"></div>
+      <div class="shadow-4xl rounded-lg text-white bg-lgreen text-4xl font-semibold py-3 my-8 m-3" style="flex: 1 1 auto; text-align: center; max-width: 18rem;">{{game?.name.toUpperCase()}}</div>
+      <div class="flex flex-col" style="flex: 1 1 auto"></div>
     </div>
 
     <!-- Buttons -->
