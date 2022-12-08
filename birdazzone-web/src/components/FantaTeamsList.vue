@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import ApiRepository from '../api/api-repository'
 import type { Tweet } from '../api/interfaces/tweet';
-import ref from 'vue'
 
 const props = defineProps<{ tweets: Tweet[] }>()
 </script>

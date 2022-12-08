@@ -61,7 +61,7 @@
     <div class="flex justify-evenly">
       <div>
       <img alt="logo" src="/logo.png" />
-          <h2 class="text-lgreen text-center font-black">BIRDAZZONE</h2>
+          <h2 class="text-lgreen text-center font-black">IL BIRDAZZONE</h2>
         </div>
       <div class="">
         <h6 class="uppercase font-semibold mb-4 flex justify-center md:justify-start">
@@ -111,7 +111,7 @@
   </div>
   <div class="text-center p-6 bg-gray-200">
     <span>© 2022 Copyright:</span>
-    <a class="text-lgray font-semibold">Birdazzone</a>
+    <a class="text-lgray font-semibold"> Il Birdazzone</a>
   </div>
 </footer>
 </template>

@@ -33,13 +33,10 @@ export class ApiManager {
       return new ApiResponse<T>(responseStatusCode, responseBody)
     }
     else {
-      console.log(response.json)
       const responseError = await response.json()      // error
       return new ApiResponse<T>(responseStatusCode, undefined, responseError)
     }
   }
-
-  private static readonly camelToSnakeCase = (str: string) => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 
   public static async get<T>(url: string): Promise<ApiResponse<T>> {
     const config: RequestInit = {
