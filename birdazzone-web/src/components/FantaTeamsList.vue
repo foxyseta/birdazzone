@@ -5,15 +5,16 @@ import ref from 'vue'
 
 const props = defineProps<{ tweets: Tweet[] }>()
 </script>
-<template>
 
-  <div class="flex flex-col justify-center align-center" style="flex:1 1 auto; width:13rem ">
+<template>
+  <div v-if="((tweets.length%2)==0)" class="mx-10 md:mx-20 grid gap-4 md:gap-10 grid-cols-1 md:grid-cols-2">
     <div v-for="(item, index) in tweets" :key="index">
-      <div class="font-semibold text-white ml-2">
-        <img :src="item.medias[0]" alt="fantacitorioTeam" />
-      
-      </div>
+      <img :src="item.medias[0]" :alt="'@' + item.author.username + ' fantacitorio team'" />
     </div>
   </div>
-
+  <div v-else class="mx-10 md:mx-20 grid gap-4 lg:gap-10 grid-cols-1 lg:grid-cols-3">
+    <div v-for="(item, index) in tweets" :key="index">
+      <img :src="item.medias[0]" :alt="'@' + item.author.username + ' fantacitorio team'" />
+    </div>
+  </div>
 </template>

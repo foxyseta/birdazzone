@@ -64,6 +64,21 @@ const tweets : Tweet[]= [
         },
         medias: ["https://pbs.twimg.com/media/Fi_4v1OWAAMCmxd?format=jpg&name=small"]
     },
+    {
+        author: {
+            name: "a",
+            profile_image_url: "",
+            username: "username"
+        },
+        created_at: "now",
+        text: "this is a tweet",
+        metrics: {
+            like_count: 0,
+            reply_count: 0,
+            retweet_count: 0
+        },
+        medias: ["https://pbs.twimg.com/media/Fi_4v1OWAAMCmxd?format=jpg&name=small"]
+    },
 
 ]
 
