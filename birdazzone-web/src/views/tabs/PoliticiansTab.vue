@@ -7,13 +7,13 @@
     const error = ref<boolean> (false)
     const loading = ref<boolean> (true)
     const list = ref<Politician[]>([
-        /*{
+        {
             "name": "Giorgia Meloni",
-            "score": 1000
+            "score": 100
         },
         {
             "name": "Matteo Salvini",
-            "score": 900
+            "score": 90
         },
         {
             "name": "Mattia di Maio",
@@ -34,10 +34,10 @@
         {
             "name": "Gianni Agnelli",
             "score": 400
-        },*/
+        },
     ])
     
-    const fetchPoliticiansList = async () => {
+    /*const fetchPoliticiansList = async () => {
         loading.value = true
         const resp = await ApiRepository.getPoliticians()
         if (resp.esit) {
@@ -48,21 +48,27 @@
         } else {
             error.value = true
         }
-    }
+    }*/
 
-    onBeforeMount(fetchPoliticiansList)
+    const sortList = () => {
+        //for(let i=0; i< list.value.length; i++)
+        //    console.log(list.value[i].score)
+        list.value.sort((a,b) => b.score - a.score)
+    }
+    //onBeforeMount(fetchPoliticiansList)
 </script>
 
 <template>
     <div class="flex flex-col flex-1 my-3" style="flex: 1 1 auto">
         <div class="flex flex-row w-full" style="flex: 1 1 auto">
-            
             <div class="flex flex-col" style="flex: 2 1 auto"></div>
-            
-            <div class="flex flex-col justify-center align-center" style="flex:1 1 auto; width:20rem ">
+            {{sortList()}}
+            <div class="flex flex-col justify-center align-center" style="flex:1 1 auto; width:22rem ">
                 <div v-for="(item,index) in list" :key="index">
                     <div class="flex flex-row my-2 text-lgray">
-                        {{(index+1)}}.
+                        <div class="flex" style="flex:1 1 auto; width:1rem">
+                            {{(index+1)}}.
+                        </div>
                         <div class="flex flex-row rounded-lg bg-foreground p-4 ml-3 items-center">
                             <div class="font-semibold text-white" style="flex: 1 1 auto;width:100%">
                                 {{item.name}}
@@ -85,21 +91,3 @@
         </div>
     </div>
 </template>
-
-<!--div class="flex flex-col justify-center align-center" style="flex:1 1 auto; width:12rem ">
-    <div v-for="(item,index) in list" :key="index">
-        <div class="flex flex-row rounded-lg  bg-foreground p-4 my-2 items-center">
-            <div class="font-semibold text-white ml-2" >
-                {{item.name}}
-            </div>
-            <div class="font-bold text-white text-right" style="flex:1 1 auto;font-size:180%">
-                {{item.score}}
-            </div>
-            <div class="flex justify-end flex-1 mr-2" style="height:2rem; width:5rem">
-                <img v-show="(index===0)" :src="'/icons/coccarda1.svg'" alt="medal1" />
-                <img v-show="(index===1)" :src="'/icons/coccarda2.svg'" alt="medal2" />
-                <img v-show="(index===2)" :src="'/icons/coccarda3.svg'" alt="medal3" />
-            </div>
-        </div>
-    </div>
-</div-->
