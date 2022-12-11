@@ -7,13 +7,13 @@
     const error = ref<boolean> (false)
     const loading = ref<boolean> (true)
     const list = ref<Politician[]>([
-        {
+        /*{
             "name": "Giorgia Meloni",
-            "score": 100
+            "score": 1000
         },
         {
             "name": "Matteo Salvini",
-            "score": 90
+            "score": 900
         },
         {
             "name": "Mattia di Maio",
@@ -34,10 +34,10 @@
         {
             "name": "Gianni Agnelli",
             "score": 400
-        },
+        },*/
     ])
     
-    /*const fetchPoliticiansList = async () => {
+    const fetchPoliticiansList = async () => {
         loading.value = true
         const resp = await ApiRepository.getPoliticians()
         if (resp.esit) {
@@ -48,21 +48,35 @@
         } else {
             error.value = true
         }
-    }*/
+    }
 
     const sortList = () => {
         //for(let i=0; i< list.value.length; i++)
         //    console.log(list.value[i].score)
         list.value.sort((a,b) => b.score - a.score)
     }
-    //onBeforeMount(fetchPoliticiansList)
+    function isNumber(value:string){
+        if (typeof value !== 'string') {
+            return false;
+        }
+
+        if (value.trim() === '') {
+            return false;
+        }
+
+        return !Number.isNaN(Number(value));
+    }
+    function changeAndSort(index:number, newScore:string){
+        list.value[index].score = isNumber(newScore)? parseInt(newScore) : list.value[index].score
+        sortList()
+    }
+    onBeforeMount(fetchPoliticiansList)
 </script>
 
 <template>
     <div class="flex flex-col flex-1 my-3" style="flex: 1 1 auto">
         <div class="flex flex-row w-full" style="flex: 1 1 auto">
             <div class="flex flex-col" style="flex: 2 1 auto"></div>
-            {{sortList()}}
             <div class="flex flex-col justify-center align-center" style="flex:1 1 auto; width:22rem ">
                 <div v-for="(item,index) in list" :key="index">
                     <div class="flex flex-row my-2 text-lgray">
@@ -74,7 +88,9 @@
                                 {{item.name}}
                             </div>
                             <div class="flex font-bold text-white text-right align-center justify-end" style="flex:1 1 auto;font-size:180%">
-                                <input type="text" class="flex bg-foreground justify-end flex-wrap text-end" style="width:100%; " :value=item.score />
+                                <input type="text" @change="(value) => {
+                                    //@ts-ignore
+                                    changeAndSort(index, value.target?.value)}" class="flex bg-foreground justify-end flex-wrap text-end" style="width:100%; " :value=item.score />
                             
                                 <span class="flex text-lgray font-normal items-center ml-1" style="font-size:50%">p.</span>
                             </div>
