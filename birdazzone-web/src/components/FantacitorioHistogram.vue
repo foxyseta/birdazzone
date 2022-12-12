@@ -38,7 +38,7 @@ const mapData = (scores) => {
   histogramValues.value = categories.map((val, index) => ({label: STEP * index, value: val}))
 }
 
-// TODO
+// TODO aggiungere la chiamata e passare a mapData i dati che vengono giù dalle api
 mapData(mocked)
 
 </script>
