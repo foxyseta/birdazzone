@@ -26,7 +26,7 @@ const items = ref<NavItem[]>([
     url: FANTA_PATH,
     title: "FANTACITORIO",
     active: false,
-    icon: "/chess.svg"
+    icon: "/montecitorio.svg"
   }
 ])
 

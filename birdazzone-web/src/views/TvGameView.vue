@@ -7,11 +7,14 @@ import BirdazzoneButton from '../components/BirdazzoneButton.vue'
 import ErrorWidget from '@/components/ErrorWidget.vue'
 import ListTab from './tabs/ListTab.vue'
 import ChartTab from './tabs/ChartTab.vue'
+import MapTab from './tabs/MapTab.vue'
 
 const props = defineProps<{id: string}>()
 
 const loading = ref<boolean> (true)
-const error = ref<boolean> (false)
+const error = ref<boolean>(false)
+const errorTitle = ref<string>()
+const errorText = ref<string>()
 const game = ref<TvGame>()
 
 const showListTab = ref<boolean>(true)
@@ -28,6 +31,8 @@ const fetchGame = async () => {
       window.location.href = "/not-found"   
     } else {
       error.value = true
+      errorTitle.value = 'Error!'
+      errorText.value = 'something went wrong!'
     }
 }
 
@@ -55,7 +60,7 @@ onBeforeMount(fetchGame)
 <template>
   <!-- Error -->
   <div v-if="error" class="flex justify-center items-center w-full">
-    <ErrorWidget />
+    <ErrorWidget :open="true" :title="errorTitle" :text="errorText"/>
   </div>
   <!-- Success -->
   <div v-else class="pl-4 w-full flex flex-col justify-start">
@@ -79,7 +84,7 @@ onBeforeMount(fetchGame)
         <ListTab :game-id="props.id" />
       </div>
       <div v-show="showMapTab" >
-        <GuesserMap :game-id="props.id"/>
+        <MapTab :game-id="props.id"/>
       </div>
       <div v-show="showChartTab" >
         <ChartTab :game-id="props.id"/>

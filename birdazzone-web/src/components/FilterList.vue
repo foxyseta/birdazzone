@@ -9,16 +9,16 @@ import ErrorWidget from './ErrorWidget.vue';
 
 export default defineComponent({
   components: { DatePicker },
-  
+
   data() {
     return {
       date: null,          /** to save the date */
       openD: false,         /** to close date popup */
 
-      sTime: null,  /** to same start time value */
-      openST: false,          /** to close start time popup */
-      eTime: null,  /** to same end time value */
-      openET: false,          /** to close end time popup */
+      sTime: null as string | null,  /** to same start time value */
+      openST: false,                    /** to close start time popup */
+      eTime: null as string | null,  /** to same end time value */
+      openET: false,                    /** to close end time popup */
 
       sDateTime: null as string | null,    /** to save start date-time*/
       eDateTime: null as string | null,    /** to save end date-time */
@@ -48,11 +48,11 @@ export default defineComponent({
     closeD() {                          /** to close dates popup */
       this.openD = false;
     },
-    disabledAfterToday(date: Date) {          /** to disabilitate days after today in dates popup */
+    disabledDates(date: Date) {          /** to disabilitate days after today and before last week in dates popup */
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      return date > today;
+      return date > today || date < new Date(today.getTime() - 6 * 24 * 3600 * 1000);
     },
     selectDate(){                      /** to confirm date was select */
       if(this.date != null)
@@ -73,25 +73,29 @@ export default defineComponent({
     closeET() {                          /** to close end time popup */
       this.openET = false;
     },
-    selectTimes(){
-      if(this.date !== null && this.sTime !== null && this.eTime !== null){            
-        if ((this.sTime as string).substring(0, 2) === (this.eTime as string).substring(0, 2))  {            // sTime HH == eTime HH (same hours)
-          if((this.sTime as string).substring(3) > (this.eTime as string).substring(3)){                      // sTime mm > eTime mm -> switch of the two dates
+    disabledHours(date: Date) {
+      return date.getHours() < 19 || date.getHours() > 20;
+    },
+    selectTimes() {
+      if(this.date !== null && this.sTime !== null && this.eTime !== null){         
+        if (this.sTime.substring(0, 2) === this.eTime.substring(0, 2))  {            // sTime HH == eTime HH (same hours)
+          if(this.sTime.substring(3) > this.eTime.substring(3)){                      // sTime mm > eTime mm -> switch of the two dates
             let box = this.sTime;
             this.sTime = this.eTime;
             this.eTime = box;
           }
         }
-        else{                                                                      // sTime HH != eTime HH (different hours)
-          if((this.sTime as string).substring(0, 2) > (this.eTime as string).substring(0, 2)){                  // sTime HH > eTime HH -> switch of the two
+        else{                                                                        // sTime HH != eTime HH (different hours)
+          if(this.sTime.substring(0, 2) > this.eTime.substring(0, 2)){                // sTime HH > eTime HH -> switch of the two
             let box = this.sTime;
             this.sTime = this.eTime;
             this.eTime = box;
           }
         }
-        
-        this.sDateTime = this.date + "T" + this.sTime + ":00Z";
-        this.eDateTime = this.date + "T" + this.eTime + ":00Z";
+
+        // the API uses english time zone
+        this.sDateTime = this.date + "T" + (Number(this.sTime.substring(0, 2)) - 1) as string + this.sTime.substring(2) + ":00Z";
+        this.eDateTime = this.date + "T" + (Number(this.eTime.substring(0, 2)) - 1) as string + this.sTime.substring(2) + ":00Z";
 
         this.choosenDateTimes = true;
       }      
@@ -111,7 +115,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="flex justify-end">
+  <div class="flex justify-start">
     <button class="font-semibold text-white text-sm border border-lgreen bg-foreground hover:bg-lgreen rounded-lg px-4 py-2 text-center inline-flex items-center" type="button" @click="openCloseFunction()">
       <svg class="mr-2 w-4 h-4" alt="arrow down" aria-hidden="true" fill="none" stroke="white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -120,7 +124,7 @@ export default defineComponent({
     </button>
   </div>
 
-  <div v-if="openClose" class="z-10 bg-foreground shadow font-semibold text-md rounded-lg m-4 mr-0 p-4 place-self-end">    
+  <div v-if="openClose" class="z-10 bg-foreground shadow font-semibold text-md rounded-lg m-4 ml-2 p-4 place-self-start">    
     <div class="flex flex-row items-stretch justify-center">
       <label for="Date" class="justify-self-center self-center text-sm text-white w-7">date</label>
       <div class="flex justify-self-center" id="Date">
@@ -133,7 +137,7 @@ export default defineComponent({
           format="YYYY-MM-DD"
           placeholder="select the date"
           :clearable="true"
-          :disabled-date="disabledAfterToday"
+          :disabled-date="disabledDates"
           :disabled="choosenDate">
             <template #footer>
               <button class="mx-btn mx-btn-text" @click="closeD()">close</button>
@@ -155,7 +159,7 @@ export default defineComponent({
     </div>
 
     <div v-if="choosenDate" class="flex flex-row items-stretch justify-between p-5 pt-2 pb-0">
-      <label for="Times" class="justify-self-center self-start text-sm text-white w-7 pt-9">times</label>
+      <label for="Times" class="justify-self-center self-start text-sm text-white w-10 pt-9">times</label>
       <div class="flex flex-col justify-self-center" id="Times">
         <date-picker 
           class = "m-2 mr-4"
@@ -166,7 +170,8 @@ export default defineComponent({
           v-model:open="openST"
           placeholder="select start time"
           :clearable="true"
-          :disabled="choosenDateTimes">
+          :disabled="choosenDateTimes"
+          :disabled-time="disabledHours">
             <template #footer>
               <button class="mx-btn mx-btn-text" @click="closeST()">close</button>
             </template>
@@ -180,7 +185,8 @@ export default defineComponent({
           v-model:open="openET"
           placeholder="select end time"
           :clearable="true"
-          :disabled="choosenDateTimes">
+          :disabled="choosenDateTimes"
+          :disabled-time="disabledHours">
             <template #footer>
               <button class="mx-btn mx-btn-text" @click="closeET()">close</button>
             </template>
@@ -203,7 +209,7 @@ export default defineComponent({
     <div v-if="choosenDateTimes" class="flex justify-end">
       <button
         class="font-semibold text-white border-b border-lgreen bg-foreground hover:bg-lgreen rounded-lg p-2 text-center text-sm"
-        type="button" @click="$emit('changeFrom', sDateTime); $emit('changeTo', eDateTime); sendData()">
+        type="button" @click="$emit('changeFromTo', sDateTime, eDateTime); sendData()">
         confirm
       </button>
     </div>

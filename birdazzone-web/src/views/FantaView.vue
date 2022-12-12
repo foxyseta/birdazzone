@@ -3,6 +3,8 @@
     import { ref, onBeforeMount } from 'vue'
     import PoliticiansList from '@/components/PoliticiansList.vue';
 import FantaTeamsTab from './tabs/FantaTeamsTab.vue';
+    import PoliticiansTab from '@/views/tabs/PoliticiansTab.vue';
+
 
     const showPoliticiansTab = ref<boolean>(true)
     const showTeamsTab = ref<boolean>(false)
@@ -38,7 +40,7 @@ import FantaTeamsTab from './tabs/FantaTeamsTab.vue';
 
         <div class="h-full">
             <div v-show="showPoliticiansTab">
-                <PoliticiansList class="flex w-full" style="flex:1 1 auto;" />
+                <PoliticiansTab class="flex" style="flex:1 1 auto; width:50%" />
             </div>
             <div v-show="showTeamsTab" >
                 <FantaTeamsTab />

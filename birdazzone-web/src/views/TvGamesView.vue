@@ -4,9 +4,13 @@
   import type { TvGame } from '@/api/interfaces/tv-game';
   import ErrorWidget from '../components/ErrorWidget.vue';
 
-  //const BASE:string = `${import.meta.env.VITE_SERVER_URL}`
+const errorTitle = ref<string>()
+const errorText = ref<string>()
+
+const games = ref<TvGame[]>([])
+
+  const BASE:string = `http://${import.meta.env.VITE_SERVER_URL}`
   const error = ref<boolean>(false)
-  const games = ref<TvGame[]>([])
   const logo_list = ref<TvGame[]>([])
 
   const fetchTvGames = async () => {
@@ -18,6 +22,8 @@
       fetchLogo()
     } else {
       error.value = true
+    errorTitle.value = 'Error!'
+    errorText.value = 'something went wrong!'
     }
   }
 
@@ -32,13 +38,17 @@
 </script>
 
 <template>
-  <div class="flex flex-row mb-10"  style="flex: 1 1 auto;">
+  <!-- Error -->
+  <div v-if="error">
+    <ErrorWidget :open="true" :title="errorTitle" :text="errorText"/>   
+  </div>
+  <div class="flex flex-row mb-10 h-screen"  style="flex: 1 1 auto;">
 
     <div class="flex flex-col"  style="flex: 1 1 auto"></div>
     
     <div class="flex flex-col" style="flex: 1 1 auto">
       <div v-if="error">
-          <ErrorWidget />   
+        <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
       </div>
       <div v-else class="flex flex-col justify-center w-full text-center">
         <div class="flex flex-row">
@@ -50,7 +60,7 @@
           <RouterLink :to="`/tv-games/${game.id}`" style="flex: 1 1 auto; width: 25rem;">
             <div class="flex flex-row rounded-lg m-10 bg-foreground hover:bg-lgray/50 p-4 flex-1">
               <div class="flex flex-row px-3">
-                <img :src="(logo_list[game.id] ? 'http://localhost:8080' + logo_list[game.id].logo : '/icons/user.svg')" style="height: 6rem" />
+                <img :src="(logo_list[game.id] ? BASE + logo_list[game.id].logo : '/icons/user.svg')" style="height: 6rem" alt="gameIcon"/>
               </div>
               
               <div class="flex flex-col flex-1"></div>
@@ -64,32 +74,7 @@
         </div>
       </div> 
     </div>
-
-    <div class="felx flex-col"  style="flex: 1 1 auto"></div>
+    <div class="flex flex-col"  style="flex: 1 1 auto"></div>
   </div>
 </template>
-
-
-
-
-
-<!--div class="flex flex-col justify-center w-full text-center">
-  <div v-if="error">
-    <ErrorWidget />   
-  </div>
-
-  <div v-else class="flex justify-center w-full text-center">
-    <h1 class="text-4xl font-black text-lgreen">TV GAMES</h1>
-    <img :src="(logo_list[0] ? 'http://localhost:8080' + logo_list[0].logo : '')" alt="ghigliottina img"/>
-  </div>
-
-  <div class="flex flex-col justify-evenly h-screen">
-    <div v-for="game in games" :key="game.name">
-      <RouterLink :to="`/tv-games/${game.id}`">
-        <div class="rounded shadow py-9 px-9">
-          <h1 class="text-white text-xl font-bold"> {{game.name}}</h1>
-        </div>
-      </RouterLink>
-    </div>
-  </div>
-</div-->
+ì
