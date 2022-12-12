@@ -31,10 +31,12 @@ const processProps = () => {
   data.value = props.values.map(x => x.value)
 
   chartOptions.value = {
+    colors:['#1eb980'], 
         chart: {
           id: "vuechart-example",
         },
         xaxis: {
+      position: 'top',
           categories: categories.value
         },
         plotOptions: {

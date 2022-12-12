@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Histogram from '@/components/Histogram.vue'
+import FantacitorioHistogram from '@/components/FantacitorioHistogram.vue'
 
 </script>
 <template>
   <main>
-    <Histogram />
+    <FantacitorioHistogram/>
   </main>
 </template>
