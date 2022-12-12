@@ -1,4 +1,3 @@
 export default interface HelloBird {
-  message: string
+  message: string;
 }
-

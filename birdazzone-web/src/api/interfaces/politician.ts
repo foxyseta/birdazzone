@@ -1,4 +1,4 @@
-export interface Politician{
-    name: string,
-    score: number
+export interface Politician {
+  name: string;
+  score: number;
 }

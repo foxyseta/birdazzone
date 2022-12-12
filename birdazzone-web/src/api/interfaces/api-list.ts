@@ -1,4 +1,4 @@
 export interface ApiList<T> {
-  entries: T[]
-  numberOfPages: number
+  entries: T[];
+  numberOfPages: number;
 }

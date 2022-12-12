@@ -1,4 +1,4 @@
 export interface ChartEntry {
-  absoluteFrequency: number
-  value: string
+  absoluteFrequency: number;
+  value: string;
 }
