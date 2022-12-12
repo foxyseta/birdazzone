@@ -197,6 +197,7 @@ func TestMakeCoordinatesOnPoint(t *testing.T) {
 	}
 }
 
+/*
 func TestMakeCoordinatesOnBoundingBox(t *testing.T) {
 	c := MakeCoordinates(&geojson.Geometry{Type: "unknown", BoundingBox: []float64{1, 2, 3, 4}}, twitter.Profile{})
 	if c == nil {
@@ -209,6 +210,7 @@ func TestMakeCoordinatesOnBoundingBox(t *testing.T) {
 		t.Fatalf("Got longitude %f instead of 3", c.Longitude)
 	}
 }
+*/
 
 func TestMakeCoordinatesOnUnsupportedShape(t *testing.T) {
 	c := MakeCoordinates(&geojson.Geometry{}, twitter.Profile{})

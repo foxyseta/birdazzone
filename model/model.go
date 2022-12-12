@@ -222,10 +222,9 @@ func MakeCoordinates(l *geojson.Geometry, p twitter.Profile) *Coordinates {
 	}
 	if l.BoundingBox != nil {
 		bb := l.BoundingBox
-		n := len(bb) / 2
 		return &Coordinates{
-			Latitude:  (bb[0] + bb[n]) / 2,
-			Longitude: (bb[1] + bb[n+1]) / 2,
+			Longitude: (bb[0] + bb[0]) / 2,
+			Latitude:  (bb[1] + bb[1]) / 2,
 		}
 	}
 	return nil
