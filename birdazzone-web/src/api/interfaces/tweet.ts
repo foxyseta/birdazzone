@@ -4,6 +4,7 @@ export interface Tweet {
   created_at: string
   coordinates?: Coordinates
   metrics: Metrics
+  medias: string[]
 }
 
 export interface Author {

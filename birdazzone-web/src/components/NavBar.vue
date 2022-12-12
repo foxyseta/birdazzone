@@ -39,6 +39,7 @@ const select = (url: string) =>
     <!-- Title -->
     <div class="py-10 flex flex-col items-center">
       <img src="/logo.png" alt="Birdazzone's logo"/>
+      <h1 class="text-lgreen font-black text-xl">IL</h1>
       <h1 class="text-lgreen font-black text-xl">BIRDAZZONE</h1>
     </div>
    <div class="overflow-y-auto py-4 px-3 rounded">

@@ -21,6 +21,8 @@ export default class ApiRepository {
   private static readonly _TV_GAMES_ID_SOLUTION = "/tvgames/{0}/solution"
 
   private static readonly _FANTACITORIO_POLITICIANS = "/fantacitorio/politicians"
+  private static readonly _FANTACITORIO_TEAMS = "/fantacitorio/teams"
+  private static readonly _FANTACITORIO_TEAMS_USERNAME = "/fantacitorio/teams?username={0}"
 
   public static readonly getPoliticians = (): Promise<ApiResponse<Politician[]>> =>
     ApiManager.get<Politician[]>(this._BASE_URL + this._FANTACITORIO_POLITICIANS)
@@ -54,6 +56,13 @@ export default class ApiRepository {
 
   public static readonly getTvGameSolutionById = (id: string): Promise<ApiResponse<Solution>> =>
     ApiManager.get<Solution>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_SOLUTION, id))
+
+  public static readonly getFantacitorioTeams = (username?: string) => 
+    ApiManager.get<Tweet[]>(
+      username
+      ? this.stringFormat(this._BASE_URL + this._FANTACITORIO_TEAMS_USERNAME, username)
+      : this.stringFormat(this._BASE_URL + this._FANTACITORIO_TEAMS)
+    )
 
   public static readonly getTvGameSolutionByIdFiltered = (id: string, date: string): Promise<ApiResponse<Solution>> =>
     ApiManager.get<Solution>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_SOLUTION_FILTERED, id, date))
