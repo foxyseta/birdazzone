@@ -9,8 +9,6 @@ require (
 	github.com/swaggo/gin-swagger v1.5.3
 	github.com/swaggo/swag v1.8.7
 	github.com/swaggo/swag/example/celler v0.0.0-20221102011542-eaed5178b774
-	github.com/timtadh/lexmachine v0.2.3
-	golang.org/x/text v0.4.0
 )
 
 require (
@@ -34,11 +32,11 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/stretchr/testify v1.8.1 // indirect
-	github.com/timtadh/data-structures v0.6.1 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/net v0.1.0 // indirect
 	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/tools v0.2.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
