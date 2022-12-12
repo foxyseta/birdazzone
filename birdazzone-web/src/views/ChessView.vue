@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import Histogram from '@/components/Histogram.vue'
 
 </script>
 <template>
   <main>
-    <h1> chess </h1>
+    <Histogram />
   </main>
 </template>
