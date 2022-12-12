@@ -82,10 +82,7 @@ func testGetAttempts(t *testing.T, successesOnly bool) {
 	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
 	result, err = getAttempts(util.GetTestingGinContext(), successesOnly, util.DateToString(d), "")
 	if err != nil {
-		if err.Error() == "couldn't find Ghigliottina solution" {
-			return // may happen where no game has been played
-		}
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	if result == nil || result.Data == nil {
 		t.Fatal("Nil result")
