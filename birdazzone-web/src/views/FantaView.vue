@@ -1,7 +1,6 @@
 <script lang="ts" setup>
     import BirdazzoneButton from '../components/BirdazzoneButton.vue'
     import { ref, onBeforeMount } from 'vue'
-    import PoliticiansList from '@/components/PoliticiansList.vue';
 import FantaTeamsTab from './tabs/FantaTeamsTab.vue';
     import PoliticiansTab from '@/views/tabs/PoliticiansTab.vue';
 
