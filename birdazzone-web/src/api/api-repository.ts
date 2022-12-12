@@ -6,6 +6,7 @@ import type { Results } from "./interfaces/results"
 import type { ChartEntry } from "./interfaces/chart-entry"
 import type { WordCloudOptions } from "./interfaces/wordcloud-options"
 import type { Solution } from "./interfaces/solution"
+import type { Politician } from "./interfaces/politician"
 
 export default class ApiRepository {
   private static readonly _BASE_URL = `http://${import.meta.env.VITE_SERVER_URL}/api/v1`
@@ -18,7 +19,14 @@ export default class ApiRepository {
   private static readonly _TV_GAMES_ID_ATTEMPTS_STATS = "/tvgames/{0}/attempts/stats"
   private static readonly _TV_GAMES_ID_ATTEMPTS_STATS_FILTERED = "/tvgames/{0}/attempts/stats?from={1}&to={2}"
   private static readonly _TV_GAMES_ID_SOLUTION = "/tvgames/{0}/solution"
+
+  private static readonly _FANTACITORIO_POLITICIANS = "/fantacitorio/politicians"
+
+  public static readonly getPoliticians = (): Promise<ApiResponse<Politician[]>> =>
+    ApiManager.get<Politician[]>(this._BASE_URL + this._FANTACITORIO_POLITICIANS)
+
   private static readonly _TV_GAMES_ID_SOLUTION_FILTERED = "/tvgames/{0}/solution?date={1}"
+
 
   public static readonly getTvGames = (): Promise<ApiResponse<TvGame[]>> =>
     ApiManager.get<TvGame[]>(this._BASE_URL + this._TV_GAMES)

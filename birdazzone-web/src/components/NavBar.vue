@@ -1,6 +1,6 @@
 <script setup lang=ts>
 import {ref} from 'vue'
-import {GAMES_PATH, CHESS_PATH } from '../router/index'
+import {GAMES_PATH, CHESS_PATH, FANTA_PATH } from '../router/index'
 
 interface NavItem {
   title: string
@@ -21,6 +21,12 @@ const items = ref<NavItem[]>([
     title: "CHESS",
     active: false,
     icon: "/chess.svg"
+  },
+  {
+    url: FANTA_PATH,
+    title: "FANTACITORIO",
+    active: false,
+    icon: "/montecitorio.svg"
   }
 ])
 

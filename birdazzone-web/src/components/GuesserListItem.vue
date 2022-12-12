@@ -15,8 +15,8 @@
 </script>
 
 <template>
-    <div class="flex flex-col flex-1 my-3" style="flex: 1 1 auto">
-      <div class="flex flex-row flex-1">
+    <div class="flex flex-col flex-1 my-3 w-full" style="flex: 1 1 auto">
+      <div class="flex flex-row flex-1 w-full">
           <span class="mr-3 text-lgray">{{index}}.</span>
       <button class="btn rounded-lg  bg-foreground hover:bg-lgray/50 p-4 flex-1" @click="changeVisibility()" >
         
@@ -30,9 +30,9 @@
             </div>
             <div class="flex flex-col mx-4">
             <div class="flex" style="flex: 1 1 auto; height:2rem">
-                <img v-if="index===1" :src="'/icons/coccarda1.svg'" alt="propic"/>
-                <img v-if="index===2" :src="'/icons/coccarda2.svg'" alt="propic"/>
-                <img v-if="index===3" :src="'/icons/coccarda3.svg'" alt="propic"/>
+                <img v-if="index===1" :src="'/icons/coccarda1.svg'" alt="medal1"/>
+                <img v-if="index===2" :src="'/icons/coccarda2.svg'" alt="medal2"/>
+                <img v-if="index===3" :src="'/icons/coccarda3.svg'" alt="medal3"/>
             </div>
                 <div class="text-lgray text-xs">{{hours}}:{{(mins>10)?mins:'0'+mins}}</div>
             </div>
