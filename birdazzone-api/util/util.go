@@ -164,6 +164,7 @@ func GetRequest(
 		}
 		req.URL.RawQuery = q.Encode()
 	}
+	//fmt.Println(req.URL.RawQuery)
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err

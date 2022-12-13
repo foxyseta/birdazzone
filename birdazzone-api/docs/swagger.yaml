@@ -187,7 +187,7 @@ paths:
           schema:
             $ref: '#/definitions/model.Error'
         "404":
-          description: No user with such username
+          description: No team with such username
           schema:
             $ref: '#/definitions/model.Error'
       summary: Get Fantacitorio teams as tweets

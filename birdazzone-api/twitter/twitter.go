@@ -23,6 +23,14 @@ type Place struct {
 	Geo geojson.Geometry `json:"geo"`
 }
 
+type Media struct {
+	MediaKey string `json:"media_key"`
+	Type     string `json:"type"`
+	URL      string `json:"url"`
+	Height   int    `json:"height"`
+	Width    int    `json:"width"`
+}
+
 // Basic user profile data
 type UIDLookup struct {
 	Data Profile `json:"data"`
@@ -51,6 +59,7 @@ type ProfileTweet struct {
 type ProfileTweets struct {
 	Data     []ProfileTweet `json:"data"`
 	Includes struct {
+		Medias []Media   `json:"media"`
 		Users  []Profile `json:"users"`
 		Places []Place   `json:"places"`
 	} `json:"includes"`
@@ -121,9 +130,10 @@ func GetRecentTweetsFromQuery(query string, startTime string, endTime string, ma
 		util.Pair[string, string]{First: "start_time", Second: startTime},
 		util.Pair[string, string]{First: "end_time", Second: endTime},
 		util.Pair[string, string]{First: "max_results", Second: strconv.Itoa(maxResults)},
-		util.Pair[string, string]{First: "tweet.fields", Second: "author_id,created_at,public_metrics,text"},
-		util.Pair[string, string]{First: "expansions", Second: "author_id,geo.place_id"},
+		util.Pair[string, string]{First: "tweet.fields", Second: "author_id,created_at,public_metrics,text,entities"},
+		util.Pair[string, string]{First: "expansions", Second: "author_id,geo.place_id,attachments.media_keys"},
 		util.Pair[string, string]{First: "user.fields", Second: "id,name,profile_image_url,username,location"},
+		util.Pair[string, string]{First: "media.fields", Second: "preview_image_url,url,height,width"},
 		util.Pair[string, string]{First: "place.fields", Second: "id,geo"},
 	)
 }
