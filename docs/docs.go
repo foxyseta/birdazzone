@@ -76,7 +76,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "No user with such username",
+                        "description": "No team with such username",
                         "schema": {
                             "$ref": "#/definitions/model.Error"
                         }
