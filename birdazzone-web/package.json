@@ -22,6 +22,7 @@
     "@headlessui/vue": "^1.7.4",
     "@popperjs/core": "^2.11.6",
     "@types/jquery": "^3.5.14",
+    "apexcharts": "^3.36.3",
     "autoprefixer": "^10.4.13",
     "c8": "^7.12.0",
     "camelcase-keys": "^8.0.2",
@@ -35,6 +36,7 @@
     "vue": "^3.2.41",
     "vue-datepicker-next": "^1.0.2",
     "vue-router": "^4.1.5",
+    "vue3-apexcharts": "^1.4.1",
     "vue3-openlayers": "^0.1.70",
     "yarn": "^1.22.19"
   },

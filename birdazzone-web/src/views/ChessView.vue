@@ -1,6 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import FantacitorioHistogram from '@/components/FantacitorioHistogram.vue'
+
+</script>
 <template>
   <main>
-    <h1>chess</h1>
+    <FantacitorioHistogram/>
   </main>
 </template>
