@@ -15,7 +15,7 @@ Web interface for the Software Engineering (90106) project for the academic year
 ## Authors
 
 - P. Ceroni
-- G. Crestanello 
+- G. Crestanello
 - F. Grisendi
 - M. Girolimetto
 - S. Volpe

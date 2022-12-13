@@ -3,4 +3,3 @@ services:
     image: registry.hjkl.gq/team13/birdazzone-api:develop
     ports:
       - 8080:8080
-
