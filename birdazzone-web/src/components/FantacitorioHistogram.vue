@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import Histogram, {type HistogramValue} from './Histogram.vue';
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
 
-const props = defineProps<{gameId: string, from: string|null, to: string|null}>()
 
 const SERIE_NAME = "scores"
 const STEP = 300
@@ -28,7 +27,7 @@ const mocked = [
 ]
 
 
-const mapData = (scores) => {
+const mapData = (scores:any) => {
   const categories = [0, 0, 0, 0, 0, 0]
   for (const score of scores) {
     const index = Math.trunc(score.score / STEP )
