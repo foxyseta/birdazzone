@@ -3,7 +3,6 @@ import ApiRepository from '../api/api-repository';
 import type { Coordinates } from '../api/interfaces/tweet';
 import { onBeforeMount, ref } from 'vue';
 import ErrorWidget from './ErrorWidget.vue';
-import FilterMap from './FilterList.vue';
 import { SemipolarSpinner } from 'epic-spinners';
 
 const errorTitle = ref<string>();
@@ -12,7 +11,7 @@ const error = ref<boolean>(false);
 
 const props = defineProps<{ gameId: string; key: number; from: string | null; to: string | null }>();
 
-const props = defineProps<{ gameId: string, from: string | null, to: string | null }>()
+const ROME = [ 12.706374170037495, 42.21140846575139 ]
 
 const loading = ref<boolean>(false);
 const center = ref<number[]>(ROME);
