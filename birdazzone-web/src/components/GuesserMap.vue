@@ -33,11 +33,9 @@ const fetchCoordinates = async () => {
   if (!from.value || !to.value) {
     const response = await ApiRepository.getListOfGuesser(props.gameId, '1', '100');
     if (response.esit) {
-      coordinates.value = response
-        .data!.entries.map((tweet) => tweet.coordinates)
-        .filter((c) => c)
-          // @ts-ignore
-        .map(unpackCoordinates); // Remove undefined and nulls
+      const packed = response.data!.entries.map((tweet) => tweet.coordinates).filter((c) => c);
+      // @ts-ignore
+      coordinates.value = packed.map(unpackCoordinates); // Remove undefined and nulls
     } else {
       if (response.statusCode === 204) {
         error.value = true;
@@ -58,10 +56,10 @@ const fetchCoordinates = async () => {
       '100'
     );
     if (response.esit) {
-      // @ts-ignore
       coordinates.value = response
         .data!.entries.map((tweet) => tweet.coordinates)
         .filter((c) => c)
+        // @ts-ignore
         .map(unpackCoordinates); // Remove undefined and nulls
     } else {
       if (response.statusCode === 204) {
