@@ -1,12 +1,8 @@
 package fantacitorio
 
 import (
-	"fmt"
 	"net/http"
-	"strings"
 
-	"git.hjkl.gq/team13/birdazzone-api/model"
-	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"github.com/gin-gonic/gin"
 )
 
@@ -41,30 +37,10 @@ func getPoliticians(ctx *gin.Context) {
 // @Router  /fantacitorio/teams [get]
 func getTeams(ctx *gin.Context) {
 	// TODO: implement me (TG-177)
-	username, hasName := ctx.GetQuery("username")
-	search := "#fantacitorio has:media"
-	if hasName {
-		if username == "" || strings.Contains(username, " ") {
-			ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Message: "incorrect syntax for a username"})
-			return
-		}
-		search += " from:" + username
-	}
-	result, err := twitter.GetManyRecentTweetsFromQuery(search, "", "")
-	ret := []string{}
-	for _, m := range result.Includes.Medias {
-		if m.Height == 512 && m.Width == 1024 {
-			ret = append(ret, m.URL)
-		}
-	}
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+	res, err := teamsFromTwitter(ctx.GetQuery("username"))
+	if err.Message != "" {
+		ctx.JSON(err.Code, gin.H{"code": err.Code, "message": err.Message})
 		return
 	}
-	if result.Meta.ResultCount == 0 {
-		ctx.JSON(http.StatusNotFound, model.Error{Code: http.StatusNotFound, Message: "no team with such username"})
-		return
-	}
-	fmt.Println(result.Includes.Medias)
-	ctx.JSON(http.StatusNotImplemented, ret)
+	ctx.JSON(http.StatusOK, res)
 }
