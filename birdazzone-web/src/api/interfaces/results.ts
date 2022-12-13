@@ -1,4 +1,4 @@
 export interface Results {
-  positives: number
-  negatives: number
+  positives: number;
+  negatives: number;
 }
