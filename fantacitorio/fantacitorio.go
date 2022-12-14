@@ -3,7 +3,6 @@ package fantacitorio
 import (
 	"net/http"
 
-	"git.hjkl.gq/team13/birdazzone-api/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,12 +30,16 @@ func getPoliticians(ctx *gin.Context) {
 // @Summary Get Fantacitorio teams as tweets
 // @Tags    fantacitorio
 // @Produce json
-// @Param   username query    string false "Optional username to search for"
-// @Success 200      {array}  string
+// @Param   username query    string false "Optional Twitter username to search for"
+// @Success 200      {array}  model.FantaTeam
 // @Failure 400      {object} model.Error "Incorrect syntax for a username"
-// @Failure 404      {object} model.Error "No user with such username"
+// @Failure 404      {object} model.Error "No team with such username"
 // @Router  /fantacitorio/teams [get]
 func getTeams(ctx *gin.Context) {
-	// TODO: implement me (TG-177)
-	ctx.JSON(http.StatusNotImplemented, []model.Tweet{})
+	res, err := teamsFromTwitter(ctx.GetQuery("username"))
+	if err.Message != "" {
+		ctx.JSON(err.Code, gin.H{"code": err.Code, "message": err.Message})
+		return
+	}
+	ctx.JSON(http.StatusOK, res)
 }
