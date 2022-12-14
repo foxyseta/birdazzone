@@ -44,7 +44,7 @@ const showTeams = () => {
 
     <div class="h-full">
       <div v-show="showPoliticiansTab">
-        <PoliticiansTab class="flex"/>
+        <PoliticiansTab class="flex" />
       </div>
       <div v-show="showTeamsTab">
         <FantaTeamsTab />
