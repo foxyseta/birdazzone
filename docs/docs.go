@@ -65,7 +65,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Tweet"
+                                "$ref": "#/definitions/model.FantaTeam"
                             }
                         }
                     },
@@ -500,6 +500,25 @@ const docTemplate = `{
                 }
             }
         },
+        "model.FantaTeam": {
+            "description": "A team from the Fantacitorio game",
+            "type": "object",
+            "properties": {
+                "image_url": {
+                    "type": "string"
+                },
+                "post_url": {
+                    "type": "string"
+                },
+                "profile_image_url": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "mariorossi"
+                }
+            }
+        },
         "model.Game": {
             "description": "A game which can be observed",
             "type": "object",
@@ -596,12 +615,6 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string",
                     "format": "date-time"
-                },
-                "medias": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 },
                 "metrics": {
                     "$ref": "#/definitions/model.Metrics"

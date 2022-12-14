@@ -44,6 +44,9 @@ type ProfileTweet struct {
 		ReplyCount   int `json:"reply_count"`
 		RetweetCount int `json:"retweet_count"`
 	} `json:"public_metrics"`
+	Attachments struct {
+		MediaKeys []string `json:"media_keys"`
+	} `json:"attachments"`
 	EditHistoryTweetIds []string `json:"edit_history_tweet_ids"`
 	ID                  string   `json:"id"`
 	Text                string   `json:"text"`

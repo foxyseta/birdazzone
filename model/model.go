@@ -9,7 +9,6 @@ import (
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"git.hjkl.gq/team13/birdazzone-api/util"
 	geojson "github.com/paulmach/go.geojson"
-	// "github.com/swaggo/swag/example/celler/httputil"
 )
 
 // @Description Object returned on failed requests
@@ -102,6 +101,14 @@ func (gk *GameKey) String() string {
 type Politician struct {
 	Name  string `json:"name" example:"Matteo Salvini"`
 	Score int    `json:"score" example:"350"`
+}
+
+// @Description A team from the Fantacitorio game
+type FantaTeam struct {
+	Username        string `json:"username" example:"mariorossi"`
+	ProfileImageUrl string `json:"profile_image_url"`
+	PostUrl         string `json:"post_url"`
+	ImageUrl        string `json:"image_url"`
 }
 
 func (p *Politician) String() string {
@@ -237,7 +244,6 @@ type Tweet struct {
 	CreatedAt   string       `json:"created_at" format:"date-time"`
 	Metrics     Metrics      `json:"metrics"`
 	Coordinates *Coordinates `json:"coordinates"`
-	Medias      []string     `json:"medias"`
 }
 
 func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile, location *geojson.Geometry) Tweet {
@@ -256,8 +262,6 @@ func MakeTweet(tweet twitter.ProfileTweet, author twitter.Profile, location *geo
 			RetweetCount: tweet.PublicMetrics.RetweetCount,
 		},
 		Coordinates: coordinates,
-		// TODO: implement me (TG-178)
-		Medias: []string{},
 	}
 }
 

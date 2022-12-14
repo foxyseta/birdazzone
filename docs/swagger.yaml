@@ -50,6 +50,19 @@ definitions:
         example: status bad request
         type: string
     type: object
+  model.FantaTeam:
+    description: A team from the Fantacitorio game
+    properties:
+      image_url:
+        type: string
+      post_url:
+        type: string
+      profile_image_url:
+        type: string
+      username:
+        example: mariorossi
+        type: string
+    type: object
   model.Game:
     description: A game which can be observed
     properties:
@@ -119,10 +132,6 @@ definitions:
       created_at:
         format: date-time
         type: string
-      medias:
-        items:
-          type: string
-        type: array
       metrics:
         $ref: '#/definitions/model.Metrics'
       text:
@@ -180,7 +189,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.Tweet'
+              $ref: '#/definitions/model.FantaTeam'
             type: array
         "400":
           description: Incorrect syntax for a username

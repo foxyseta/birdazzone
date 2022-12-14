@@ -31,12 +31,11 @@ func getPoliticians(ctx *gin.Context) {
 // @Tags    fantacitorio
 // @Produce json
 // @Param   username query    string false "Optional Twitter username to search for"
-// @Success 200      {array}  model.Tweet
+// @Success 200      {array}  model.FantaTeam
 // @Failure 400      {object} model.Error "Incorrect syntax for a username"
 // @Failure 404      {object} model.Error "No team with such username"
 // @Router  /fantacitorio/teams [get]
 func getTeams(ctx *gin.Context) {
-	// TODO: implement me (TG-177)
 	res, err := teamsFromTwitter(ctx.GetQuery("username"))
 	if err.Message != "" {
 		ctx.JSON(err.Code, gin.H{"code": err.Code, "message": err.Message})
