@@ -5,6 +5,7 @@ import ApiRepository from '../../api/api-repository';
 import type { Politician } from '../../api/interfaces/politician';
 import FantacitorioHistogram from '@/components/FantacitorioHistogram.vue';
 import { SemipolarSpinner } from 'epic-spinners';
+import FantaRankChart from '@/components/FantaRankChart.vue';
 
 const error = ref<boolean>(false);
 const loading = ref<boolean>(true);
@@ -52,7 +53,7 @@ onBeforeMount(() => {fetchPoliticiansList() });
 </script>
 
 <template>
-    <div class="flex justify-evenly w-full" >
+    <div class="py-10 flex justify-evenly w-full" >
       <!-- LIST -->
       <div class="flex flex-col mx-10 justify-center align-center" >
         <div v-for="(item, index) in list" :key="index">
@@ -94,6 +95,9 @@ onBeforeMount(() => {fetchPoliticiansList() });
       <div v-show="loading" class="h-screen flex justify-center items-center">
         <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
       </div>
-      <FantacitorioHistogram v-if="!loading" :list="list"/>
+      <div>
+        <FantaRankChart class="m-4" v-if="!loading" :list="list" />
+        <FantacitorioHistogram class="m-4" v-if="!loading" :list="list"/>
+      </div>
     </div>
 </template>
