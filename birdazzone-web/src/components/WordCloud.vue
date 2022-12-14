@@ -68,9 +68,8 @@ const fetchStats = async (): Promise<ChartEntry[] | undefined> => {
     } else {
       error.value = true;
     }
-  }
-  else {
-    const response = await ApiRepository.getTvGameAttemptsStat(props.tvGameId, from.value, to.value)
+  } else {
+    const response = await ApiRepository.getTvGameAttemptsStat(props.tvGameId, from.value, to.value);
     if (response.esit) {
       return response.data;
     } else {
