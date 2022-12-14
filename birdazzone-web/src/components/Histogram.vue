@@ -61,7 +61,7 @@ onBeforeMount(() => {
 });
 </script>
 <template>
-  <div class="w-full bg-foreground shadow rounded-2xl p-6">
+  <div class="bg-foreground shadow rounded-2xl p-6" :style="`height: ${CHART_HEIGHT + 30}px`">
     <h1 class="text-white font-bold font-xl">{{ props.chartTitle }}</h1>
     <apexchart
       v-show="chartOptions"

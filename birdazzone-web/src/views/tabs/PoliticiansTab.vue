@@ -3,39 +3,12 @@ import { ref, onBeforeMount } from 'vue';
 import ErrorWidget from '@/components/ErrorWidget.vue';
 import ApiRepository from '../../api/api-repository';
 import type { Politician } from '../../api/interfaces/politician';
+import FantacitorioHistogram from '@/components/FantacitorioHistogram.vue';
+import { SemipolarSpinner } from 'epic-spinners';
 
 const error = ref<boolean>(false);
 const loading = ref<boolean>(true);
-const list = ref<Politician[]>([
-  /*{
-            "name": "Giorgia Meloni",
-            "score": 1000
-        },
-        {
-            "name": "Matteo Salvini",
-            "score": 900
-        },
-        {
-            "name": "Mattia di Maio",
-            "score": 800
-        },
-        {
-            "name": "Carlo Calenda",
-            "score": 700
-        },
-        {
-            "name": "Matteo Renzi",
-            "score": 600
-        },
-        {
-            "name": "Silvio Berlusconi",
-            "score": 500
-        },
-        {
-            "name": "Gianni Agnelli",
-            "score": 400
-        },*/
-]);
+const list = ref<Politician[]>([]);
 
 const fetchPoliticiansList = async () => {
   loading.value = true;
@@ -50,10 +23,6 @@ const fetchPoliticiansList = async () => {
   }
 };
 
-function sortList() {
-  list.value.sort((a, b) => b.score - a.score);
-}
-
 function isNumber(value: string): boolean {
   if (typeof value !== 'string') {
     return false;
@@ -66,24 +35,30 @@ function isNumber(value: string): boolean {
   return !isNaN(Number(value));
 }
 
-function changeAndSort(index: number, newScore: string) {
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const changeAndSort = async (index: number, newScore: string) => {
+  loading.value = true
+  await sleep(1000)
   list.value[index].score = isNumber(newScore) ? parseInt(newScore) : list.value[index].score;
-  sortList();
+  list.value = list.value.sort((a, b) => b.score - a.score);
+  loading.value = false
   return list.value[index].score.toString();
 }
 
-onBeforeMount(fetchPoliticiansList);
+onBeforeMount(() => {fetchPoliticiansList() });
 </script>
 
 <template>
-  <div class="flex flex-col flex-1 my-3" style="flex: 1 1 auto">
-    <div class="flex flex-row w-full" style="flex: 1 1 auto">
-      <div class="flex flex-col" style="flex: 2 1 auto"></div>
-      <div class="flex flex-col justify-center align-center" style="flex: 1 1 auto; width: 22rem">
+    <div class="flex justify-evenly w-full" >
+      <!-- LIST -->
+      <div class="flex flex-col mx-10 justify-center align-center" >
         <div v-for="(item, index) in list" :key="index">
           <div class="flex flex-row my-2 text-lgray">
             <div class="flex" style="flex: 1 1 auto; width: 1rem">{{ index + 1 }}.</div>
-            <div class="flex flex-row rounded-lg bg-foreground p-4 ml-3 items-center">
+            <div class="flex flex-row rounded-lg w-full bg-foreground p-4 ml-3 items-center">
               <div class="font-semibold text-white" style="flex: 1 1 auto; width: 100%">
                 {{ item.name }}
               </div>
@@ -115,7 +90,10 @@ onBeforeMount(fetchPoliticiansList);
           </div>
         </div>
       </div>
-      <div class="flex flex-col" style="flex: 2 1 auto"></div>
+
+      <div v-show="loading" class="h-screen flex justify-center items-center">
+        <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
+      </div>
+      <FantacitorioHistogram v-if="!loading" :list="list"/>
     </div>
-  </div>
 </template>
