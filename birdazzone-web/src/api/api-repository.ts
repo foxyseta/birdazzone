@@ -7,6 +7,7 @@ import type { ChartEntry } from './interfaces/chart-entry';
 import type { WordCloudOptions } from './interfaces/wordcloud-options';
 import type { Solution } from './interfaces/solution';
 import type { Politician } from './interfaces/politician';
+import type { FantaTeam } from './interfaces/fanta-team';
 
 export default class ApiRepository {
   private static readonly _BASE_URL = `http://${import.meta.env.VITE_SERVER_URL}/api/v1`;
@@ -77,7 +78,7 @@ export default class ApiRepository {
     ApiManager.get<Solution>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_SOLUTION, id));
 
   public static readonly getFantacitorioTeams = (username?: string) =>
-    ApiManager.get<Tweet[]>(
+    ApiManager.get<FantaTeam[]>(
       username
         ? this.stringFormat(this._BASE_URL + this._FANTACITORIO_TEAMS_USERNAME, username)
         : this.stringFormat(this._BASE_URL + this._FANTACITORIO_TEAMS)
