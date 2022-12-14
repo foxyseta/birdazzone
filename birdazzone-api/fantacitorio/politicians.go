@@ -48,22 +48,24 @@ func newFantacitorioLexer() *lexmachine.Lexer {
 	return res
 }
 
-func updatePoliticiansList(points *int, names *[]string, malus *bool, res *Politicians) {
+func updatePoliticiansList(points *int, names *[]string, malus *bool, res *map[string]int) {
 	if *points != -1 && len(*names) > 0 {
 		if *malus && *points > 0 {
 			*points = -*points
 		}
 		for _, name := range *names {
-			*res = append(*res, model.Politician{Name: name, Score: *points})
+			_, ok := (*res)[name]
+			if !ok {
+				(*res)[name] = *points
+			}
 		}
 		*malus, *points, *names = false, -1, []string{}
 	}
 }
 
-func extractPoliticianPoints(text string) ([]model.Politician, error) {
+func extractPoliticianPoints(text string) (map[string]int, error) {
 	text = strings.ToUpper(text)
-	println(text)
-	res := make(Politicians, 0)
+	res := make(map[string]int, 0)
 	scanner, err := lexer.Scanner([]byte(text))
 	if err != nil {
 		return nil, err
@@ -122,19 +124,33 @@ func sortPoliticiansByPoints(politicians *Politicians) {
 }
 
 func getPoliticiansPoints() ([]model.Politician, error) {
+	// From Twitter
 	result, err := twitter.GetManyRecentTweetsFromQuery("from:fanta_citorio punti -squadre -squadra", "", "")
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
-	var arr Politicians
 	tweets := result.Data
+	// Map every politician name to its score
+	dict := make(map[string]int, 0)
 	for i := 0; i < result.Meta.ResultCount; i++ {
 		politicians, err := extractPoliticianPoints(tweets[i].Text)
 		if err != nil {
 			return nil, err
 		}
-		arr = append(arr, politicians...)
+		for k, v := range politicians {
+			_, ok := dict[k]
+			if !ok {
+				dict[k] = v
+			}
+		}
+	}
+	// Map to sorted array of politicians
+	arr := make(Politicians, len(dict))
+	i := 0
+	for k, v := range dict {
+		arr[i] = model.Politician{Name: k, Score: v}
+		i++
 	}
 	sortPoliticiansByPoints(&arr)
 	return arr, err
