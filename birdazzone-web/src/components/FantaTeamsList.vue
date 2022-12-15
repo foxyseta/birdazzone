@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import type { FantaTeam } from '../api/interfaces/fanta-team';
 
-const props = defineProps<{ teams: FantaTeam[]}>();
-
+const props = defineProps<{ teams: FantaTeam[] }>();
 </script>
 
 <template>

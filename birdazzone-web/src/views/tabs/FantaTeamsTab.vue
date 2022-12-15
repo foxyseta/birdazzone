@@ -13,7 +13,6 @@ const isError = ref<boolean>(false);
 const error = ref<string>();
 const loading = ref<boolean>(false);
 
-
 const fetchTeams = async () => {
   const mock = username.value ? teams.value.filter((x: FantaTeam) => x.username.startsWith(username.value!)) : teams;
   const response = await ApiRepository.getFantacitorioTeams(username.value);
@@ -45,6 +44,6 @@ const onUsernameChanged = async (newUsername: string) => {
     <div v-show="loading" class="h-screen flex justify-center items-center">
       <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
     </div>
-    <FantaTeamsList v-show="!loading" :teams="teams"/>
+    <FantaTeamsList v-show="!loading" :teams="teams" />
   </div>
 </template>
