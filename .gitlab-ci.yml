@@ -7,7 +7,7 @@ compile_pdf:
       - report/report.pdf
     reports:
       # To ensure we've access to this file in the next stage
-      dotenv: generate_executables.env
+      dotenv: compile_pdf.env
   only:
     - merge_requests
     - main
@@ -31,5 +31,5 @@ release_job:
     ref: "$CI_COMMIT_SHA" # The tag is created from the pipeline SHA.
     assets:
       links:
-        - name: "Linux executable"
+        - name: "Report"
           url: "https://gitlab.com/codemancers/engineering/cw/-/jobs/${GE_JOB_ID}/artifacts/file/report/report.pdf"
