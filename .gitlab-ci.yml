@@ -18,8 +18,8 @@ release_job:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   rules:
-    - if: $CI_COMMIT_TAG
-      when: never # Do not run this job when a tag is created manually
+    # - if: $CI_COMMIT_TAG
+    #   when: never # Do not run this job when a tag is created manually
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # Run this job when commits are pushed or merged to the default branch
   script:
     - echo "running release_job for $TAG"
@@ -27,11 +27,15 @@ release_job:
     - job: compile_pdf
       artifacts: true
   release: # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
-    name: "Release Executables $CI_COMMIT_SHORT_SHA"
+    name: "v0.$CI_PIPELINE_IID ($CI_COMMIT_SHORT_SHA)"
     tag_name: "v0.$CI_PIPELINE_IID" # The version is incremented per pipeline.
     description: "v0.$CI_PIPELINE_IID"
     ref: "$CI_COMMIT_SHA" # The tag is created from the pipeline SHA.
     assets:
       links:
+        - name: "docker-compose.yml"
+          url: "https://git.hjkl.gq/team13/birdazzone-full/-/raw/v0.$CI_PIPELINE_IID/docker-compose.yml"
+        - name: "production.yml"
+          url: "https://git.hjkl.gq/team13/birdazzone-full/-/raw/v0.$CI_PIPELINE_IID/production.yml"
         - name: "Report"
-          url: "https://gitlab.com/codemancers/engineering/cw/-/jobs/${GE_JOB_ID}/artifacts/file/report.pdf"
+          url: "https://git.hjkl.gq/team13/birdazzone-full/-/jobs/$GE_JOB_ID/artifacts/raw/report.pdf?inline=false"

@@ -1,4 +1,13 @@
 # Birdazzone Full
 
-Run `docker compose up`, then visit Birdazzone Web from `localhost:8000`, or
-directly access Birdazzone API from `localhost:8080`.
+Production:
+
+```bash
+docker-compose -f docker-compose.yml -f production.yml up
+```
+
+Development:
+
+```bash
+docker-compose -f docker-compose.yml -f development.yml up
+```
