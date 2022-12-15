@@ -512,11 +512,16 @@ func gameResults(ctx *gin.Context) {
 				}
 			} else {
 				//from && !to
-				toTime = time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 23, 59, 59, 0, time.UTC)
+				sol, _ := gameTracker.Solution(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC))
+				toTime, _ = util.StringToDateTime(sol.Date)
 			}
 		} else {
 			//!from && !to
-			result, err := getAttempts(ctx, false, "", "")
+			sol, _ := gameTracker.LastSolution()
+			solTime, _ := util.StringToDateTime(sol.Date)
+			fromStr = util.DateToString(time.Date(solTime.Year(), solTime.Month(), solTime.Day(), 0, 0, 0, 0, time.UTC))
+			result, err := getAttempts(ctx, false, fromStr, sol.Date)
+			fmt.Println(result)
 			if err == nil {
 				util.Reverse(&result.Data)
 				tweets := result.Data
