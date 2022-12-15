@@ -1,10 +1,12 @@
 compile_pdf:
   stage: build
   image: timnn/texlive
-  script: xelatex report/report.tex
+  script:
+    - echo GE_JOB_ID=$CI_JOB_ID >> compile_pdf.env
+    - xelatex report/report.tex
   artifacts:
     paths:
-      - report/report.pdf
+      - report.pdf
     reports:
       # To ensure we've access to this file in the next stage
       dotenv: compile_pdf.env
@@ -32,4 +34,4 @@ release_job:
     assets:
       links:
         - name: "Report"
-          url: "https://gitlab.com/codemancers/engineering/cw/-/jobs/${GE_JOB_ID}/artifacts/file/report/report.pdf"
+          url: "https://gitlab.com/codemancers/engineering/cw/-/jobs/${GE_JOB_ID}/artifacts/file/report.pdf"
