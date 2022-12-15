@@ -27,11 +27,11 @@ release_job:
     - job: compile_pdf
       artifacts: true
   release: # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
-    name: "Release Executables $CI_COMMIT_SHORT_SHA"
+    name: "v0.$CI_PIPELINE_IID ($CI_COMMIT_SHORT_SHA)"
     tag_name: "v0.$CI_PIPELINE_IID" # The version is incremented per pipeline.
     description: "v0.$CI_PIPELINE_IID"
     ref: "$CI_COMMIT_SHA" # The tag is created from the pipeline SHA.
     assets:
       links:
         - name: "Report"
-          url: "https://gitlab.com/codemancers/engineering/cw/-/jobs/${GE_JOB_ID}/artifacts/file/report.pdf"
+          url: "https://git.hjkl.gq/team13/birdazzone-full/-/jobs/${GE_JOB_ID}/artifacts/raw/report.pdf?inline=false"
