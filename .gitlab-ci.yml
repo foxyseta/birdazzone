@@ -22,7 +22,7 @@ release_job:
   script:
     - echo "running release_job for $TAG"
   needs:
-    - job: generate_executables
+    - job: compile_pdf
       artifacts: true
   release: # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
     name: "Release Executables $CI_COMMIT_SHORT_SHA"
