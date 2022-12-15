@@ -5,9 +5,9 @@ compile_pdf:
   artifacts:
     paths:
       - report/report.pdf
-  reports:
-    # To ensure we've access to this file in the next stage
-    dotenv: generate_executables.env
+    reports:
+      # To ensure we've access to this file in the next stage
+      dotenv: generate_executables.env
   only:
     - merge_requests
     - main
