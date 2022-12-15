@@ -1,0 +1,37 @@
+compile_pdf:
+  stage: build
+  image: timnn/texlive
+  script:
+    - echo GE_JOB_ID=$CI_JOB_ID >> compile_pdf.env
+    - xelatex report/report.tex
+  artifacts:
+    paths:
+      - report.pdf
+    reports:
+      # To ensure we've access to this file in the next stage
+      dotenv: compile_pdf.env
+  only:
+    - merge_requests
+    - main
+
+release_job:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never # Do not run this job when a tag is created manually
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # Run this job when commits are pushed or merged to the default branch
+  script:
+    - echo "running release_job for $TAG"
+  needs:
+    - job: compile_pdf
+      artifacts: true
+  release: # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
+    name: "Release Executables $CI_COMMIT_SHORT_SHA"
+    tag_name: "v0.$CI_PIPELINE_IID" # The version is incremented per pipeline.
+    description: "v0.$CI_PIPELINE_IID"
+    ref: "$CI_COMMIT_SHA" # The tag is created from the pipeline SHA.
+    assets:
+      links:
+        - name: "Report"
+          url: "https://gitlab.com/codemancers/engineering/cw/-/jobs/${GE_JOB_ID}/artifacts/file/report.pdf"
