@@ -1,7 +1,7 @@
 compile_pdf:
   stage: build
   image: timnn/texlive
-  script: pdflatex report/report.tex
+  script: xelatex report/report.tex
   artifacts:
     paths:
       - report/report.pdf
