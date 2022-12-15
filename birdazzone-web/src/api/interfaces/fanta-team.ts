@@ -1,6 +1,6 @@
 export interface FantaTeam {
+  imageUrl: string;
+  postUrl: string;
+  profileImageUrl: string;
   username: string;
-  profile_image_url: string;
-  post_url: string;
-  image_url: string;
 }
