@@ -18,8 +18,8 @@ release_job:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   rules:
-    - if: $CI_COMMIT_TAG
-      when: never # Do not run this job when a tag is created manually
+    # - if: $CI_COMMIT_TAG
+    #   when: never # Do not run this job when a tag is created manually
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # Run this job when commits are pushed or merged to the default branch
   script:
     - echo "running release_job for $TAG"
@@ -33,5 +33,9 @@ release_job:
     ref: "$CI_COMMIT_SHA" # The tag is created from the pipeline SHA.
     assets:
       links:
+        - name: "docker-compose.yml"
+          url: "https://git.hjkl.gq/team13/birdazzone-full/-/raw/v0.$CI_PIPELINE_IID/docker-compose.yml"
+        - name: "production.yml"
+          url: "https://git.hjkl.gq/team13/birdazzone-full/-/raw/v0.$CI_PIPELINE_IID/production.yml"
         - name: "Report"
-          url: "https://git.hjkl.gq/team13/birdazzone-full/-/jobs/${GE_JOB_ID}/artifacts/raw/report.pdf?inline=false"
+          url: "https://git.hjkl.gq/team13/birdazzone-full/-/jobs/$GE_JOB_ID/artifacts/raw/report.pdf?inline=false"
