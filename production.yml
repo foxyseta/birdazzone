@@ -1,0 +1,23 @@
+version: "3.3"
+services:
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    environment:
+      - WATCHTOWER_NOTIFICATIONS=msteams
+      - WATCHTOWER_NOTIFICATION_MSTEAMS_HOOK_URL=https://liveunibo.webhook.office.com/webhookb2/5604856b-7ed2-41cb-979a-94e8ee5d7cac@e99647dc-1b08-454a-bf8c-699181b389ab/IncomingWebhook/23cad16a06ea4d2cba9bf5f315437c03/1b6bd19a-e7e4-4d89-a903-8b0c11f61ed6
+      - WATCHTOWER_NOTIFICATION_MSTEAMS_USE_LOG_DATA=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.docker/config.json:/config.json
+    command: --interval 300
+  backend:
+    image: registry.hjkl.gq/team13/birdazzone-api:main
+    depends_on:
+      - watchtower
+  frontend:
+    image: registry.hjkl.gq/team13/birdazzone-web:main
+    environment:
+      - VITE_SERVER_URL="http://hjkl.gq:8000"
+    ports:
+      - 80:80

@@ -1,0 +1,5 @@
+services:
+  backend:
+    build: birdazzone-api
+  frontend:
+    build: birdazzone-web
