@@ -146,9 +146,9 @@ export default defineComponent({
 
   <div
     v-if="openClose"
-    class="z-10 bg-foreground shadow font-semibold text-md rounded-lg m-4 ml-2 p-4 place-self-start"
+    class="place-self-start z-10 bg-foreground shadow font-semibold text-md rounded-lg m-4 ml-2 p-4"
   >
-    <div class="flex flex-row items-stretch justify-center">
+    <div class="flex flex-row items-start justify-center">
       <label for="Date" class="justify-self-center self-center text-sm text-white w-7">date</label>
       <div class="flex justify-self-center" id="Date">
         <date-picker

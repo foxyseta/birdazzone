@@ -3,7 +3,7 @@ import Histogram, { type HistogramValue } from './Histogram.vue';
 import ApiRepository from '../api/api-repository';
 import { onBeforeMount, ref } from 'vue';
 
-const props = defineProps<{ gameId: string; from: string | null; to: string | null }>();
+const props = defineProps<{ gameId: string; key: number; from: string | null; to: string | null }>();
 
 const SERIE_NAME = 'attempts';
 
@@ -39,6 +39,10 @@ onBeforeMount(() => {
 </script>
 <template>
   <div>
+    <div v-if="from" class="text-md text-white text-semibold mb-3">
+      Data refere to the following date-time range: from {{ from.substring(0, 10) }}, {{ from.substring(11, 16) }} to
+      {{ to.substring(0, 10) }}, {{ to.substring(11, 16) }}
+    </div>
     <Histogram
       v-if="!loading"
       :chart-title="'Played words with more than 3 tentatives'"

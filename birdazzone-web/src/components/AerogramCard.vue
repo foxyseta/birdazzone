@@ -10,7 +10,7 @@ const errorTitle = ref<string>();
 const errorText = ref<string>();
 
 const loading = ref<boolean>(true);
-const props = defineProps<{ id: string; from: string | null; to: string | null }>();
+const props = defineProps<{ id: string; key: number; from: string | null; to: string | null }>();
 const nFail = ref<number>(0);
 const nSucc = ref<number>(0);
 const fail = ref<number>(0);
@@ -29,9 +29,11 @@ const fetchData = async () => {
   if (!from.value || !to.value) {
     const response = await ApiRepository.getResults(props.id.toString());
 
-    if (response.esit) {
-      nFail.value = response.data![0].negatives; // failed attempts
-      nSucc.value = response.data![0].positives; // succeded attempts
+    if (response.esit && response.data) {
+      response.data.forEach(function (value) {
+        nFail.value += value.negatives; // failed attempts
+        nSucc.value += value.positives; // succeded attempts
+      });
       nAttempts.value = nFail.value + nSucc.value; // total attempts
 
       success.value = (() => {
@@ -56,12 +58,15 @@ const fetchData = async () => {
     const response = await ApiRepository.getResultsFiltered(
       props.id.toString(),
       from.value.toString(),
-      to.value.toString()
+      to.value.toString(),
+      '720' // minuti in 12 ore
     );
 
-    if (response.esit) {
-      nFail.value = response.data![0].negatives; // failed attempts
-      nSucc.value = response.data![0].positives; // succeded attempts
+    if (response.esit && response.data) {
+      response.data.forEach(function (value) {
+        nFail.value += value.negatives; // failed attempts
+        nSucc.value += value.positives; // succeded attempts
+      });
       nAttempts.value = nFail.value + nSucc.value; // total attempts
 
       success.value = (() => {
@@ -140,8 +145,11 @@ const popover = () => {
   </div>
 
   <!-- Non error -->
+  <div v-if="from" class="text-md text-white text-semibold mb-3">
+    Data refere to the following date range: from {{ from }} to {{ to }}
+  </div>
   <div class="flex flex-col">
-    <div class="bg-foreground font-semibold text-lg rounded-lg p-3 ml-4 z-0 w-auto">
+    <div class="bg-foreground font-semibold text-lg rounded-lg p-3 z-0 w-auto">
       <div v-if="loading">
         <semipolar-spinner :animation-duration="2000" :size="35" color="#1eb980" />
       </div>

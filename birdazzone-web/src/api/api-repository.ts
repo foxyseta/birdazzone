@@ -60,8 +60,13 @@ export default class ApiRepository {
   public static readonly getResults = (id: string): Promise<ApiResponse<Results[]>> =>
     ApiManager.get<Results[]>(this.stringFormat(this._BASE_URL + this._RESULTS_ID, id));
 
-  public static readonly getResultsFiltered = (id: string, from: string, to: string): Promise<ApiResponse<Results[]>> =>
-    ApiManager.get<Results[]>(this.stringFormat(this._BASE_URL + this._RESULTS_ID_FILTERED, id, from, to, '604800')); // 604800: secondi in una settimana
+  public static readonly getResultsFiltered = (
+    id: string,
+    from: string,
+    to: string,
+    each: string
+  ): Promise<ApiResponse<Results[]>> =>
+    ApiManager.get<Results[]>(this.stringFormat(this._BASE_URL + this._RESULTS_ID_FILTERED, id, from, to, each));
 
   public static readonly getTvGameAttemptsStat = (
     id: string,
