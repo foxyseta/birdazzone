@@ -39,7 +39,7 @@ const onUsernameChanged = async (newUsername: string) => {
 </script>
 
 <template>
-  <div class="h-screen">
+  <div class="h-full">
     <FantaSearchUser class="m-10" @changed="onUsernameChanged" />
     <div v-show="loading" class="h-screen flex justify-center items-center">
       <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
