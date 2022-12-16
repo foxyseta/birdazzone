@@ -7,6 +7,8 @@ import FantacitorioHistogram from '@/components/FantacitorioHistogram.vue';
 import { SemipolarSpinner } from 'epic-spinners';
 import FantaRankChart from '@/components/FantaRankChart.vue';
 
+const errorTitle = ref<string>();
+const errorText = ref<string>();
 const error = ref<boolean>(false);
 const loading = ref<boolean>(true);
 const list = ref<Politician[]>([]);
@@ -21,6 +23,8 @@ const fetchPoliticiansList = async () => {
     window.location.href = '/not-found';
   } else {
     error.value = true;
+    errorTitle.value = 'Error!';
+    errorText.value = 'something went wrong!';
   }
 };
 
@@ -30,7 +34,7 @@ function isNumber(value: string): boolean {
   }
 
   if (value.trim() === '') {
-    return false;
+    return false;'../components/BirdazzoneButton.vue';
   }
 
   return !isNaN(Number(value));
@@ -55,32 +59,36 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div class="py-10 flex justify-evenly w-full">
-    <!-- LIST -->
-    <div class="flex flex-col mx-10 justify-center align-center">
-      <div v-for="(item, index) in list" :key="index">
-        <div class="flex flex-row my-2 text-lgray">
-          <div class="flex" style="flex: 1 1 auto; width: 1rem">{{ index + 1 }}.</div>
-          <div class="flex flex-row rounded-lg w-full bg-foreground p-4 ml-3 items-center">
-            <div class="font-semibold text-white" style="flex: 1 1 auto; width: 100%">
-              {{ item.name }}
-            </div>
-            <div
-              class="flex font-bold text-white text-right align-center justify-end"
-              style="flex: 1 1 auto; font-size: 180%"
-            >
-              <input
-                type="text"
-                @change="
-                  (value) => {
-                    //@ts-ignore
-                    value = changeAndSort(index, value.target?.value);
-                  }
-                "
-                class="flex bg-foreground justify-end flex-wrap text-end"
-                style="width: 100%"
-                :value="item.score"
-              />
+  <div class="flex flex-col flex-1 my-3" style="flex: 1 1 auto">
+    <div v-if="error">
+    <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
+  </div>
+    <div class="flex flex-row w-full" style="flex: 1 1 auto">
+      <div class="flex flex-col" style="flex: 2 1 auto"></div>
+      <div class="flex flex-col justify-center align-center" style="flex: 1 1 auto; width: 22rem">
+        <div v-for="(item, index) in list" :key="index">
+          <div class="flex flex-row my-2 text-lgray">
+            <div class="flex" style="flex: 1 1 auto; width: 1rem">{{ index + 1 }}.</div>
+            <div class="flex flex-row rounded-lg bg-foreground p-4 ml-3 items-center">
+              <div class="font-semibold text-white" style="flex: 1 1 auto; width: 100%">
+                {{ item.name }}
+              </div>
+              <div
+                class="flex font-bold text-white text-right align-center justify-end"
+                style="flex: 1 1 auto; font-size: 180%"
+              >
+                <input
+                  type="text"
+                  @change="
+                    (value) => {
+                      //@ts-ignore
+                      value = changeAndSort(index, value.target?.value);
+                    }
+                  "
+                  class="flex bg-foreground justify-end flex-wrap text-end"
+                  style="width: 100%"
+                  :value="item.score"
+                />
 
               <span class="flex text-lgray font-normal items-center ml-1" style="font-size: 50%">p.</span>
             </div>

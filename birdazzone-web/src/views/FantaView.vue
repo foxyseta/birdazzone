@@ -3,6 +3,7 @@ import BirdazzoneButton from '../components/BirdazzoneButton.vue';
 import { ref, onBeforeMount } from 'vue';
 import FantaTeamsTab from './tabs/FantaTeamsTab.vue';
 import PoliticiansTab from '@/views/tabs/PoliticiansTab.vue';
+import NumberOfPoliticians from '../components/NumberOfPoliticians.vue';
 
 const showPoliticiansTab = ref<boolean>(true);
 const showTeamsTab = ref<boolean>(false);
@@ -43,8 +44,11 @@ const showTeams = () => {
     </div>
 
     <div class="h-full">
-      <div v-show="showPoliticiansTab">
-        <PoliticiansTab class="flex" />
+      <div class="flex flex-row" v-show="showPoliticiansTab">
+        <div style=" width: 50%">
+          <PoliticiansTab class="flex" style="flex: 1 1 auto;" />
+        </div>
+        <NumberOfPoliticians />
       </div>
       <div v-show="showTeamsTab">
         <FantaTeamsTab />

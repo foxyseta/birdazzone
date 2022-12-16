@@ -37,7 +37,6 @@ onBeforeMount(fetchTvGames);
 </script>
 
 <template>
-  <!-- Error -->
   <div v-if="error">
     <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
   </div>
