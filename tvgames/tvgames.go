@@ -35,6 +35,7 @@ const fromDateParsingErrorMessage = "date parsing error (from)"
 const toDateParsingErrorMessage = "date parsing error (to)"
 const fromGreaterThanToErrorMessage = "from > to"
 const toGreaterThenNowErrorMessage = "to > now"
+const noGameInstancePlayed = "no game instance has been played"
 
 func TvGamesGroup(group *gin.RouterGroup) {
 	group.GET("/", getTvGames)
@@ -254,7 +255,7 @@ func gameAttempts(ctx *gin.Context) {
 	}
 	result, err := getAttempts(ctx, true, fromStr, toStr)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusNoContent, errors.New("no game instance has been played"))
+		httputil.NewError(ctx, http.StatusNoContent, errors.New(noGameInstancePlayed))
 		return
 	}
 	tweets := result.Data
@@ -297,15 +298,9 @@ func extractGameAttemptsStatsTimes(fromStr string, hasFrom bool, toStr string, h
 			if err != nil {
 				return "", "", errors.New(toDateParsingErrorMessage)
 			}
-			toStr = util.DateToString(toTime)
-			if fromStr > toStr {
-				return "", "", errors.New(fromGreaterThanToErrorMessage)
-			}
-			if toStr > util.DateToString(time.Now()) {
-				return "", "", errors.New(toGreaterThenNowErrorMessage)
-			}
-			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				return "", "", errors.New("from and to are not in the same day")
+			toStr, err = checkToStrGameAttemptsStatsTimes(fromTime, toTime)
+			if err != nil {
+				return "", "", err
 			}
 		}
 	} else {
@@ -313,6 +308,21 @@ func extractGameAttemptsStatsTimes(fromStr string, hasFrom bool, toStr string, h
 		toStr = ""
 	}
 	return fromStr, toStr, nil
+}
+
+func checkToStrGameAttemptsStatsTimes(fromTime time.Time, toTime time.Time) (string, error) {
+	fromStr := util.DateToString(fromTime)
+	toStr := util.DateToString(toTime)
+	if fromStr > toStr {
+		return "", errors.New(fromGreaterThanToErrorMessage)
+	}
+	if toStr > util.DateToString(time.Now()) {
+		return "", errors.New(toGreaterThenNowErrorMessage)
+	}
+	if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
+		return "", errors.New("from and to are not in the same day")
+	}
+	return toStr, nil
 }
 
 func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
@@ -346,10 +356,8 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	chartAsMap := make(map[string]int)
 	for _, tweet := range tweets {
 		text := strings.ToLower(tweet.Text)
-		var attempt string
-		if strings.Contains(text, solution.Key) {
-			attempt = solution.Key
-		} else {
+		var attempt string = solution.Key
+		if !strings.Contains(text, solution.Key) {
 			attempt = tweetTextToAttempt(text)
 		}
 		if attempt == "" {
@@ -401,14 +409,8 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 		lastTime := util.DateToString(time.Date(lt.Year(), lt.Month(), lt.Day(), lt.Hour(), lt.Minute(), lt.Second()+each, 0, time.UTC))
 		for _, tweet := range *tweets {
 			if tweet.CreatedAt <= lastTime {
-				if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
-					successes++
-				} else {
-					fails++
-				}
+				editSuccessesFailsFromTweet(tweet.Text, solution.Key, &successes, &fails)
 			} else {
-				// nt, _ := util.StringToDateTime(lastTime)
-				// nextTime := util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
 				nt, _ := util.StringToDateTime(tweet.CreatedAt)
 
 				chart = append(chart, model.BooleanChart{Label: startTime, Positives: successes, Negatives: fails})
@@ -416,18 +418,22 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 				lastTime = util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
 				successes = 0
 				fails = 0
-				if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
-					successes++
-				} else {
-					fails++
-				}
+
+				editSuccessesFailsFromTweet(tweet.Text, solution.Key, &successes, &fails)
 			}
 
 		}
-		// nextTime, _ := util.StringToDateTime((*tweets)[len(*tweets)-1].CreatedAt)
 		chart = append(chart, model.BooleanChart{Label: startTime, Positives: successes, Negatives: fails})
 	}
 	return chart
+}
+
+func editSuccessesFailsFromTweet(text string, solution string, successes *int, fails *int) {
+	if strings.Contains(strings.ToLower(text), strings.ToLower(solution)) {
+		*successes++
+	} else {
+		*fails++
+	}
 }
 
 func extractGameResultsTimes(gameTracker *gametracker.GameTracker, fromStr string, toStr string) (string, string, model.Error) {
@@ -518,7 +524,7 @@ func gameResults(ctx *gin.Context) {
 			solTime, _ := util.StringToDateTime(sol.Date)
 			chart = createBooleanCharts(gameTracker, ctx, time.Date(solTime.Year(), solTime.Month(), solTime.Day(), 0, 0, 0, 0, time.UTC), solTime, each)
 			if chart == nil {
-				httputil.NewError(ctx, http.StatusNoContent, errors.New("no game instance has been played"))
+				httputil.NewError(ctx, http.StatusNoContent, errors.New(noGameInstancePlayed))
 				return
 			}
 			ctx.JSON(
@@ -530,7 +536,7 @@ func gameResults(ctx *gin.Context) {
 
 		chart = createBooleanCharts(gameTracker, ctx, fromTime, toTime, each)
 		if chart == nil {
-			httputil.NewError(ctx, http.StatusNoContent, errors.New("no game instance has been played"))
+			httputil.NewError(ctx, http.StatusNoContent, errors.New(noGameInstancePlayed))
 			return
 		}
 		ctx.JSON(
