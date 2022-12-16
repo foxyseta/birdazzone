@@ -439,7 +439,8 @@ func extractGameResultsTimes(gameTracker *gametracker.GameTracker, fromStr strin
 	fromStr = util.DateToString(fromTime)
 	if toStr != "" {
 		//from && to
-		_, err = util.StringToDate(toStr)
+		toTime, err = util.StringToDate(toStr)
+		toStr = util.DateToString(toTime)
 		if err != nil {
 			return "", "", model.Error{Code: http.StatusBadRequest, Message: toDateParsingErrorMessage}
 		}
@@ -510,6 +511,7 @@ func gameResults(ctx *gin.Context) {
 			}
 			fromTime, _ = util.StringToDateTime(fromStr)
 			toTime, _ = util.StringToDateTime(toStr)
+			fmt.Printf("%s -> %s", fromStr, toStr)
 		} else {
 			//!from && !to
 			sol, _ := gameTracker.LastSolution()
