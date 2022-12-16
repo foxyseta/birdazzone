@@ -430,9 +430,7 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 				// nt, _ := util.StringToDateTime(lastTime)
 				// nextTime := util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
 				nt, _ := util.StringToDateTime(tweet.CreatedAt)
-				if updateNextTime {
-					// nextTime = util.DateToString(nt)
-				}
+
 				chart = append(chart, model.BooleanChart{Label: startTime, Positives: successes, Negatives: fails})
 				startTime = lastTime
 				lastTime = util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
@@ -452,6 +450,34 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 	return chart
 }
 
+func extractGameResultsTimes(gameTracker *gametracker.GameTracker, fromStr string, toStr string) (string, string, model.Error) {
+	var fromTime, toTime time.Time
+	fromTime, err := util.StringToDate(fromStr)
+	if err != nil {
+		return "", "", model.Error{Code: http.StatusBadRequest, Message: fromDateParsingErrorMessage}
+	}
+	fromStr = util.DateToString(fromTime)
+	if toStr != "" {
+		//from && to
+		_, err = util.StringToDate(toStr)
+		if err != nil {
+			return "", "", model.Error{Code: http.StatusBadRequest, Message: toDateParsingErrorMessage}
+		}
+		if fromStr > toStr {
+			return "", "", model.Error{Code: http.StatusBadRequest, Message: fromGreaterThanToErrorMessage}
+		}
+		if toStr > util.DateToString(time.Now()) {
+			return "", "", model.Error{Code: http.StatusBadRequest, Message: toGreaterThenNowErrorMessage}
+		}
+	} else {
+		//from && !to
+		sol, _ := gameTracker.Solution(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC))
+		toTime, _ = util.StringToDateTime(sol.Date)
+		toStr = util.DateToString(toTime)
+	}
+	return fromStr, toStr, model.Error{}
+}
+
 // gameResults godoc
 // @Summary Retrieve game's number of successes and failures, grouped in time interval bins
 // @Tags    tvgames
@@ -467,16 +493,17 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 // @Router  /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	var merr model.Error
 	var chart []model.BooleanChart
 
 	if err == nil {
-		fromStr, hasFrom := ctx.GetQuery("from")
-		toStr, hasTo := ctx.GetQuery("to")
+		fromStr, _ := ctx.GetQuery("from")
+		toStr, _ := ctx.GetQuery("to")
 		eachStr, hasEach := ctx.GetQuery("each")
 		var each = 57600
 		var fromTime, toTime time.Time
 		if hasEach {
-			each, err = strconv.Atoi(eachStr)
+			each, err := strconv.Atoi(eachStr)
 			if err != nil {
 				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (each)"))
 				return
@@ -486,54 +513,32 @@ func gameResults(ctx *gin.Context) {
 				return
 			}
 		}
+		fmt.Println(each)
 
-		if hasFrom {
-			fromTime, err = util.StringToDate(fromStr)
-			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromDateParsingErrorMessage))
+		if fromStr != "" {
+			fromStr, toStr, merr = extractGameResultsTimes(gameTracker, fromStr, toStr)
+			if merr.Message != "" {
+				httputil.NewError(ctx, merr.Code, errors.New(merr.Message))
 				return
 			}
-			fromStr = util.DateToString(fromTime)
-			if hasTo {
-				//from && to
-				toTime, err = util.StringToDate(toStr)
-				if err != nil {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New(toDateParsingErrorMessage))
-					return
-				}
-				toStr = util.DateToString(toTime)
-				if fromStr > toStr {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromGreaterThanToErrorMessage))
-					return
-				}
-				if toStr > util.DateToString(time.Now()) {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New(toGreaterThenNowErrorMessage))
-					return
-				}
-			} else {
-				//from && !to
-				sol, _ := gameTracker.Solution(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC))
-				toTime, _ = util.StringToDateTime(sol.Date)
-			}
+			fromTime, _ = util.StringToDateTime(fromStr)
+			toTime, _ = util.StringToDateTime(toStr)
 		} else {
 			//!from && !to
 			sol, _ := gameTracker.LastSolution()
 			solTime, _ := util.StringToDateTime(sol.Date)
 			fromStr = util.DateToString(time.Date(solTime.Year(), solTime.Month(), solTime.Day(), 0, 0, 0, 0, time.UTC))
 			result, err := getAttempts(ctx, false, fromStr, sol.Date)
-			fmt.Println(result)
 			if err == nil {
 				util.Reverse(&result.Data)
 				tweets := result.Data
 				var solution model.GameKey
 				solution, err = gameTracker.LastSolution()
-				if err == nil {
-					chart = gameResultsHelper(solution, &tweets, each, chart, err, true)
-					ctx.JSON(
-						http.StatusOK,
-						chart,
-					)
-				}
+				chart = gameResultsHelper(solution, &tweets, each, chart, err, true)
+				ctx.JSON(
+					http.StatusOK,
+					chart,
+				)
 			}
 			return
 		}

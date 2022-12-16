@@ -41,16 +41,16 @@ func mediaToFantaTeam(media twitter.Media, tweets *twitter.ProfileTweets) []mode
 	var ret []model.FantaTeam
 	for _, data := range tweets.Data {
 		if len(data.Attachments.MediaKeys) > 0 && media.MediaKey == data.Attachments.MediaKeys[0] {
-			ret = append(ret, dataToFantaTeam(media, data, tweets.Includes.Users)...)
+			ret = append(ret, dataToFantaTeam(media, data, tweets)...)
 			break
 		}
 	}
 	return ret
 }
 
-func dataToFantaTeam(media twitter.Media, data twitter.ProfileTweet, users []twitter.Profile) []model.FantaTeam {
+func dataToFantaTeam(media twitter.Media, data twitter.ProfileTweet, tweets *twitter.ProfileTweets) []model.FantaTeam {
 	var ret []model.FantaTeam
-	for _, user := range users {
+	for _, user := range tweets.Includes.Users {
 		if data.AuthorId == user.ID {
 			ret = append(ret,
 				model.FantaTeam{
