@@ -39,7 +39,7 @@ onBeforeMount(() => {
 </script>
 <template>
   <div>
-    <div v-if="from" class="text-md text-white text-semibold mb-3">
+    <div v-if="from && to" class="text-md text-white text-semibold mb-3">
       Data refere to the following date-time range: from {{ from.substring(0, 10) }}, {{ from.substring(11, 16) }} to
       {{ to.substring(0, 10) }}, {{ to.substring(11, 16) }}
     </div>
