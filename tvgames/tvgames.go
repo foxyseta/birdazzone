@@ -225,37 +225,9 @@ func getGameAttemptsParameters(ctx *gin.Context) (int, int, string, string, erro
 
 	fromStr, hasFrom := ctx.GetQuery("from")
 	toStr, hasTo := ctx.GetQuery("to")
-	var fromTime, toTime time.Time
-	if hasFrom {
-		fromTime, err = util.StringToDateTime(fromStr)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromDateParsingErrorMessage))
-			return 0, 0, "", "", err
-		}
-		fromStr = util.DateToString(fromTime)
-		if hasTo {
-			toTime, err = util.StringToDateTime(toStr)
-			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(toDateParsingErrorMessage))
-				return 0, 0, "", "", err
-			}
-			toStr = util.DateToString(toTime)
-			if fromStr > toStr {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromGreaterThanToErrorMessage))
-				return 0, 0, "", "", err
-			}
-			if toStr > util.DateToString(time.Now()) {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(toGreaterThenNowErrorMessage))
-				return 0, 0, "", "", err
-			}
-			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from and to are not in the same day"))
-				return 0, 0, "", "", err
-			}
-		}
-	} else {
-		fromStr = ""
-		toStr = ""
+	fromStr, toStr, err = extractGameAttemptsStatsTimes(fromStr, hasFrom, toStr, hasTo)
+	if err != nil {
+		return 0, 0, "", "", err
 	}
 	return pageIndex, pageLength, fromStr, toStr, nil
 }
