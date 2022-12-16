@@ -110,6 +110,38 @@ func TestGetAttemptsWrongParam(t *testing.T) {
 	}
 }
 
+func TestExtractGameResultsTimes(t *testing.T) {
+	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
+
+	gameTracker, _ := util.IdToObject(util.GetTestingGinContext(), gameTrackersById)
+	// should give errors
+	_, _, err := extractGameResultsTimes(gameTracker, "", "")
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "randomtext")
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "2021-12-14")
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "2099-12-15")
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+	// should be ok
+	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "")
+	if err.Message != "" {
+		t.Fatalf("Expected OK but got %d", err.Code)
+	}
+	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "2021-12-18")
+	if err.Message != "" {
+		t.Fatalf("Expected OK but got %d", err.Code)
+	}
+}
+
 func TestGetAttemptsSuccessesOnly(t *testing.T) {
 	testGetAttempts(t, true)
 }
