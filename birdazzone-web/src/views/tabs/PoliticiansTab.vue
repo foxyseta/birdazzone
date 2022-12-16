@@ -4,38 +4,11 @@ import ErrorWidget from '@/components/ErrorWidget.vue';
 import ApiRepository from '../../api/api-repository';
 import type { Politician } from '../../api/interfaces/politician';
 
+const errorTitle = ref<string>();
+const errorText = ref<string>();
 const error = ref<boolean>(false);
 const loading = ref<boolean>(true);
-const list = ref<Politician[]>([
-  /*{
-            "name": "Giorgia Meloni",
-            "score": 1000
-        },
-        {
-            "name": "Matteo Salvini",
-            "score": 900
-        },
-        {
-            "name": "Mattia di Maio",
-            "score": 800
-        },
-        {
-            "name": "Carlo Calenda",
-            "score": 700
-        },
-        {
-            "name": "Matteo Renzi",
-            "score": 600
-        },
-        {
-            "name": "Silvio Berlusconi",
-            "score": 500
-        },
-        {
-            "name": "Gianni Agnelli",
-            "score": 400
-        },*/
-]);
+const list = ref<Politician[]>([]);
 
 const fetchPoliticiansList = async () => {
   loading.value = true;
@@ -47,6 +20,8 @@ const fetchPoliticiansList = async () => {
     window.location.href = '/not-found';
   } else {
     error.value = true;
+    errorTitle.value = 'Error!';
+    errorText.value = 'something went wrong!';
   }
 };
 
@@ -60,7 +35,7 @@ function isNumber(value: string): boolean {
   }
 
   if (value.trim() === '') {
-    return false;
+    return false;'../components/BirdazzoneButton.vue';
   }
 
   return !isNaN(Number(value));
@@ -77,6 +52,9 @@ onBeforeMount(fetchPoliticiansList);
 
 <template>
   <div class="flex flex-col flex-1 my-3" style="flex: 1 1 auto">
+    <div v-if="error">
+    <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
+  </div>
     <div class="flex flex-row w-full" style="flex: 1 1 auto">
       <div class="flex flex-col" style="flex: 2 1 auto"></div>
       <div class="flex flex-col justify-center align-center" style="flex: 1 1 auto; width: 22rem">
