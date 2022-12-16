@@ -77,7 +77,7 @@ func getTvGameById(ctx *gin.Context) {
 // @Param   id   path     string true  "Game to query"
 // @Param   date query    string false "Date to query; if not specified, last game instance is considered" Format(date)
 // @Success 200  {object} model.GameKey
-// @Success 204  {string} string      "No game instance has been played"
+// @Success 204  {string} string      "no game instance has been played"
 // @Failure 400  {object} model.Error "integer parsing error (id) or error while parsing to date"
 // @Failure 404  {object} model.Error "game id not found"
 // @Failure 500  {object} model.Error "(internal server error)"
@@ -504,6 +504,7 @@ func gameResults(ctx *gin.Context) {
 		}
 
 		if fromStr != "" {
+			// (from && to) || (from && !to)
 			fromStr, toStr, merr = extractGameResultsTimes(gameTracker, fromStr, toStr)
 			if merr.Message != "" {
 				httputil.NewError(ctx, merr.Code, errors.New(merr.Message))
@@ -511,37 +512,26 @@ func gameResults(ctx *gin.Context) {
 			}
 			fromTime, _ = util.StringToDateTime(fromStr)
 			toTime, _ = util.StringToDateTime(toStr)
-			fmt.Printf("%s -> %s", fromStr, toStr)
 		} else {
-			//!from && !to
+			// !from && !to
 			sol, _ := gameTracker.LastSolution()
 			solTime, _ := util.StringToDateTime(sol.Date)
-			fromStr = util.DateToString(time.Date(solTime.Year(), solTime.Month(), solTime.Day(), 0, 0, 0, 0, time.UTC))
-			result, err := getAttempts(ctx, false, fromStr, sol.Date)
-			if err == nil {
-				util.Reverse(&result.Data)
-				tweets := result.Data
-				var solution model.GameKey
-				solution, err = gameTracker.LastSolution()
-				chart = gameResultsHelper(solution, &tweets, each, chart, err, true)
-				ctx.JSON(
-					http.StatusOK,
-					chart,
-				)
+			chart = createBooleanCharts(gameTracker, ctx, time.Date(solTime.Year(), solTime.Month(), solTime.Day(), 0, 0, 0, 0, time.UTC), solTime, each)
+			if chart == nil {
+				httputil.NewError(ctx, http.StatusNoContent, errors.New("no game instance has been played"))
+				return
 			}
+			ctx.JSON(
+				http.StatusOK,
+				chart,
+			)
 			return
 		}
 
-		for util.DateToString(fromTime) <= util.DateToString(toTime) {
-			result, err := getAttempts(ctx, false, util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC)), util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 23, 59, 59, 0, time.UTC)))
-			if err == nil {
-				util.Reverse(&result.Data)
-				tweets := result.Data
-				var solution model.GameKey
-				solution, err = gameTracker.Solution(fromTime)
-				chart = gameResultsHelper(solution, &tweets, each, chart, err, false)
-			}
-			fromTime = fromTime.AddDate(0, 0, 1)
+		chart = createBooleanCharts(gameTracker, ctx, fromTime, toTime, each)
+		if chart == nil {
+			httputil.NewError(ctx, http.StatusNoContent, errors.New("no game instance has been played"))
+			return
 		}
 		ctx.JSON(
 			http.StatusOK,
@@ -550,6 +540,22 @@ func gameResults(ctx *gin.Context) {
 		return
 	}
 	httputil.NewError(ctx, http.StatusInternalServerError, err)
+}
+
+func createBooleanCharts(gameTracker *gametracker.GameTracker, ctx *gin.Context, fromTime time.Time, toTime time.Time, each int) []model.BooleanChart {
+	var chart []model.BooleanChart
+	for util.DateToString(fromTime) <= util.DateToString(toTime) {
+		result, err := getAttempts(ctx, false, util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC)), util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 23, 59, 59, 0, time.UTC)))
+		if err == nil {
+			util.Reverse(&result.Data)
+			tweets := result.Data
+			var solution model.GameKey
+			solution, err = gameTracker.Solution(fromTime)
+			chart = gameResultsHelper(solution, &tweets, each, chart, err, false)
+		}
+		fromTime = fromTime.AddDate(0, 0, 1)
+	}
+	return chart
 }
 
 func assignIds() {
