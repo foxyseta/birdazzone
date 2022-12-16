@@ -225,37 +225,9 @@ func getGameAttemptsParameters(ctx *gin.Context) (int, int, string, string, erro
 
 	fromStr, hasFrom := ctx.GetQuery("from")
 	toStr, hasTo := ctx.GetQuery("to")
-	var fromTime, toTime time.Time
-	if hasFrom {
-		fromTime, err = util.StringToDateTime(fromStr)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromDateParsingErrorMessage))
-			return 0, 0, "", "", err
-		}
-		fromStr = util.DateToString(fromTime)
-		if hasTo {
-			toTime, err = util.StringToDateTime(toStr)
-			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(toDateParsingErrorMessage))
-				return 0, 0, "", "", err
-			}
-			toStr = util.DateToString(toTime)
-			if fromStr > toStr {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromGreaterThanToErrorMessage))
-				return 0, 0, "", "", err
-			}
-			if toStr > util.DateToString(time.Now()) {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(toGreaterThenNowErrorMessage))
-				return 0, 0, "", "", err
-			}
-			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from and to are not in the same day"))
-				return 0, 0, "", "", err
-			}
-		}
-	} else {
-		fromStr = ""
-		toStr = ""
+	fromStr, toStr, err = extractGameAttemptsStatsTimes(fromStr, hasFrom, toStr, hasTo)
+	if err != nil {
+		return 0, 0, "", "", err
 	}
 	return pageIndex, pageLength, fromStr, toStr, nil
 }
@@ -312,6 +284,37 @@ func gameAttempts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, model.Page[model.Tweet]{Entries: res, NumberOfPages: (n + pageLength - 1) / pageLength})
 }
 
+func extractGameAttemptsStatsTimes(fromStr string, hasFrom bool, toStr string, hasTo bool) (string, string, error) {
+	var toTime time.Time
+	if hasFrom {
+		fromTime, err := util.StringToDateTime(fromStr)
+		if err != nil {
+			return "", "", errors.New(fromDateParsingErrorMessage)
+		}
+		fromStr = util.DateToString(fromTime)
+		if hasTo {
+			toTime, err = util.StringToDateTime(toStr)
+			if err != nil {
+				return "", "", errors.New(toDateParsingErrorMessage)
+			}
+			toStr = util.DateToString(toTime)
+			if fromStr > toStr {
+				return "", "", errors.New(fromGreaterThanToErrorMessage)
+			}
+			if toStr > util.DateToString(time.Now()) {
+				return "", "", errors.New(toGreaterThenNowErrorMessage)
+			}
+			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
+				return "", "", errors.New("from and to are not in the same day")
+			}
+		}
+	} else {
+		fromStr = ""
+		toStr = ""
+	}
+	return fromStr, toStr, nil
+}
+
 func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
@@ -319,32 +322,9 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	}
 	fromStr, hasFrom := ctx.GetQuery("from")
 	toStr, hasTo := ctx.GetQuery("to")
-	var fromTime, toTime time.Time
-	if hasFrom {
-		fromTime, err = util.StringToDateTime(fromStr)
-		if err != nil {
-			return nil, errors.New(fromDateParsingErrorMessage)
-		}
-		fromStr = util.DateToString(fromTime)
-		if hasTo {
-			toTime, err = util.StringToDateTime(toStr)
-			if err != nil {
-				return nil, errors.New(toDateParsingErrorMessage)
-			}
-			toStr = util.DateToString(toTime)
-			if fromStr > toStr {
-				return nil, errors.New(fromGreaterThanToErrorMessage)
-			}
-			if toStr > util.DateToString(time.Now()) {
-				return nil, errors.New(toGreaterThenNowErrorMessage)
-			}
-			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				return nil, errors.New("from and to are not in the same day")
-			}
-		}
-	} else {
-		fromStr = ""
-		toStr = ""
+	fromStr, toStr, err = extractGameAttemptsStatsTimes(fromStr, hasFrom, toStr, hasTo)
+	if err != nil {
+		return nil, err
 	}
 
 	result, err := getAttempts(ctx, false, fromStr, toStr)
@@ -430,9 +410,7 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 				// nt, _ := util.StringToDateTime(lastTime)
 				// nextTime := util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
 				nt, _ := util.StringToDateTime(tweet.CreatedAt)
-				if updateNextTime {
-					// nextTime = util.DateToString(nt)
-				}
+
 				chart = append(chart, model.BooleanChart{Label: startTime, Positives: successes, Negatives: fails})
 				startTime = lastTime
 				lastTime = util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
@@ -452,6 +430,50 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 	return chart
 }
 
+func extractGameResultsTimes(gameTracker *gametracker.GameTracker, fromStr string, toStr string) (string, string, model.Error) {
+	var fromTime, toTime time.Time
+	fromTime, err := util.StringToDate(fromStr)
+	if err != nil {
+		return "", "", model.Error{Code: http.StatusBadRequest, Message: fromDateParsingErrorMessage}
+	}
+	fromStr = util.DateToString(fromTime)
+	if toStr != "" {
+		//from && to
+		toTime, err = util.StringToDate(toStr)
+		toStr = util.DateToString(toTime)
+		if err != nil {
+			return "", "", model.Error{Code: http.StatusBadRequest, Message: toDateParsingErrorMessage}
+		}
+		if fromStr > toStr {
+			return "", "", model.Error{Code: http.StatusBadRequest, Message: fromGreaterThanToErrorMessage}
+		}
+		if toStr > util.DateToString(time.Now()) {
+			return "", "", model.Error{Code: http.StatusBadRequest, Message: toGreaterThenNowErrorMessage}
+		}
+	} else {
+		//from && !to
+		sol, _ := gameTracker.Solution(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC))
+		toTime, _ = util.StringToDateTime(sol.Date)
+		toStr = util.DateToString(toTime)
+	}
+	return fromStr, toStr, model.Error{}
+}
+
+func extractGameResultsEach(eachStr string, hasEach bool) (int, model.Error) {
+	each := 57000
+	var err error
+	if hasEach {
+		each, err = strconv.Atoi(eachStr)
+		if err != nil {
+			return -1, model.Error{Code: http.StatusBadRequest, Message: "integer parsing error (each)"}
+		}
+		if each < 1 {
+			return -1, model.Error{Code: http.StatusBadRequest, Message: "each < 1"}
+		}
+	}
+	return each, model.Error{}
+}
+
 // gameResults godoc
 // @Summary Retrieve game's number of successes and failures, grouped in time interval bins
 // @Tags    tvgames
@@ -467,68 +489,45 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 // @Router  /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	var merr model.Error
+	var each int
+	var fromTime, toTime time.Time
+
 	var chart []model.BooleanChart
 
 	if err == nil {
-		fromStr, hasFrom := ctx.GetQuery("from")
-		toStr, hasTo := ctx.GetQuery("to")
-		eachStr, hasEach := ctx.GetQuery("each")
-		var each = 57600
-		var fromTime, toTime time.Time
-		if hasEach {
-			each, err = strconv.Atoi(eachStr)
-			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (each)"))
-				return
-			}
-			if each < 1 {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("each < 1"))
-				return
-			}
+		fromStr, _ := ctx.GetQuery("from")
+		toStr, _ := ctx.GetQuery("to")
+		each, merr = extractGameResultsEach(ctx.GetQuery("each"))
+		if each == -1 {
+			httputil.NewError(ctx, merr.Code, errors.New(merr.Message))
 		}
 
-		if hasFrom {
-			fromTime, err = util.StringToDate(fromStr)
-			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromDateParsingErrorMessage))
+		if fromStr != "" {
+			fromStr, toStr, merr = extractGameResultsTimes(gameTracker, fromStr, toStr)
+			if merr.Message != "" {
+				httputil.NewError(ctx, merr.Code, errors.New(merr.Message))
 				return
 			}
-			fromStr = util.DateToString(fromTime)
-			if hasTo {
-				//from && to
-				toTime, err = util.StringToDate(toStr)
-				if err != nil {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New(toDateParsingErrorMessage))
-					return
-				}
-				toStr = util.DateToString(toTime)
-				if fromStr > toStr {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromGreaterThanToErrorMessage))
-					return
-				}
-				if toStr > util.DateToString(time.Now()) {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New(toGreaterThenNowErrorMessage))
-					return
-				}
-			} else {
-				//from && !to
-				toTime = time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 23, 59, 59, 0, time.UTC)
-			}
+			fromTime, _ = util.StringToDateTime(fromStr)
+			toTime, _ = util.StringToDateTime(toStr)
+			fmt.Printf("%s -> %s", fromStr, toStr)
 		} else {
 			//!from && !to
-			result, err := getAttempts(ctx, false, "", "")
+			sol, _ := gameTracker.LastSolution()
+			solTime, _ := util.StringToDateTime(sol.Date)
+			fromStr = util.DateToString(time.Date(solTime.Year(), solTime.Month(), solTime.Day(), 0, 0, 0, 0, time.UTC))
+			result, err := getAttempts(ctx, false, fromStr, sol.Date)
 			if err == nil {
 				util.Reverse(&result.Data)
 				tweets := result.Data
 				var solution model.GameKey
 				solution, err = gameTracker.LastSolution()
-				if err == nil {
-					chart = gameResultsHelper(solution, &tweets, each, chart, err, true)
-					ctx.JSON(
-						http.StatusOK,
-						chart,
-					)
-				}
+				chart = gameResultsHelper(solution, &tweets, each, chart, err, true)
+				ctx.JSON(
+					http.StatusOK,
+					chart,
+				)
 			}
 			return
 		}
