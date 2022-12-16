@@ -405,7 +405,7 @@ const docTemplate = `{
                         }
                     },
                     "204": {
-                        "description": "No game instance has been played",
+                        "description": "no game instance has been played",
                         "schema": {
                             "type": "string"
                         }
