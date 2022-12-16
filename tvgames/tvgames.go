@@ -503,7 +503,7 @@ func gameResults(ctx *gin.Context) {
 		var each = 57600
 		var fromTime, toTime time.Time
 		if hasEach {
-			each, err := strconv.Atoi(eachStr)
+			each, err = strconv.Atoi(eachStr)
 			if err != nil {
 				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (each)"))
 				return
@@ -513,7 +513,6 @@ func gameResults(ctx *gin.Context) {
 				return
 			}
 		}
-		fmt.Println(each)
 
 		if fromStr != "" {
 			fromStr, toStr, merr = extractGameResultsTimes(gameTracker, fromStr, toStr)
