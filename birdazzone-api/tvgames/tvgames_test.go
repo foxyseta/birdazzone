@@ -142,6 +142,21 @@ func TestExtractGameResultsTimes(t *testing.T) {
 	}
 }
 
+func TestExtractGameResultsEach(t *testing.T) {
+	each, err := extractGameResultsEach("12", true)
+	if each != 12 {
+		t.Fatalf("Expected to get 12 but got %d", each)
+	}
+	_, err = extractGameResultsEach("randomtext", true)
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+	_, err = extractGameResultsEach("-42", true)
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+}
+
 func TestGetAttemptsSuccessesOnly(t *testing.T) {
 	testGetAttempts(t, true)
 }

@@ -478,6 +478,21 @@ func extractGameResultsTimes(gameTracker *gametracker.GameTracker, fromStr strin
 	return fromStr, toStr, model.Error{}
 }
 
+func extractGameResultsEach(eachStr string, hasEach bool) (int, model.Error) {
+	each := 57000
+	var err error
+	if hasEach {
+		each, err = strconv.Atoi(eachStr)
+		if err != nil {
+			return -1, model.Error{Code: http.StatusBadRequest, Message: "integer parsing error (each)"}
+		}
+		if each < 1 {
+			return -1, model.Error{Code: http.StatusBadRequest, Message: "each < 1"}
+		}
+	}
+	return each, model.Error{}
+}
+
 // gameResults godoc
 // @Summary Retrieve game's number of successes and failures, grouped in time interval bins
 // @Tags    tvgames
@@ -494,24 +509,17 @@ func extractGameResultsTimes(gameTracker *gametracker.GameTracker, fromStr strin
 func gameResults(ctx *gin.Context) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	var merr model.Error
+	var each int
+	var fromTime, toTime time.Time
+
 	var chart []model.BooleanChart
 
 	if err == nil {
 		fromStr, _ := ctx.GetQuery("from")
 		toStr, _ := ctx.GetQuery("to")
-		eachStr, hasEach := ctx.GetQuery("each")
-		var each = 57600
-		var fromTime, toTime time.Time
-		if hasEach {
-			each, err = strconv.Atoi(eachStr)
-			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (each)"))
-				return
-			}
-			if each < 1 {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("each < 1"))
-				return
-			}
+		each, merr = extractGameResultsEach(ctx.GetQuery("each"))
+		if each == -1 {
+			httputil.NewError(ctx, merr.Code, errors.New(merr.Message))
 		}
 
 		if fromStr != "" {
