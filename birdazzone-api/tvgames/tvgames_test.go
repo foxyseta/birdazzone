@@ -157,6 +157,46 @@ func TestExtractGameResultsEach(t *testing.T) {
 	}
 }
 
+func TestExtractGameAttemptsStatsTimes(t *testing.T) {
+	// should be ok
+	from, to, err := extractGameAttemptsStatsTimes("2021-12-12T00:00:00Z", true, "", false)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	if from != "2021-12-12T00:00:00Z" || to != "" {
+		t.Fatalf("Expected to get F:2021-12-12T00:00:00Z T: but instead got F:%s T:%s", from, to)
+	}
+	from, to, err = extractGameAttemptsStatsTimes("2021-12-12T00:00:00Z", true, "2021-12-12T12:00:00Z", true)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	if from != "2021-12-12T00:00:00Z" || to != "2021-12-12T12:00:00Z" {
+		t.Fatalf("Expected to get F:2021-12-12T00:00:00Z T:2021-12-12T12:00:00Z but instead got F:%s T:%s", from, to)
+	}
+
+	// should give errors
+	_, _, err = extractGameAttemptsStatsTimes("", true, "", false)
+	if err == nil {
+		t.Fatalf("Expected error but didn't get it #1")
+	}
+	_, _, err = extractGameAttemptsStatsTimes("2021-12-12T00:00:00Z", true, "", true)
+	if err == nil {
+		t.Fatalf("Expected error but didn't get it #2")
+	}
+	_, _, err = extractGameAttemptsStatsTimes("2021-12-12T12:00:00Z", true, "2021-12-12T00:00:00Z", true)
+	if err == nil {
+		t.Fatalf("Expected error but didn't get it #3")
+	}
+	_, _, err = extractGameAttemptsStatsTimes("2021-12-12T12:00:00Z", true, "2099-12-12T00:00:00Z", true)
+	if err == nil {
+		t.Fatalf("Expected error but didn't get it #4")
+	}
+	_, _, err = extractGameAttemptsStatsTimes("2021-12-12T12:00:00Z", true, "2021-12-13T00:00:00Z", true)
+	if err == nil {
+		t.Fatalf("Expected error but didn't get it #5")
+	}
+}
+
 func TestGetAttemptsSuccessesOnly(t *testing.T) {
 	testGetAttempts(t, true)
 }

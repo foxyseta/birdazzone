@@ -312,6 +312,37 @@ func gameAttempts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, model.Page[model.Tweet]{Entries: res, NumberOfPages: (n + pageLength - 1) / pageLength})
 }
 
+func extractGameAttemptsStatsTimes(fromStr string, hasFrom bool, toStr string, hasTo bool) (string, string, error) {
+	var toTime time.Time
+	if hasFrom {
+		fromTime, err := util.StringToDateTime(fromStr)
+		if err != nil {
+			return "", "", errors.New(fromDateParsingErrorMessage)
+		}
+		fromStr = util.DateToString(fromTime)
+		if hasTo {
+			toTime, err = util.StringToDateTime(toStr)
+			if err != nil {
+				return "", "", errors.New(toDateParsingErrorMessage)
+			}
+			toStr = util.DateToString(toTime)
+			if fromStr > toStr {
+				return "", "", errors.New(fromGreaterThanToErrorMessage)
+			}
+			if toStr > util.DateToString(time.Now()) {
+				return "", "", errors.New(toGreaterThenNowErrorMessage)
+			}
+			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
+				return "", "", errors.New("from and to are not in the same day")
+			}
+		}
+	} else {
+		fromStr = ""
+		toStr = ""
+	}
+	return fromStr, toStr, nil
+}
+
 func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
@@ -319,32 +350,9 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	}
 	fromStr, hasFrom := ctx.GetQuery("from")
 	toStr, hasTo := ctx.GetQuery("to")
-	var fromTime, toTime time.Time
-	if hasFrom {
-		fromTime, err = util.StringToDateTime(fromStr)
-		if err != nil {
-			return nil, errors.New(fromDateParsingErrorMessage)
-		}
-		fromStr = util.DateToString(fromTime)
-		if hasTo {
-			toTime, err = util.StringToDateTime(toStr)
-			if err != nil {
-				return nil, errors.New(toDateParsingErrorMessage)
-			}
-			toStr = util.DateToString(toTime)
-			if fromStr > toStr {
-				return nil, errors.New(fromGreaterThanToErrorMessage)
-			}
-			if toStr > util.DateToString(time.Now()) {
-				return nil, errors.New(toGreaterThenNowErrorMessage)
-			}
-			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				return nil, errors.New("from and to are not in the same day")
-			}
-		}
-	} else {
-		fromStr = ""
-		toStr = ""
+	fromStr, toStr, err = extractGameAttemptsStatsTimes(fromStr, hasFrom, toStr, hasTo)
+	if err != nil {
+		return nil, err
 	}
 
 	result, err := getAttempts(ctx, false, fromStr, toStr)
