@@ -35,6 +35,7 @@ const fromDateParsingErrorMessage = "date parsing error (from)"
 const toDateParsingErrorMessage = "date parsing error (to)"
 const fromGreaterThanToErrorMessage = "from > to"
 const toGreaterThenNowErrorMessage = "to > now"
+const noGameInstancePlayed = "no game instance has been played"
 
 func TvGamesGroup(group *gin.RouterGroup) {
 	group.GET("/", getTvGames)
@@ -77,7 +78,7 @@ func getTvGameById(ctx *gin.Context) {
 // @Param   id   path     string true  "Game to query"
 // @Param   date query    string false "Date to query; if not specified, last game instance is considered" Format(date)
 // @Success 200  {object} model.GameKey
-// @Success 204  {string} string      "No game instance has been played"
+// @Success 204  {string} string      "no game instance has been played"
 // @Failure 400  {object} model.Error "integer parsing error (id) or error while parsing to date"
 // @Failure 404  {object} model.Error "game id not found"
 // @Failure 500  {object} model.Error "(internal server error)"
@@ -225,37 +226,9 @@ func getGameAttemptsParameters(ctx *gin.Context) (int, int, string, string, erro
 
 	fromStr, hasFrom := ctx.GetQuery("from")
 	toStr, hasTo := ctx.GetQuery("to")
-	var fromTime, toTime time.Time
-	if hasFrom {
-		fromTime, err = util.StringToDateTime(fromStr)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromDateParsingErrorMessage))
-			return 0, 0, "", "", err
-		}
-		fromStr = util.DateToString(fromTime)
-		if hasTo {
-			toTime, err = util.StringToDateTime(toStr)
-			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(toDateParsingErrorMessage))
-				return 0, 0, "", "", err
-			}
-			toStr = util.DateToString(toTime)
-			if fromStr > toStr {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromGreaterThanToErrorMessage))
-				return 0, 0, "", "", err
-			}
-			if toStr > util.DateToString(time.Now()) {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(toGreaterThenNowErrorMessage))
-				return 0, 0, "", "", err
-			}
-			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("from and to are not in the same day"))
-				return 0, 0, "", "", err
-			}
-		}
-	} else {
-		fromStr = ""
-		toStr = ""
+	fromStr, toStr, err = extractGameAttemptsStatsTimes(fromStr, hasFrom, toStr, hasTo)
+	if err != nil {
+		return 0, 0, "", "", err
 	}
 	return pageIndex, pageLength, fromStr, toStr, nil
 }
@@ -282,7 +255,7 @@ func gameAttempts(ctx *gin.Context) {
 	}
 	result, err := getAttempts(ctx, true, fromStr, toStr)
 	if err != nil {
-		httputil.NewError(ctx, http.StatusNoContent, errors.New("no game instance has been played"))
+		httputil.NewError(ctx, http.StatusNoContent, errors.New(noGameInstancePlayed))
 		return
 	}
 	tweets := result.Data
@@ -312,6 +285,46 @@ func gameAttempts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, model.Page[model.Tweet]{Entries: res, NumberOfPages: (n + pageLength - 1) / pageLength})
 }
 
+func extractGameAttemptsStatsTimes(fromStr string, hasFrom bool, toStr string, hasTo bool) (string, string, error) {
+	var toTime time.Time
+	if hasFrom {
+		fromTime, err := util.StringToDateTime(fromStr)
+		if err != nil {
+			return "", "", errors.New(fromDateParsingErrorMessage)
+		}
+		fromStr = util.DateToString(fromTime)
+		if hasTo {
+			toTime, err = util.StringToDateTime(toStr)
+			if err != nil {
+				return "", "", errors.New(toDateParsingErrorMessage)
+			}
+			toStr, err = checkToStrGameAttemptsStatsTimes(fromTime, toTime)
+			if err != nil {
+				return "", "", err
+			}
+		}
+	} else {
+		fromStr = ""
+		toStr = ""
+	}
+	return fromStr, toStr, nil
+}
+
+func checkToStrGameAttemptsStatsTimes(fromTime time.Time, toTime time.Time) (string, error) {
+	fromStr := util.DateToString(fromTime)
+	toStr := util.DateToString(toTime)
+	if fromStr > toStr {
+		return "", errors.New(fromGreaterThanToErrorMessage)
+	}
+	if toStr > util.DateToString(time.Now()) {
+		return "", errors.New(toGreaterThenNowErrorMessage)
+	}
+	if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
+		return "", errors.New("from and to are not in the same day")
+	}
+	return toStr, nil
+}
+
 func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
 	if err != nil {
@@ -319,32 +332,9 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	}
 	fromStr, hasFrom := ctx.GetQuery("from")
 	toStr, hasTo := ctx.GetQuery("to")
-	var fromTime, toTime time.Time
-	if hasFrom {
-		fromTime, err = util.StringToDateTime(fromStr)
-		if err != nil {
-			return nil, errors.New(fromDateParsingErrorMessage)
-		}
-		fromStr = util.DateToString(fromTime)
-		if hasTo {
-			toTime, err = util.StringToDateTime(toStr)
-			if err != nil {
-				return nil, errors.New(toDateParsingErrorMessage)
-			}
-			toStr = util.DateToString(toTime)
-			if fromStr > toStr {
-				return nil, errors.New(fromGreaterThanToErrorMessage)
-			}
-			if toStr > util.DateToString(time.Now()) {
-				return nil, errors.New(toGreaterThenNowErrorMessage)
-			}
-			if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
-				return nil, errors.New("from and to are not in the same day")
-			}
-		}
-	} else {
-		fromStr = ""
-		toStr = ""
+	fromStr, toStr, err = extractGameAttemptsStatsTimes(fromStr, hasFrom, toStr, hasTo)
+	if err != nil {
+		return nil, err
 	}
 
 	result, err := getAttempts(ctx, false, fromStr, toStr)
@@ -366,10 +356,8 @@ func getAttemptsStats(ctx *gin.Context) (model.Chart, error) {
 	chartAsMap := make(map[string]int)
 	for _, tweet := range tweets {
 		text := strings.ToLower(tweet.Text)
-		var attempt string
-		if strings.Contains(text, solution.Key) {
-			attempt = solution.Key
-		} else {
+		var attempt string = solution.Key
+		if !strings.Contains(text, solution.Key) {
 			attempt = tweetTextToAttempt(text)
 		}
 		if attempt == "" {
@@ -421,35 +409,75 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 		lastTime := util.DateToString(time.Date(lt.Year(), lt.Month(), lt.Day(), lt.Hour(), lt.Minute(), lt.Second()+each, 0, time.UTC))
 		for _, tweet := range *tweets {
 			if tweet.CreatedAt <= lastTime {
-				if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
-					successes++
-				} else {
-					fails++
-				}
+				editSuccessesFailsFromTweet(tweet.Text, solution.Key, &successes, &fails)
 			} else {
-				// nt, _ := util.StringToDateTime(lastTime)
-				// nextTime := util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
 				nt, _ := util.StringToDateTime(tweet.CreatedAt)
-				if updateNextTime {
-					// nextTime = util.DateToString(nt)
-				}
+
 				chart = append(chart, model.BooleanChart{Label: startTime, Positives: successes, Negatives: fails})
 				startTime = lastTime
 				lastTime = util.DateToString(time.Date(nt.Year(), nt.Month(), nt.Day(), nt.Hour(), nt.Minute(), nt.Second()+each, 0, time.UTC))
 				successes = 0
 				fails = 0
-				if strings.Contains(strings.ToLower(tweet.Text), solution.Key) {
-					successes++
-				} else {
-					fails++
-				}
+
+				editSuccessesFailsFromTweet(tweet.Text, solution.Key, &successes, &fails)
 			}
 
 		}
-		// nextTime, _ := util.StringToDateTime((*tweets)[len(*tweets)-1].CreatedAt)
 		chart = append(chart, model.BooleanChart{Label: startTime, Positives: successes, Negatives: fails})
 	}
 	return chart
+}
+
+func editSuccessesFailsFromTweet(text string, solution string, successes *int, fails *int) {
+	if strings.Contains(strings.ToLower(text), strings.ToLower(solution)) {
+		*successes++
+	} else {
+		*fails++
+	}
+}
+
+func extractGameResultsTimes(gameTracker *gametracker.GameTracker, fromStr string, toStr string) (string, string, model.Error) {
+	var fromTime, toTime time.Time
+	fromTime, err := util.StringToDate(fromStr)
+	if err != nil {
+		return "", "", model.Error{Code: http.StatusBadRequest, Message: fromDateParsingErrorMessage}
+	}
+	fromStr = util.DateToString(fromTime)
+	if toStr != "" {
+		//from && to
+		toTime, err = util.StringToDate(toStr)
+		toStr = util.DateToString(toTime)
+		if err != nil {
+			return "", "", model.Error{Code: http.StatusBadRequest, Message: toDateParsingErrorMessage}
+		}
+		if fromStr > toStr {
+			return "", "", model.Error{Code: http.StatusBadRequest, Message: fromGreaterThanToErrorMessage}
+		}
+		if toStr > util.DateToString(time.Now()) {
+			return "", "", model.Error{Code: http.StatusBadRequest, Message: toGreaterThenNowErrorMessage}
+		}
+	} else {
+		//from && !to
+		sol, _ := gameTracker.Solution(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC))
+		toTime, _ = util.StringToDateTime(sol.Date)
+		toStr = util.DateToString(toTime)
+	}
+	return fromStr, toStr, model.Error{}
+}
+
+func extractGameResultsEach(eachStr string, hasEach bool) (int, model.Error) {
+	each := 57000
+	var err error
+	if hasEach {
+		each, err = strconv.Atoi(eachStr)
+		if err != nil {
+			return -1, model.Error{Code: http.StatusBadRequest, Message: "integer parsing error (each)"}
+		}
+		if each < 1 {
+			return -1, model.Error{Code: http.StatusBadRequest, Message: "each < 1"}
+		}
+	}
+	return each, model.Error{}
 }
 
 // gameResults godoc
@@ -467,82 +495,49 @@ func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, e
 // @Router  /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
 	gameTracker, err := util.IdToObject(ctx, gameTrackersById)
+	var merr model.Error
+	var each int
+	var fromTime, toTime time.Time
+
 	var chart []model.BooleanChart
 
 	if err == nil {
-		fromStr, hasFrom := ctx.GetQuery("from")
-		toStr, hasTo := ctx.GetQuery("to")
-		eachStr, hasEach := ctx.GetQuery("each")
-		var each = 57600
-		var fromTime, toTime time.Time
-		if hasEach {
-			each, err = strconv.Atoi(eachStr)
-			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("integer parsing error (each)"))
-				return
-			}
-			if each < 1 {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New("each < 1"))
-				return
-			}
+		fromStr, _ := ctx.GetQuery("from")
+		toStr, _ := ctx.GetQuery("to")
+		each, merr = extractGameResultsEach(ctx.GetQuery("each"))
+		if each == -1 {
+			httputil.NewError(ctx, merr.Code, errors.New(merr.Message))
 		}
 
-		if hasFrom {
-			fromTime, err = util.StringToDate(fromStr)
-			if err != nil {
-				httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromDateParsingErrorMessage))
+		if fromStr != "" {
+			// (from && to) || (from && !to)
+			fromStr, toStr, merr = extractGameResultsTimes(gameTracker, fromStr, toStr)
+			if merr.Message != "" {
+				httputil.NewError(ctx, merr.Code, errors.New(merr.Message))
 				return
 			}
-			fromStr = util.DateToString(fromTime)
-			if hasTo {
-				//from && to
-				toTime, err = util.StringToDate(toStr)
-				if err != nil {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New(toDateParsingErrorMessage))
-					return
-				}
-				toStr = util.DateToString(toTime)
-				if fromStr > toStr {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New(fromGreaterThanToErrorMessage))
-					return
-				}
-				if toStr > util.DateToString(time.Now()) {
-					httputil.NewError(ctx, http.StatusBadRequest, errors.New(toGreaterThenNowErrorMessage))
-					return
-				}
-			} else {
-				//from && !to
-				toTime = time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 23, 59, 59, 0, time.UTC)
-			}
+			fromTime, _ = util.StringToDateTime(fromStr)
+			toTime, _ = util.StringToDateTime(toStr)
 		} else {
-			//!from && !to
-			result, err := getAttempts(ctx, false, "", "")
-			if err == nil {
-				util.Reverse(&result.Data)
-				tweets := result.Data
-				var solution model.GameKey
-				solution, err = gameTracker.LastSolution()
-				if err == nil {
-					chart = gameResultsHelper(solution, &tweets, each, chart, err, true)
-					ctx.JSON(
-						http.StatusOK,
-						chart,
-					)
-				}
+			// !from && !to
+			sol, _ := gameTracker.LastSolution()
+			solTime, _ := util.StringToDateTime(sol.Date)
+			chart = createBooleanCharts(gameTracker, ctx, time.Date(solTime.Year(), solTime.Month(), solTime.Day(), 0, 0, 0, 0, time.UTC), solTime, each)
+			if chart == nil {
+				httputil.NewError(ctx, http.StatusNoContent, errors.New(noGameInstancePlayed))
+				return
 			}
+			ctx.JSON(
+				http.StatusOK,
+				chart,
+			)
 			return
 		}
 
-		for util.DateToString(fromTime) <= util.DateToString(toTime) {
-			result, err := getAttempts(ctx, false, util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC)), util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 23, 59, 59, 0, time.UTC)))
-			if err == nil {
-				util.Reverse(&result.Data)
-				tweets := result.Data
-				var solution model.GameKey
-				solution, err = gameTracker.Solution(fromTime)
-				chart = gameResultsHelper(solution, &tweets, each, chart, err, false)
-			}
-			fromTime = fromTime.AddDate(0, 0, 1)
+		chart = createBooleanCharts(gameTracker, ctx, fromTime, toTime, each)
+		if chart == nil {
+			httputil.NewError(ctx, http.StatusNoContent, errors.New(noGameInstancePlayed))
+			return
 		}
 		ctx.JSON(
 			http.StatusOK,
@@ -551,6 +546,22 @@ func gameResults(ctx *gin.Context) {
 		return
 	}
 	httputil.NewError(ctx, http.StatusInternalServerError, err)
+}
+
+func createBooleanCharts(gameTracker *gametracker.GameTracker, ctx *gin.Context, fromTime time.Time, toTime time.Time, each int) []model.BooleanChart {
+	var chart []model.BooleanChart
+	for util.DateToString(fromTime) <= util.DateToString(toTime) {
+		result, err := getAttempts(ctx, false, util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC)), util.DateToString(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 23, 59, 59, 0, time.UTC)))
+		if err == nil {
+			util.Reverse(&result.Data)
+			tweets := result.Data
+			var solution model.GameKey
+			solution, err = gameTracker.Solution(fromTime)
+			chart = gameResultsHelper(solution, &tweets, each, chart, err, false)
+		}
+		fromTime = fromTime.AddDate(0, 0, 1)
+	}
+	return chart
 }
 
 func assignIds() {
