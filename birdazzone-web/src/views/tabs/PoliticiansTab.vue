@@ -10,8 +10,6 @@ import NumberOfPoliticians from '@/components/NumberOfPoliticians.vue';
 const errorTitle = ref<string>();
 const errorText = ref<string>();
 
-const errorTitle = ref<string>();
-const errorText = ref<string>();
 const error = ref<boolean>(false);
 const loading = ref<boolean>(false);
 const list = ref<Politician[]>([
@@ -147,10 +145,11 @@ const changeAndSort = async (index: number, newScore: string) => {
           <FantacitorioHistogram class="flex align-center mt-2" style="flex: 1 1 auto" v-if="!loading" :list="list" />
         </div>
       </div>
+    </div>
   <div class="flex flex-col flex-1 my-3" style="flex: 1 1 auto">
     <div v-if="error">
-    <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
-  </div>
+      <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
+    </div>
     <div class="flex flex-row w-full" style="flex: 1 1 auto">
       <div class="flex flex-col" style="flex: 2 1 auto"></div>
       <div class="flex flex-col justify-center align-center" style="flex: 1 1 auto; width: 22rem">
@@ -189,6 +188,7 @@ const changeAndSort = async (index: number, newScore: string) => {
         </div>
       </div>
     </div>
+    </div>
 
     <div v-show="loading" class="h-screen flex justify-center items-center">
       <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
@@ -198,5 +198,6 @@ const changeAndSort = async (index: number, newScore: string) => {
       <FantacitorioHistogram class="m-4" v-if="!loading" :list="list" />
     </div>
     <v-else> </v-else>
+  </div>
   </div>
 </template>
