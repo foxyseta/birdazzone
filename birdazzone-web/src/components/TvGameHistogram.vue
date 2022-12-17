@@ -3,7 +3,7 @@ import Histogram, { type HistogramValue } from './Histogram.vue';
 import ApiRepository from '../api/api-repository';
 import { onBeforeMount, ref } from 'vue';
 
-const props = defineProps<{ gameId: string; from: string | null; to: string | null }>();
+const props = defineProps<{ gameId: string; key: number; from: string | null; to: string | null }>();
 
 const SERIE_NAME = 'attempts';
 
@@ -36,9 +36,21 @@ const fetchAttempts = async () => {
 onBeforeMount(() => {
   fetchAttempts();
 });
+
+function itaJetLagFrom() {
+  return ((Number(props.from!.substring(11, 13)) + 1) as unknown as string) + ':' + props.from!.substring(14, 16);
+}
+
+function itaJetLagTo() {
+  return ((Number(props.to!.substring(11, 13)) + 1) as unknown as string) + ':' + props.to!.substring(14, 16);
+}
 </script>
 <template>
-  <div>
+  <div class="h-full">
+    <div v-if="from && to" class="text-md text-white text-semibold mb-3">
+      Data refere to the following date-time range: from {{ from.substring(0, 10) }}, {{ itaJetLagFrom() }} to
+      {{ itaJetLagTo() }}
+    </div>
     <Histogram
       v-if="!loading"
       :chart-title="'Played words with more than 3 tentatives'"
