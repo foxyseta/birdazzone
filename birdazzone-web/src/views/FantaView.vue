@@ -20,10 +20,6 @@ const showTeams = () => {
 </script>
 
 <template>
-  <!--div v-if="error" class="flex justify-center items-center w-full">
-        <ErrorWidget />
-    </div-->
-  <!-- Success -->
   <div class="pl-4 w-full flex flex-col justify-start">
     <div class="flex flex-row">
       <div class="flex flex-col" style="flex: 1 1 auto"></div>
@@ -45,10 +41,9 @@ const showTeams = () => {
 
     <div class="h-full">
       <div class="flex flex-row" v-show="showPoliticiansTab">
-        <div style=" width: 50%">
-          <PoliticiansTab class="flex" style="flex: 1 1 auto;" />
+        <div>
+          <PoliticiansTab class="flex" style="flex: 1 1 auto" />
         </div>
-        <NumberOfPoliticians />
       </div>
       <div v-show="showTeamsTab">
         <FantaTeamsTab />

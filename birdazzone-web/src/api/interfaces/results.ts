@@ -1,5 +1,5 @@
 export interface Results {
-  label: string
+  label: string;
   positives: number;
   negatives: number;
 }
