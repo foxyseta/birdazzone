@@ -4,6 +4,7 @@ import { ref, onBeforeMount } from 'vue';
 import FantaTeamsTab from './tabs/FantaTeamsTab.vue';
 import PoliticiansTab from '@/views/tabs/PoliticiansTab.vue';
 import NumberOfPoliticians from '../components/NumberOfPoliticians.vue';
+import NumberOfPoliticians from '../components/NumberOfPoliticians.vue';
 
 const showPoliticiansTab = ref<boolean>(true);
 const showTeamsTab = ref<boolean>(false);
