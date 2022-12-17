@@ -146,58 +146,58 @@ const changeAndSort = async (index: number, newScore: string) => {
         </div>
       </div>
     </div>
-  <div class="flex flex-col flex-1 my-3" style="flex: 1 1 auto">
-    <div v-if="error">
-      <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
-    </div>
-    <div class="flex flex-row w-full" style="flex: 1 1 auto">
-      <div class="flex flex-col" style="flex: 2 1 auto"></div>
-      <div class="flex flex-col justify-center align-center" style="flex: 1 1 auto; width: 22rem">
-        <div v-for="(item, index) in list" :key="index">
-          <div class="flex flex-row my-2 text-lgray">
-            <div class="flex" style="flex: 1 1 auto; width: 1rem">{{ index + 1 }}.</div>
-            <div class="flex flex-row rounded-lg bg-foreground p-4 ml-3 items-center">
-              <div class="font-semibold text-white" style="flex: 1 1 auto; width: 100%">
-                {{ item.name }}
-              </div>
-              <div
-                class="flex font-bold text-white text-right align-center justify-end"
-                style="flex: 1 1 auto; font-size: 180%"
-              >
-                <input
-                  type="text"
-                  @change="
-                    (value) => {
-                      //@ts-ignore
-                      value = changeAndSort(index, value.target?.value);
-                    }
-                  "
-                  class="flex bg-foreground justify-end flex-wrap text-end"
-                  style="width: 100%"
-                  :value="item.score"
-                />
+    <div class="flex flex-col flex-1 my-3" style="flex: 1 1 auto">
+      <div v-if="error">
+        <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
+      </div>
+      <div class="flex flex-row w-full" style="flex: 1 1 auto">
+        <div class="flex flex-col" style="flex: 2 1 auto"></div>
+        <div class="flex flex-col justify-center align-center" style="flex: 1 1 auto; width: 22rem">
+          <div v-for="(item, index) in list" :key="index">
+            <div class="flex flex-row my-2 text-lgray">
+              <div class="flex" style="flex: 1 1 auto; width: 1rem">{{ index + 1 }}.</div>
+              <div class="flex flex-row rounded-lg bg-foreground p-4 ml-3 items-center">
+                <div class="font-semibold text-white" style="flex: 1 1 auto; width: 100%">
+                  {{ item.name }}
+                </div>
+                <div
+                  class="flex font-bold text-white text-right align-center justify-end"
+                  style="flex: 1 1 auto; font-size: 180%"
+                >
+                  <input
+                    type="text"
+                    @change="
+                      (value) => {
+                        //@ts-ignore
+                        value = changeAndSort(index, value.target?.value);
+                      }
+                    "
+                    class="flex bg-foreground justify-end flex-wrap text-end"
+                    style="width: 100%"
+                    :value="item.score"
+                  />
 
-              <span class="flex text-lgray font-normal items-center ml-1" style="font-size: 50%">p.</span>
-            </div>
-            <div class="flex justify-center ml-3" style="flex: 1 0 auto; height: 2rem; width: 2rem">
-              <img v-show="index === 0" :src="'/icons/coccarda1.svg'" alt="medal1" />
-              <img v-show="index === 1" :src="'/icons/coccarda2.svg'" alt="medal2" />
-              <img v-show="index === 2" :src="'/icons/coccarda3.svg'" alt="medal3" />
+                  <span class="flex text-lgray font-normal items-center ml-1" style="font-size: 50%">p.</span>
+                </div>
+                <div class="flex justify-center ml-3" style="flex: 1 0 auto; height: 2rem; width: 2rem">
+                  <img v-show="index === 0" :src="'/icons/coccarda1.svg'" alt="medal1" />
+                  <img v-show="index === 1" :src="'/icons/coccarda2.svg'" alt="medal2" />
+                  <img v-show="index === 2" :src="'/icons/coccarda3.svg'" alt="medal3" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    </div>
 
-    <div v-show="loading" class="h-screen flex justify-center items-center">
-      <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
+      <div v-show="loading" class="h-screen flex justify-center items-center">
+        <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
+      </div>
+      <div>
+        <FantaRankChart class="m-4" v-if="!loading" :list="list" />
+        <FantacitorioHistogram class="m-4" v-if="!loading" :list="list" />
+      </div>
+      <v-else> </v-else>
     </div>
-    <div>
-      <FantaRankChart class="m-4" v-if="!loading" :list="list" />
-      <FantacitorioHistogram class="m-4" v-if="!loading" :list="list" />
-    </div>
-    <v-else> </v-else>
-  </div>
   </div>
 </template>

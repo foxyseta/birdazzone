@@ -9,9 +9,6 @@ console.log(propss.num);
     <div class="text-lgreen font-bold mx-4" style="font-size: 200%">{{ propss.num }}</div>
   </div>
 </template>
-<script lang="ts" setup>
-</script>
+<script lang="ts" setup></script>
 
-<template>
-    ciao
-</template>
+<template>ciao</template>
