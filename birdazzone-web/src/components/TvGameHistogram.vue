@@ -44,13 +44,10 @@ onBeforeMount(() => {
       {{ to.substring(0, 10) }}, {{ to.substring(11, 16) }}
     </div>
     <Histogram
-      v-if="!loading && histogramValues.length > 0"
+      v-if="!loading"
       :chart-title="'Played words with more than 3 tentatives'"
       :values="histogramValues"
       :serie-name="SERIE_NAME"
     />
-    <div v-if="!loading && histogramValues.length === 0" class="bg-foreground shadow rounded p-6">
-      <h1 class="font-bold text-lgray text-xl text-center">No data :(</h1>
-    </div>
   </div>
 </template>

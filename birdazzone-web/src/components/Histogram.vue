@@ -62,14 +62,20 @@ onBeforeMount(() => {
 </script>
 <template>
   <div class="bg-foreground shadow rounded-lg p-6" :style="`height: ${CHART_HEIGHT + 30}px`">
-    <h1 class="text-white font-semibold text-lg">{{ props.chartTitle }}</h1>
-    <apexchart
-      v-show="chartOptions"
-      type="bar"
-      :width="CHART_WIDTH"
-      :height="CHART_HEIGHT"
-      :options="chartOptions"
-      :series="series"
-    ></apexchart>
+    <div v-if="props.values.length !== 0">
+      <h1 class="text-white font-semibold text-lg">{{ props.chartTitle }}</h1>
+      <apexchart
+        v-show="chartOptions"
+        type="bar"
+        :width="CHART_WIDTH"
+        :height="CHART_HEIGHT"
+        :options="chartOptions"
+        :series="series"
+      ></apexchart>
+    </div>
+    <div v-else class="flex flex-col h-full items-center justify-center">
+      <h1 class="text-center text-2xl text-lgray font-bold">No data</h1>
+      <h1 class="text-center text-6xl text-lgray font-bold m-3">:(</h1>
+    </div>
   </div>
 </template>
