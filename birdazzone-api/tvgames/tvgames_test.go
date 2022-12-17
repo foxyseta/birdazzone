@@ -82,7 +82,10 @@ func testGetAttempts(t *testing.T, successesOnly bool) {
 	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
 	result, err = getAttempts(util.GetTestingGinContext(), successesOnly, util.DateToString(d), "")
 	if err != nil {
-		t.Fatal(err)
+		if err.Error() == "couldn't find Ghigliottina solution" {
+			return // may happen where no game has been played
+		}
+		t.Fatalf(err.Error())
 	}
 	if result == nil || result.Data == nil {
 		t.Fatal("Nil result")
@@ -104,6 +107,93 @@ func TestGetAttemptsWrongParam(t *testing.T) {
 	_, err := getAttempts(util.GetTestingGinContext(), true, "", "")
 	if err == nil {
 		t.FailNow()
+	}
+}
+
+func TestExtractGameResultsTimes(t *testing.T) {
+	util.GetTestingGinContext().Params = []gin.Param{{Key: "id", Value: "0"}}
+
+	gameTracker, _ := util.IdToObject(util.GetTestingGinContext(), gameTrackersById)
+	// should give errors
+	_, _, err := extractGameResultsTimes(gameTracker, "", "")
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "randomtext")
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "2021-12-14")
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "2099-12-15")
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+	// should be ok
+	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "")
+	if err.Message != "" {
+		t.Fatalf("Expected OK but got %d", err.Code)
+	}
+	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "2021-12-18")
+	if err.Message != "" {
+		t.Fatalf("Expected OK but got %d", err.Code)
+	}
+}
+
+func TestExtractGameResultsEach(t *testing.T) {
+	each, err := extractGameResultsEach("12", true)
+	if each != 12 {
+		t.Fatalf("Expected to get 12 but got %d", each)
+	}
+	_, err = extractGameResultsEach("randomtext", true)
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+	_, err = extractGameResultsEach("-42", true)
+	if err.Code != http.StatusBadRequest {
+		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
+	}
+}
+
+func TestExtractGameAttemptsStatsTimes(t *testing.T) {
+	// should be ok
+	from, to, err := extractGameAttemptsStatsTimes("2021-12-12T00:00:00Z", true, "", false)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	if from != "2021-12-12T00:00:00Z" || to != "" {
+		t.Fatalf("Expected to get F:2021-12-12T00:00:00Z T: but instead got F:%s T:%s", from, to)
+	}
+	from, to, err = extractGameAttemptsStatsTimes("2021-12-12T00:00:00Z", true, "2021-12-12T12:00:00Z", true)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	if from != "2021-12-12T00:00:00Z" || to != "2021-12-12T12:00:00Z" {
+		t.Fatalf("Expected to get F:2021-12-12T00:00:00Z T:2021-12-12T12:00:00Z but instead got F:%s T:%s", from, to)
+	}
+
+	// should give errors
+	_, _, err = extractGameAttemptsStatsTimes("", true, "", false)
+	if err == nil {
+		t.Fatalf("Expected error but didn't get it #1")
+	}
+	_, _, err = extractGameAttemptsStatsTimes("2021-12-12T00:00:00Z", true, "", true)
+	if err == nil {
+		t.Fatalf("Expected error but didn't get it #2")
+	}
+	_, _, err = extractGameAttemptsStatsTimes("2021-12-12T12:00:00Z", true, "2021-12-12T00:00:00Z", true)
+	if err == nil {
+		t.Fatalf("Expected error but didn't get it #3")
+	}
+	_, _, err = extractGameAttemptsStatsTimes("2021-12-12T12:00:00Z", true, "2099-12-12T00:00:00Z", true)
+	if err == nil {
+		t.Fatalf("Expected error but didn't get it #4")
+	}
+	_, _, err = extractGameAttemptsStatsTimes("2021-12-12T12:00:00Z", true, "2021-12-13T00:00:00Z", true)
+	if err == nil {
+		t.Fatalf("Expected error but didn't get it #5")
 	}
 }
 

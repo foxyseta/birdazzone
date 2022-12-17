@@ -54,7 +54,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Optional username to search for",
+                        "description": "Optional Twitter username to search for",
                         "name": "username",
                         "in": "query"
                     }
@@ -65,7 +65,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "$ref": "#/definitions/model.FantaTeam"
                             }
                         }
                     },
@@ -76,7 +76,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "No user with such username",
+                        "description": "No team with such username",
                         "schema": {
                             "$ref": "#/definitions/model.Error"
                         }
@@ -405,7 +405,7 @@ const docTemplate = `{
                         }
                     },
                     "204": {
-                        "description": "No game instance has been played",
+                        "description": "no game instance has been played",
                         "schema": {
                             "type": "string"
                         }
@@ -497,6 +497,25 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "status bad request"
+                }
+            }
+        },
+        "model.FantaTeam": {
+            "description": "A team from the Fantacitorio game",
+            "type": "object",
+            "properties": {
+                "image_url": {
+                    "type": "string"
+                },
+                "post_url": {
+                    "type": "string"
+                },
+                "profile_image_url": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "mariorossi"
                 }
             }
         },
@@ -596,12 +615,6 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string",
                     "format": "date-time"
-                },
-                "medias": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 },
                 "metrics": {
                     "$ref": "#/definitions/model.Metrics"
