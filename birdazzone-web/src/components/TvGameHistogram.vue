@@ -36,12 +36,21 @@ const fetchAttempts = async () => {
 onBeforeMount(() => {
   fetchAttempts();
 });
+
+function itaJetLagFrom() {
+  return ((Number(props.from!.substring(11, 13)) + 1)) as unknown as string + ':' + props.from!.substring(14, 16)
+}
+
+function itaJetLagTo() {
+  return ((Number(props.to!.substring(11, 13)) + 1)) as unknown as string + ':' + props.to!.substring(14, 16)
+}
+
 </script>
 <template>
   <div class="h-full">
     <div v-if="from && to" class="text-md text-white text-semibold mb-3">
-      Data refere to the following date-time range: from {{ from.substring(0, 10) }}, {{ from.substring(11, 16) }} to
-      {{ to.substring(0, 10) }}, {{ to.substring(11, 16) }}
+      Data refere to the following date-time range: from {{ from.substring(0, 10) }}, {{ itaJetLagFrom() }} to
+      {{ itaJetLagTo() }}
     </div>
     <Histogram
       v-if="!loading"
