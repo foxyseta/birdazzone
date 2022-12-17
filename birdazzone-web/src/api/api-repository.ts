@@ -13,9 +13,10 @@ export default class ApiRepository {
   private static readonly _BASE_URL = `http://${import.meta.env.VITE_SERVER_URL}/api/v1`;
   private static readonly _TV_GAMES = '/tvgames/';
   private static readonly _TV_GAMES_ID = '/tvgames/{0}';
-  private static readonly _RESULTS_ID = '/tvgames/{0}/results';
+  private static readonly _RESULTS_ID = '/tvgames/{0}/results?each={1}';
   private static readonly _TV_GAMES_ID_ATTEMPTS = '/tvgames/{0}/attempts?pageLength={1}&pageIndex={2}';
-  private static readonly _RESULTS_ID_FILTERED = '/tvgames/{0}/results?from={1}&to={2}&each={3}';
+  private static readonly _RESULTS_ID_FROM_TO = '/tvgames/{0}/results?from={1}&to={2}&each={3}';
+  private static readonly _RESULTS_ID_FROM = '/tvgames/{0}/results?from={1}&each={2}';
   private static readonly _TV_GAMES_ID_ATTEMPTS_FILTERED =
     '/tvgames/{0}/attempts?from={1}&to={2}&pageLength={3}&pageIndex={4}';
   private static readonly _TV_GAMES_ID_ATTEMPTS_STATS = '/tvgames/{0}/attempts/stats';
@@ -57,16 +58,18 @@ export default class ApiRepository {
       this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_FILTERED, id, from, to, itemPerPage, index)
     );
 
-  public static readonly getResults = (id: string): Promise<ApiResponse<Results[]>> =>
-    ApiManager.get<Results[]>(this.stringFormat(this._BASE_URL + this._RESULTS_ID, id));
+  public static readonly getResults = (id: string, each = `${60 * 60 * 24}`): Promise<ApiResponse<Results[]>> =>
+    ApiManager.get<Results[]>(this.stringFormat(this._BASE_URL + this._RESULTS_ID, id, each));
 
   public static readonly getResultsFiltered = (
     id: string,
     from: string,
-    to: string,
+    to: string | null,
     each: string
   ): Promise<ApiResponse<Results[]>> =>
-    ApiManager.get<Results[]>(this.stringFormat(this._BASE_URL + this._RESULTS_ID_FILTERED, id, from, to, each));
+    to
+      ? ApiManager.get<Results[]>(this.stringFormat(this._BASE_URL + this._RESULTS_ID_FROM_TO, id, from, to, each))
+      : ApiManager.get<Results[]>(this.stringFormat(this._BASE_URL + this._RESULTS_ID_FROM, id, from, each));
 
   public static readonly getTvGameAttemptsStat = (
     id: string,
@@ -75,8 +78,8 @@ export default class ApiRepository {
   ): Promise<ApiResponse<ChartEntry[]>> =>
     from && to
       ? ApiManager.get<ChartEntry[]>(
-          this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS_FILTERED, id, from, to)
-        )
+        this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS_FILTERED, id, from, to)
+      )
       : ApiManager.get<ChartEntry[]>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS, id));
 
   public static readonly getTvGameSolutionById = (id: string): Promise<ApiResponse<Solution>> =>

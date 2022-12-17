@@ -52,8 +52,7 @@ export default defineComponent({
       /** to confirm selected dates */
       if (this.dates != null) {
         // entered dates
-        this.sDate = this.dates[0];
-        this.eDate = this.dates[1];
+        this.sDate = this.dates;
         this.choosenDates = true;
       } // ELSE -> didnt enter dates -> by default: today
     },
@@ -95,7 +94,6 @@ export default defineComponent({
       <div class="flex justify-self-start" id="Dates">
         <date-picker
           class="m-2 mr-0"
-          range
           type="date"
           v-model:value="dates"
           v-model:open="openD"
