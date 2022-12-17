@@ -5,25 +5,25 @@ import ApiRepository from '../api/api-repository';
 import ErrorWidget from './ErrorWidget.vue';
 import { SemipolarSpinner } from 'epic-spinners';
 
-const error = ref<boolean>(false)
-const errorTitle = ref<string>()
-const errorText = ref<string>()
+const error = ref<boolean>(false);
+const errorTitle = ref<string>();
+const errorText = ref<string>();
 
-const loading = ref<boolean>(true)
-const props = defineProps<{ id: string, from: string|null, to: string|null}>()
-const nFail = ref<number>(0)
-const nSucc = ref<number>(0)
-const fail = ref<number>(0)
-const success = ref<number>(0)
-const nAttempts = ref<number>(0)
-const canvas = ref(null)
-const see = ref(false)
-const popoverRef = ref(null)
-const from = ref<string | null>(props.from)
-const to = ref<string | null>(props.to)
+const loading = ref<boolean>(true);
+const props = defineProps<{ id: string; from: string | null; to: string | null }>();
+const nFail = ref<number>(0);
+const nSucc = ref<number>(0);
+const fail = ref<number>(0);
+const success = ref<number>(0);
+const nAttempts = ref<number>(0);
+const canvas = ref(null);
+const see = ref(false);
+const popoverRef = ref(null);
+const from = ref<string | null>(props.from);
+const to = ref<string | null>(props.to);
 
-const CANVAS_SIZE = 350
-const CIRCLE_RADIUS = 140
+const CANVAS_SIZE = 350;
+const CIRCLE_RADIUS = 140;
 
 const fetchData = async () => {
   if (!from.value || !to.value) {

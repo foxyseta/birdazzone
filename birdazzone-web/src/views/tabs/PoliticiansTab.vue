@@ -3,6 +3,9 @@ import { ref, onBeforeMount } from 'vue';
 import ErrorWidget from '@/components/ErrorWidget.vue';
 import ApiRepository from '../../api/api-repository';
 import type { Politician } from '../../api/interfaces/politician';
+import FantacitorioHistogram from '@/components/FantacitorioHistogram.vue';
+import { SemipolarSpinner } from 'epic-spinners';
+import FantaRankChart from '@/components/FantaRankChart.vue';
 
 const errorTitle = ref<string>();
 const errorText = ref<string>();
@@ -25,10 +28,6 @@ const fetchPoliticiansList = async () => {
   }
 };
 
-function sortList() {
-  list.value.sort((a, b) => b.score - a.score);
-}
-
 function isNumber(value: string): boolean {
   if (typeof value !== 'string') {
     return false;
@@ -41,13 +40,22 @@ function isNumber(value: string): boolean {
   return !isNaN(Number(value));
 }
 
-function changeAndSort(index: number, newScore: string) {
-  list.value[index].score = isNumber(newScore) ? parseInt(newScore) : list.value[index].score;
-  sortList();
-  return list.value[index].score.toString();
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-onBeforeMount(fetchPoliticiansList);
+const changeAndSort = async (index: number, newScore: string) => {
+  loading.value = true;
+  await sleep(1000);
+  list.value[index].score = isNumber(newScore) ? parseInt(newScore) : list.value[index].score;
+  list.value = list.value.sort((a, b) => b.score - a.score);
+  loading.value = false;
+  return list.value[index].score.toString();
+};
+
+onBeforeMount(() => {
+  fetchPoliticiansList();
+});
 </script>
 
 <template>
@@ -82,18 +90,24 @@ onBeforeMount(fetchPoliticiansList);
                   :value="item.score"
                 />
 
-                <span class="flex text-lgray font-normal items-center ml-1" style="font-size: 50%">p.</span>
-              </div>
-              <div class="flex justify-center ml-3" style="flex: 1 0 auto; height: 2rem; width: 2rem">
-                <img v-show="index === 0" :src="'/icons/coccarda1.svg'" alt="medal1" />
-                <img v-show="index === 1" :src="'/icons/coccarda2.svg'" alt="medal2" />
-                <img v-show="index === 2" :src="'/icons/coccarda3.svg'" alt="medal3" />
-              </div>
+              <span class="flex text-lgray font-normal items-center ml-1" style="font-size: 50%">p.</span>
+            </div>
+            <div class="flex justify-center ml-3" style="flex: 1 0 auto; height: 2rem; width: 2rem">
+              <img v-show="index === 0" :src="'/icons/coccarda1.svg'" alt="medal1" />
+              <img v-show="index === 1" :src="'/icons/coccarda2.svg'" alt="medal2" />
+              <img v-show="index === 2" :src="'/icons/coccarda3.svg'" alt="medal3" />
             </div>
           </div>
         </div>
       </div>
-      <div class="flex flex-col" style="flex: 2 1 auto"></div>
+    </div>
+
+    <div v-show="loading" class="h-screen flex justify-center items-center">
+      <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
+    </div>
+    <div>
+      <FantaRankChart class="m-4" v-if="!loading" :list="list" />
+      <FantacitorioHistogram class="m-4" v-if="!loading" :list="list" />
     </div>
   </div>
 </template>

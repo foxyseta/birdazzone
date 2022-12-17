@@ -7,6 +7,7 @@ import type { ChartEntry } from './interfaces/chart-entry';
 import type { WordCloudOptions } from './interfaces/wordcloud-options';
 import type { Solution } from './interfaces/solution';
 import type { Politician } from './interfaces/politician';
+import type { FantaTeam } from './interfaces/fanta-team';
 
 export default class ApiRepository {
   private static readonly _BASE_URL = `http://${import.meta.env.VITE_SERVER_URL}/api/v1`;
@@ -62,16 +63,22 @@ export default class ApiRepository {
   public static readonly getResultsFiltered = (id: string, from: string, to: string): Promise<ApiResponse<Results[]>> =>
     ApiManager.get<Results[]>(this.stringFormat(this._BASE_URL + this._RESULTS_ID_FILTERED, id, from, to, '604800')); // 604800: secondi in una settimana
 
-  public static readonly getTvGameAttemptsStat = (id: string, from: string | null = null, to: string | null = null): Promise<ApiResponse<ChartEntry[]>> =>
+  public static readonly getTvGameAttemptsStat = (
+    id: string,
+    from: string | null = null,
+    to: string | null = null
+  ): Promise<ApiResponse<ChartEntry[]>> =>
     from && to
-      ? ApiManager.get<ChartEntry[]>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS_FILTERED, id, from, to))
-      : ApiManager.get<ChartEntry[]>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS, id))
+      ? ApiManager.get<ChartEntry[]>(
+          this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS_FILTERED, id, from, to)
+        )
+      : ApiManager.get<ChartEntry[]>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS, id));
 
   public static readonly getTvGameSolutionById = (id: string): Promise<ApiResponse<Solution>> =>
     ApiManager.get<Solution>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_SOLUTION, id));
 
   public static readonly getFantacitorioTeams = (username?: string) =>
-    ApiManager.get<Tweet[]>(
+    ApiManager.get<FantaTeam[]>(
       username
         ? this.stringFormat(this._BASE_URL + this._FANTACITORIO_TEAMS_USERNAME, username)
         : this.stringFormat(this._BASE_URL + this._FANTACITORIO_TEAMS)
