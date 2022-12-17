@@ -38,16 +38,19 @@ onBeforeMount(() => {
 });
 </script>
 <template>
-  <div>
+  <div class="h-full">
     <div v-if="from && to" class="text-md text-white text-semibold mb-3">
       Data refere to the following date-time range: from {{ from.substring(0, 10) }}, {{ from.substring(11, 16) }} to
       {{ to.substring(0, 10) }}, {{ to.substring(11, 16) }}
     </div>
     <Histogram
-      v-if="!loading"
+      v-if="!loading && histogramValues.length > 0"
       :chart-title="'Played words with more than 3 tentatives'"
       :values="histogramValues"
       :serie-name="SERIE_NAME"
     />
+    <div v-if="!loading && histogramValues.length === 0" class="bg-foreground shadow rounded p-6">
+      <h1 class="font-bold text-lgray text-xl text-center">No data :(</h1>
+    </div>
   </div>
 </template>
