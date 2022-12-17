@@ -38,13 +38,12 @@ onBeforeMount(() => {
 });
 
 function itaJetLagFrom() {
-  return ((Number(props.from!.substring(11, 13)) + 1)) as unknown as string + ':' + props.from!.substring(14, 16)
+  return ((Number(props.from!.substring(11, 13)) + 1) as unknown as string) + ':' + props.from!.substring(14, 16);
 }
 
 function itaJetLagTo() {
-  return ((Number(props.to!.substring(11, 13)) + 1)) as unknown as string + ':' + props.to!.substring(14, 16)
+  return ((Number(props.to!.substring(11, 13)) + 1) as unknown as string) + ':' + props.to!.substring(14, 16);
 }
-
 </script>
 <template>
   <div class="h-full">
