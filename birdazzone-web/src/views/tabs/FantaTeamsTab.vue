@@ -7,7 +7,7 @@ import ApiRepository from '@/api/api-repository';
 import { SemipolarSpinner } from 'epic-spinners';
 
 const teams = ref<FantaTeam[]>([]);
-const cache = ref<FantaTeam[]>([])
+const cache = ref<FantaTeam[]>([]);
 const isError = ref<boolean>(false);
 const error = ref<string>();
 const loading = ref<boolean>(false);
@@ -16,7 +16,7 @@ const cacheTeams = async () => {
   const response = await ApiRepository.getFantacitorioTeams();
   isError.value = response.esit;
   if (response.esit && response.data) {
-    cache.value = response.data
+    cache.value = response.data;
   } else {
     error.value = response.error?.message;
   }
@@ -31,7 +31,7 @@ onBeforeMount(async () => {
 
 const onUsernameChanged = async (newUsername: string) => {
   loading.value = true;
-  teams.value = cache.value.filter((x: FantaTeam) => x.username.startsWith(newUsername))
+  teams.value = cache.value.filter((x: FantaTeam) => x.username.startsWith(newUsername));
   loading.value = false;
 };
 </script>
