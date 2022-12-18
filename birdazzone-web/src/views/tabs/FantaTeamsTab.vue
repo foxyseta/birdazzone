@@ -2,23 +2,21 @@
 import FantaTeamsList from '../../components/FantaTeamsList.vue';
 import FantaSearchUser from '../../components/FantaSearchUser.vue';
 import type { FantaTeam } from '../../api/interfaces/fanta-team';
-import { useRoute } from 'vue-router';
 import { onBeforeMount, ref } from 'vue';
 import ApiRepository from '@/api/api-repository';
 import { SemipolarSpinner } from 'epic-spinners';
 
-const username = ref<string>();
 const teams = ref<FantaTeam[]>([]);
+const cache = ref<FantaTeam[]>([])
 const isError = ref<boolean>(false);
 const error = ref<string>();
 const loading = ref<boolean>(false);
 
-const fetchTeams = async () => {
-  const mock = username.value ? teams.value.filter((x: FantaTeam) => x.username.startsWith(username.value!)) : teams;
-  const response = await ApiRepository.getFantacitorioTeams(username.value);
+const cacheTeams = async () => {
+  const response = await ApiRepository.getFantacitorioTeams();
   isError.value = response.esit;
   if (response.esit && response.data) {
-    teams.value = response.data;
+    cache.value = response.data
   } else {
     error.value = response.error?.message;
   }
@@ -26,14 +24,14 @@ const fetchTeams = async () => {
 
 onBeforeMount(async () => {
   loading.value = true;
-  await fetchTeams();
+  await cacheTeams();
+  teams.value = cache.value;
   loading.value = false;
 });
 
 const onUsernameChanged = async (newUsername: string) => {
   loading.value = true;
-  username.value = newUsername;
-  await fetchTeams();
+  teams.value = cache.value.filter((x: FantaTeam) => x.username.startsWith(newUsername))
   loading.value = false;
 };
 </script>
