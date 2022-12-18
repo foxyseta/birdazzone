@@ -11,37 +11,8 @@ const errorTitle = ref<string>();
 const errorText = ref<string>();
 
 const error = ref<boolean>(false);
-const loading = ref<boolean>(false);
-const list = ref<Politician[]>([
-  {
-    name: 'Giorgia Meloni',
-    score: 1000,
-  },
-  {
-    name: 'Matteo Salvini',
-    score: 900,
-  },
-  {
-    name: 'Mattia di Maio',
-    score: 800,
-  },
-  {
-    name: 'Carlo Calenda',
-    score: 700,
-  },
-  {
-    name: 'Matteo Renzi',
-    score: 600,
-  },
-  {
-    name: 'Silvio Berlusconi',
-    score: 500,
-  },
-  {
-    name: 'Gianni Agnelli',
-    score: 400,
-  },
-]);
+const loading = ref<boolean>(true);
+const list = ref<Politician[]>([]);
 
 const fetchPoliticiansList = async () => {
   loading.value = true;
@@ -83,9 +54,9 @@ const changeAndSort = async (index: number, newScore: string) => {
   return list.value[index].score.toString();
 };
 
-//onBeforeMount(() => {
-//  fetchPoliticiansList();
-//});
+onBeforeMount(() => {
+  fetchPoliticiansList();
+});
 </script>
 
 <template>
@@ -144,6 +115,9 @@ const changeAndSort = async (index: number, newScore: string) => {
           <FantacitorioHistogram class="flex align-center mt-2" style="flex: 1 1 auto" v-if="!loading" :list="list" />
         </div>
       </div>
+    </div>
+    <div v-else class="m-5 text-white font-semibold">
+      No politicians ranked &#9203;
     </div>
   </div>
 </template>
