@@ -11,7 +11,7 @@ const props = defineProps<{ gameId: string }>();
 
 const fromA = ref<string | null>(null);
 const toA = ref<string | null>(null);
-const dateL = ref<string|null>(null)
+const dateL = ref<string | null>(null);
 const fromH = ref<string | null>(null);
 const toH = ref<string | null>(null);
 const aerogramKey = ref<number>(0);
@@ -42,10 +42,10 @@ const h = (f: string | null, t: string | null) => {
   forceUpdateH();
 };
 
-const l = (d: string|null) => {
-  dateL.value = d
-  forceUpdateL()
-}
+const l = (d: string | null) => {
+  dateL.value = d;
+  forceUpdateL();
+};
 </script>
 
 <template>
@@ -78,7 +78,6 @@ const l = (d: string|null) => {
       <div class="m-3 ml-0 mr-20 col-span-3">
         <TvGameHistogram style="margin-left: 0" :game-id="props.gameId" :key="histogramKey" :from="fromH" :to="toH" />
       </div>
-
     </div>
   </div>
 </template>

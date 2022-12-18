@@ -78,8 +78,8 @@ export default class ApiRepository {
   ): Promise<ApiResponse<ChartEntry[]>> =>
     from && to
       ? ApiManager.get<ChartEntry[]>(
-        this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS_FILTERED, id, from, to)
-      )
+          this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS_FILTERED, id, from, to)
+        )
       : ApiManager.get<ChartEntry[]>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_ATTEMPTS_STATS, id));
 
   public static readonly getTvGameSolutionById = (id: string): Promise<ApiResponse<Solution>> =>

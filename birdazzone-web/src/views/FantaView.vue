@@ -3,6 +3,7 @@ import BirdazzoneButton from '../components/BirdazzoneButton.vue';
 import { ref, onBeforeMount } from 'vue';
 import FantaTeamsTab from './tabs/FantaTeamsTab.vue';
 import PoliticiansTab from '@/views/tabs/PoliticiansTab.vue';
+import NumberOfPoliticians from '../components/NumberOfPoliticians.vue';
 
 const showPoliticiansTab = ref<boolean>(true);
 const showTeamsTab = ref<boolean>(false);
@@ -19,10 +20,6 @@ const showTeams = () => {
 </script>
 
 <template>
-  <!--div v-if="error" class="flex justify-center items-center w-full">
-        <ErrorWidget />
-    </div-->
-  <!-- Success -->
   <div class="pl-4 w-full flex flex-col justify-start">
     <div class="flex flex-row">
       <div class="flex flex-col" style="flex: 1 1 auto"></div>
@@ -43,8 +40,10 @@ const showTeams = () => {
     </div>
 
     <div class="h-full">
-      <div v-show="showPoliticiansTab">
-        <PoliticiansTab class="flex" />
+      <div class="flex flex-row" v-show="showPoliticiansTab">
+        <div>
+          <PoliticiansTab class="flex" style="flex: 1 1 auto" />
+        </div>
       </div>
       <div v-show="showTeamsTab">
         <FantaTeamsTab />
