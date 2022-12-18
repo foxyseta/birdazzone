@@ -1,3 +1,3 @@
 export interface Solution {
-  solution: string
+  solution: string;
 }
