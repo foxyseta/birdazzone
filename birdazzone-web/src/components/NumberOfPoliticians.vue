@@ -10,5 +10,3 @@ console.log(propss.num);
   </div>
 </template>
 <script lang="ts" setup></script>
-
-<template>ciao</template>
