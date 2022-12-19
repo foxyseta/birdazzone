@@ -38,7 +38,7 @@ func newFantacitorioLexer() *lexmachine.Lexer {
 	res := lexmachine.NewLexer()
 	res.Add([]byte("MALUS"), token(MALUS_TOKEN))
 	res.Add([]byte("[\\+\\-]?\\d+"), token(POINTS_TOKEN))
-	res.Add([]byte("(\\W*(PUNTI|A\\W|PRIMI|DI|PER|TOT|[@#]\\w+)\\W*)+"), skip)
+	res.Add([]byte("(\\W*(RT|PUNTI|A\\W|PRIMI|DI|PER|TOT|[@#]\\w+)\\W*)+"), skip)
 	res.Add([]byte("\\W+"), token(99))
 	res.Add([]byte("[A-Z\\'\\ ]+[A-ZÀÈÌÒÙ]"), token(NAME_TOKEN))
 	err := res.Compile()
@@ -107,6 +107,7 @@ func (this *Politicians) Less(i int, j int) bool {
 	if firstScore > secondScore {
 		return true
 	}
+	// println(firstPolitician.Name + " VS " + secondPolitician.Name)
 	firstName := strings.Split(firstPolitician.Name, " ")
 	secondName := strings.Split(secondPolitician.Name, " ")
 	return firstName[1] < secondName[1] || firstName[1] == secondName[1] &&
@@ -125,7 +126,7 @@ func sortPoliticiansByPoints(politicians *Politicians) {
 
 func getPoliticiansPoints() ([]model.Politician, error) {
 	// From Twitter
-	result, err := twitter.GetManyRecentTweetsFromQuery("from:fanta_citorio punti -squadre -squadra", "", "")
+	result, err := twitter.GetManyRecentTweetsFromQuery("(from:fanta_citorio OR from:birdazzone) punti -squadre -squadra", "", "")
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -134,6 +135,7 @@ func getPoliticiansPoints() ([]model.Politician, error) {
 	// Map every politician name to its score
 	dict := make(map[string]int, 0)
 	for i := 0; i < result.Meta.ResultCount; i++ {
+		println(tweets[i].Text)
 		politicians, err := extractPoliticianPoints(tweets[i].Text)
 		if err != nil {
 			return nil, err
