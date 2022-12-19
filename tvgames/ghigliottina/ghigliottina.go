@@ -16,7 +16,7 @@ var ghigliottinaTracker = gametracker.GameTracker{
 		Name:    "Ghigliottina",
 		Hashtag: "#ghigliottina#leredita",
 		Logo:    "/public/leredita.png"},
-	Query:        "(#ghigliottina OR #leredita) -from:quizzettone -is:retweet",
+	Query:        "(#ghigliottina OR #leredita OR #eredita) -from:quizzettone -is:retweet",
 	Solution:     givenSolution,
 	LastSolution: lastSolution,
 	Start:        18,
