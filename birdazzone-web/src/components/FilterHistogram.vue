@@ -201,7 +201,6 @@ export default defineComponent({
           placeholder="select start time"
           :clearable="true"
           :disabled="choosenDateTimes"
-          :disabled-time="disabledHours"
         >
           <template #footer>
             <button class="mx-btn mx-btn-text" @click="closeST()">close</button>
@@ -217,7 +216,6 @@ export default defineComponent({
           placeholder="select end time"
           :clearable="true"
           :disabled="choosenDateTimes"
-          :disabled-time="disabledHours"
         >
           <template #footer>
             <button class="mx-btn mx-btn-text" @click="closeET()">close</button>
@@ -240,7 +238,7 @@ export default defineComponent({
         type="button"
         @click="modifyTimes()"
       >
-        modfy times
+        modify times
       </button>
     </div>
 

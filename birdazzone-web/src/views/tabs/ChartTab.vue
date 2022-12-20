@@ -63,7 +63,7 @@ const l = (d: string | null) => {
     <!-- Line -->
     <div>
       <div class="mt-6 mb-4 place-self-start w-auto">
-        <FilterL @change-from-to="l" class="justify-start" />
+        <FilterL @change-date="l" class="justify-start" />
       </div>
       <div class="m-3 mr-0 place-self-start w-auto">
         <TvGameTimeChart :game-id="props.gameId" :key="lineKey" :date="dateL" />
