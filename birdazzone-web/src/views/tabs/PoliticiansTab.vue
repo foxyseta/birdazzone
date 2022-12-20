@@ -116,8 +116,6 @@ onBeforeMount(() => {
         </div>
       </div>
     </div>
-    <div v-else class="m-5 text-white font-semibold">
-      No politicians ranked &#9203;
-    </div>
+    <div v-else class="m-5 text-white font-semibold">No politicians ranked &#9203;</div>
   </div>
 </template>

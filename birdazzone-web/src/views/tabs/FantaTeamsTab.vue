@@ -31,7 +31,7 @@ onBeforeMount(async () => {
 
 const onUsernameChanged = async (newUsername: string) => {
   loading.value = true;
-  teams.value = cache.value.filter((x: FantaTeam) => x.username.startsWith(newUsername));
+  teams.value = cache.value.filter((x: FantaTeam) => x.username.toLowerCase().startsWith(newUsername.toLowerCase()));
   loading.value = false;
 };
 </script>

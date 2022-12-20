@@ -25,6 +25,7 @@ onBeforeMount(() => {
           <div class="flex" style="height: 4rem">
             <img
               :src="props.data.author.profile_image_url"
+              class="aspect-square"
               style="border-radius: 50%"
               alt="propic"
               onerror="this.onerror = null; this.src='/icons/user.svg' "
