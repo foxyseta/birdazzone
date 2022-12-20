@@ -100,8 +100,12 @@ export default defineComponent({
         }
 
         // the API uses english time zone
-        this.sDateTime =
-          ((this.date + 'T' + (Number(this.sTime.substring(0, 2)) - 1)) as string) + this.sTime.substring(2) + ':00Z';
+        if (Number(this.sTime.substring(0, 2)) != 0) {
+          this.sDateTime =
+            ((this.date + 'T' + (Number(this.sTime.substring(0, 2)) - 1)) as string) + this.sTime.substring(2) + ':00Z';
+        } else {
+          this.sDateTime = this.date + 'T' + this.sTime.substring(0, 2) + this.sTime.substring(2) + ':00Z';
+        }
         this.eDateTime =
           ((this.date + 'T' + (Number(this.eTime.substring(0, 2)) - 1)) as string) + this.eTime.substring(2) + ':00Z';
 
@@ -201,7 +205,6 @@ export default defineComponent({
           placeholder="select start time"
           :clearable="true"
           :disabled="choosenDateTimes"
-          :disabled-time="disabledHours"
         >
           <template #footer>
             <button class="mx-btn mx-btn-text" @click="closeST()">close</button>
@@ -217,7 +220,6 @@ export default defineComponent({
           placeholder="select end time"
           :clearable="true"
           :disabled="choosenDateTimes"
-          :disabled-time="disabledHours"
         >
           <template #footer>
             <button class="mx-btn mx-btn-text" @click="closeET()">close</button>
@@ -240,7 +242,7 @@ export default defineComponent({
         type="button"
         @click="modifyTimes()"
       >
-        modfy times
+        modify times
       </button>
     </div>
 

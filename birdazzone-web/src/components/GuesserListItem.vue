@@ -22,11 +22,11 @@ onBeforeMount(() => {
       <span class="mr-3 text-lgray">{{ index }}.</span>
       <button class="btn rounded-lg bg-foreground hover:bg-lgray/50 p-4 flex-1" @click="changeVisibility()">
         <div class="flex flex-row" style="border-radius: 50%; flex: 1 1 auto">
-          <div class="flex" style="height: 4rem">
+          <div class="flex" style="width: 4rem; height: 4rem">
             <img
               :src="props.data.author.profile_image_url"
               class="aspect-square"
-              style="border-radius: 50%"
+              style="width: 10em; border-radius: 50%"
               alt="propic"
               onerror="this.onerror = null; this.src='/icons/user.svg' "
             />
