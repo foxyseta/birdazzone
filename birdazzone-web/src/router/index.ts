@@ -15,8 +15,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'Root',
-      component: TvGamesView,
+      redirect: GAMES_PATH,
     },
     {
       path: '/:pathMatch(.*)*',
