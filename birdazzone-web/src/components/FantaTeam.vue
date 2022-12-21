@@ -24,13 +24,12 @@ onBeforeMount(() => {
               onerror="this.onerror = null; this.src='/icons/user.svg' "
             />
             <p class="flex flex-1 text-white font-bold p-2 items-center">@{{ props.data.username }}</p>
-
           </div>
           <div class="flex flex-col mx-4" style="flex: 1 1 auto">
             <img :src="props.data.imageUrl" alt="fantacitorio team" style="border-radius: 5%" />
           </div>
         </div>
-        </a>
+      </a>
     </button>
   </div>
 </template>
