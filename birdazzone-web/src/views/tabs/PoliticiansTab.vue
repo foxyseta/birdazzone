@@ -65,9 +65,9 @@ onBeforeMount(() => {
       <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
     </div>
     <div v-if="list.length > 0" class="flex flex-row w-full" style="flex: 1 1 auto">
-      <div class="flex flex-col mx-4" style="flex: 1 1 auto; width: 22rem">
+      <div class="flex flex-col" style="flex: 1 1 auto; width: 22rem">
         <div v-for="(item, index) in list" :key="index">
-          <div class="flex flex-row my-2 text-lgray">
+          <div class="flex flex-row my-3 text-lgray">
             <div class="flex" style="flex: 1 1 auto; width: 1rem">{{ index + 1 }}.</div>
             <div class="flex flex-row rounded-lg bg-foreground p-4 ml-3 items-center">
               <div class="font-semibold text-white" style="flex: 1 1 auto; width: 100%">
@@ -100,18 +100,13 @@ onBeforeMount(() => {
           </div>
         </div>
       </div>
-      <div class="flex mx-4 justify-center align-center flex-1">
+      <div class="flex ml-20 justify-center align-center flex-1">
         <div v-show="loading" class="flex justify-center items-center">
           <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
         </div>
         <div class="flex flex-col items-center">
-          <NumberOfPoliticians
-            class="flex align-center m-2"
-            style="flex: 1 1 auto"
-            v-if="!loading"
-            :num="list.length"
-          />
-          <FantaRankChart class="flex align-center m-2" style="flex: 1 1 auto" v-if="!loading" :list="list" />
+          <NumberOfPoliticians class="flex align-center m-2 mb-3" style="flex: 1 1 auto" v-if="!loading" :num="list.length"/>
+          <FantaRankChart class="flex align-center m-2 mb-6" style="flex: 1 1 auto" v-if="!loading" :list="list" />
           <FantacitorioHistogram class="flex align-center mt-2" style="flex: 1 1 auto" v-if="!loading" :list="list" />
         </div>
       </div>

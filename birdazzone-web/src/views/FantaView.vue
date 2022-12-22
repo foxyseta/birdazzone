@@ -33,14 +33,12 @@ const showTeams = () => {
     </div>
 
     <div class="flex justify-start w-100 m-3">
-      <BirdazzoneButton :text="'POLITICIANS'" :active="showPoliticiansTab" @click="showPoliticians"
-        >ciao</BirdazzoneButton
-      >
-      <BirdazzoneButton :text="'TEAMS'" :active="showTeamsTab" @click="showTeams">ciao</BirdazzoneButton>
+      <BirdazzoneButton :text="'POLITICIANS'" :active="showPoliticiansTab" @click="showPoliticians"></BirdazzoneButton>
+      <BirdazzoneButton :text="'TEAMS'" :active="showTeamsTab" @click="showTeams"></BirdazzoneButton>
     </div>
 
     <div class="h-full">
-      <div class="flex flex-row" v-show="showPoliticiansTab">
+      <div class="flex justify-center flex-row" v-show="showPoliticiansTab">
         <div>
           <PoliticiansTab class="flex" style="flex: 1 1 auto" />
         </div>
