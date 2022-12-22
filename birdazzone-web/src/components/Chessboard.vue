@@ -72,11 +72,11 @@ const doOpponentMove = (move: IMove) => {
   const oldState = boardAPI.value?.board.getFen();
   boardAPI.value?.makeMove(move.from, move.to);
   const newState = boardAPI.value?.board.getFen();
-  if (oldState !== newState){
+  if (oldState !== newState) {
     turn.value++;
-    console.log("board did change") 
+    console.log('board did change');
   } else {
-    console.log("board did not change") 
+    console.log('board did not change');
   }
 };
 
@@ -137,25 +137,21 @@ const onTweetAgainClicked = () => {
         <UserInfo v-if="gameId" class="w-1000" :user="props.user" :turn="turn" :game-id="gameId" />
       </div>
       <div class="grid grid-cols-2 gap-4 h-10">
-      <div class="ml-3">
-        <BirdazzoneSmartButton
-          :text="'CHECK OPPONENTS'"
-          :clickable="boardLocked"
-          @click="onCheckOpponentClicked"
-        />
+        <div class="ml-3">
+          <BirdazzoneSmartButton :text="'CHECK OPPONENTS'" :clickable="boardLocked" @click="onCheckOpponentClicked" />
+        </div>
+        <div class="ml-3">
+          <BirdazzoneSmartButton :text="'TWEET AGAIN'" :clickable="boardLocked" @click="onTweetAgainClicked" />
+        </div>
       </div>
-      <div class="ml-3">
-        <BirdazzoneSmartButton  :text="'TWEET AGAIN'" :clickable="boardLocked" @click="onTweetAgainClicked" />
+      <div v-show="error" class="flex-col justify-center items-center m-3">
+        <div class="flex justify-center items-center">
+          <img style="height: 12rem; widows: 12rem" src="/bchess.png" />
+        </div>
+        <div class="animate-pulse rounded-2xl p-3">
+          <h1 class="text-lred text-center text-xl font-bold">{{ error }}</h1>
+        </div>
       </div>
-      </div>
-    <div v-show="error"  class="flex-col justify-center items-center m-3">
-      <div class="flex justify-center items-center">
-        <img style="height: 12rem; widows: 12rem;" src="/bchess.png" />
-      </div>
-      <div class="animate-pulse rounded-2xl p-3">
-        <h1 class="text-lred text-center text-xl font-bold">{{ error }}</h1>
-      </div>
-    </div>
     </div>
     <!-- CONTENT -->
     <div class="flex justify-center items-center mt-0">
@@ -173,11 +169,12 @@ const onTweetAgainClicked = () => {
         :style="`height: ${CHESSBOARD_SIZE}rem; width: ${CHESSBOARD_SIZE}rem;`"
         class="flex absolute z-1 items-center justify-center"
       >
-      <div 
-        :style="`background-color: #1eb980aa`"
-        class="flex items-center justify-center absolute z-1 p-20 rounded-full">
+        <div
+          :style="`background-color: #1eb980aa`"
+          class="flex items-center justify-center absolute z-1 p-20 rounded-full"
+        >
           <img src="/icons/lock.svg" class="w-40" alt="lock" />
-      </div>
+        </div>
       </div>
     </div>
   </div>
