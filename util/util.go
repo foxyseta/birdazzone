@@ -15,7 +15,7 @@ import (
 	"github.com/swaggo/swag/example/celler/httputil"
 )
 
-const BearerToken = "AAAAAAAAAAAAAAAAAAAAAE4higEAAAAAIAkazaLrT4LHjJx2XFPsdVzEPe8%3DE7HE9wBq5B5b0m4F8uGmcslObTmQFccb9gppULjUwTNBGj1Td3"
+const BearerToken = "AAAAAAAAAAAAAAAAAAAAANHikgEAAAAAt0NQtN01tfyiK%2BbDypCiMOeGTQo%3DMyouTiX5Ewc2jwx5QdKjGrs64wNOJfvr2QeujrXt4lgO6uwtPo"
 
 var testingResponseRecorder = httptest.NewRecorder()
 var testingGinContext *gin.Context = nil
