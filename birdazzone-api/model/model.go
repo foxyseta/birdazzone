@@ -179,10 +179,16 @@ func (c *Coordinates) String() string {
 	return fmt.Sprintf("(%f, %f)", c.Latitude, c.Longitude)
 }
 
+var locationsCache = map[string]Coordinates{}
+
 func StringToCoordinates(s string) (Coordinates, error) {
 	var result Coordinates
 	if s == "" {
 		return result, errors.New("User has no location")
+	}
+	cachedValue, ok := locationsCache[s]
+	if ok {
+		return cachedValue, nil
 	}
 	data, err := util.GetRequest(
 		"https://nominatim.openstreetmap.org/search",
@@ -210,12 +216,13 @@ func StringToCoordinates(s string) (Coordinates, error) {
 	if err != nil {
 		return result, err
 	}
+	locationsCache[s] = result
 	return result, nil
 }
 
 func MakeCoordinates(l *geojson.Geometry, p twitter.Profile) *Coordinates {
 	if l == nil {
-		result, err := Coordinates{}, errors.New("User has no location")
+		result, err := StringToCoordinates(p.Location)
 		if err != nil {
 			return nil
 		}
