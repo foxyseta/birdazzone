@@ -39,17 +39,17 @@ const verifyAndConfirm = async () => {
 };
 </script>
 <template>
-  <div class="shadow bg-foreground rounded-2xl flex justify-start items-center m-10 p-10 flex-col">
+  <div class="shadow bg-foreground rounded-2xl flex justify-start items-center my-5 mx-20 p-10 flex-col font-semibold">
     <h1 class="font-bold text-4xl text-white">Welcome to the Birdazzone chess game!</h1>
     <div class="m-10 flex flex-col items-center justify-evenly">
-      <div v-show="isError" class="p-2 text-center text-lred rounded-2xl border-lred">
+      <div v-show="isError" class="p-2 text-center text-lred rounded-2xl border-2 border-lred">
         {{ error }}
       </div>
 
       <p class="m-3 text-white text-xl text-center">Tell me what's your name</p>
       <input
         v-model="username"
-        class="form-control block px-3 py-1.5 text-base font-normal text-white bg-foreground bg-clip-padding border border-solid border-dgreen rounded-xl transition ease-in-out m-0 focus:border-lgreen focus:outline-none"
+        class="form-control block px-3 py-1.5 text-base font-normal text-white bg-foreground bg-clip-padding border-2 border-solid border-dgreen rounded-xl transition ease-in-out m-0 focus:border-lgreen focus:outline-none"
         type="text"
       />
 
@@ -57,28 +57,28 @@ const verifyAndConfirm = async () => {
 
       <div class="flex w-full justify-evenly m-5">
         <div>
-          <button v-if="color !== 'black'" @click="selectBlack()" class="bg-lblack p-10 text-white">black</button>
+          <button v-if="color !== 'black'" @click="selectBlack()" class="bg-lblack p-10 text-white rounded-lg">black</button>
           <button
             v-if="color === 'black'"
             @click="selectBlack()"
-            class="bg-lblack p-10 text-white border-lgreen border-2"
+            class="bg-lblack p-10 text-white border-lgreen border-2 rounded-lg"
           >
             black
           </button>
         </div>
         <div>
-          <button v-if="color !== 'white'" @click="selectWhite()" class="bg-white p-10 text-lblack">white</button>
+          <button v-if="color !== 'white'" @click="selectWhite()" class="bg-white p-10 text-lblack rounded-lg">white</button>
           <button
             v-if="color === 'white'"
             @click="selectWhite()"
-            class="bg-white p-10 text-lblack border-2 border-lgreen"
+            class="bg-white p-10 text-lblack border-2 border-lgreen rounded-lg"
           >
             white
           </button>
         </div>
       </div>
 
-      <BirdazzoneButton @click="verifyAndConfirm" class="h-20 w-40 mt-10" :active="username !== ''" :text="'Done!'" />
+      <BirdazzoneButton @click="verifyAndConfirm" class="h-20 w-40 mt-10 border-2" :active="username !== ''" :text="'Done!'" />
     </div>
   </div>
 </template>
