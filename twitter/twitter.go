@@ -2,6 +2,7 @@ package twitter
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"git.hjkl.gq/team13/birdazzone-api/util"
@@ -139,6 +140,12 @@ func GetRecentTweetsFromQuery(query string, startTime string, endTime string, ma
 		util.Pair[string, string]{First: "media.fields", Second: "preview_image_url,url,height,width"},
 		util.Pair[string, string]{First: "place.fields", Second: "id,geo"},
 	)
+}
+
+func GetRecentQuotingTweets(id string) (*ProfileTweets, error) {
+	return getTweets(
+		fmt.Sprintf("https://api.twitter.com/2/tweets/%s/quote_tweets", id),
+		[]any{})
 }
 
 func GetManyRecentTweetsFromQuery(query string, startTime string, endTime string) (*ProfileTweets, error) {
