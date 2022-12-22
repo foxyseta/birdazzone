@@ -3,6 +3,7 @@ package chess
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"strconv"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
@@ -23,11 +24,19 @@ func ChessGroup(group *gin.RouterGroup) {
 // @Param   turn path     int         true "second player's turn number"                minimum(1)
 // @Success 200  {string} string      "The second player's move. It is recognized by the [a-h][1-8][a-h][1-8] regexp."
 // @Success 204  {string} string      "No one has played yet"
-// @Failure 400  {object} model.Error "integer parsing error on turn or turn <= 0"
+// @Failure 400  {object} model.Error "username parsing module or integer parsing error on turn or turn <= 0"
 // @Failure 404  {object} model.Error "No user or no post found"
 // @Router  /chess/{user}/{game}/{turn} [get]
 func getChessMove(ctx *gin.Context) {
-	username := ctx.Param("username")
+	username := ctx.Param("user")
+	validUsername, _ := regexp.MatchString("^[A-Za-z0-9_]+$", username)
+	if !validUsername {
+		ctx.JSON(http.StatusBadRequest, model.Error{
+			Code:    http.StatusBadRequest,
+			Message: "Username parsing error",
+		})
+		return
+	}
 	date := ctx.Param("game")
 	turn, err := strconv.Atoi(ctx.Param("turn"))
 	if err != nil {
@@ -55,8 +64,10 @@ func getChessMove(ctx *gin.Context) {
 	}
 }
 
+const MaxResults = 100
+
 func uncheckedGetCheckMove(username string, date string, turn int) (string, *model.Error) {
-	tweets, err := twitter.GetTweetsFromUser(username, 100, date)
+	tweets, err := twitter.GetRecentTweetsFromQuery("from:"+username, date, "", MaxResults)
 	if err != nil {
 		return "", &model.Error{Code: http.StatusNotFound, Message: err.Error()}
 	}
