@@ -13,6 +13,7 @@ package main
 import (
 	"net/http"
 
+	"git.hjkl.gq/team13/birdazzone-api/chess"
 	_ "git.hjkl.gq/team13/birdazzone-api/docs"
 	"git.hjkl.gq/team13/birdazzone-api/fantacitorio"
 	"git.hjkl.gq/team13/birdazzone-api/model"
@@ -65,6 +66,7 @@ func v1Group(group *gin.RouterGroup) {
 	helloGroup(group.Group("/hello"))
 	tvgames.TvGamesGroup(group.Group("/tvgames"))
 	fantacitorio.FantacitorioGroup(group.Group("/fantacitorio"))
+	chess.ChessGroup(group.Group("/chess"))
 }
 
 func birdazzoneServer() *gin.Engine {
