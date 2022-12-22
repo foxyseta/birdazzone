@@ -15,8 +15,10 @@ import (
 
 	_ "git.hjkl.gq/team13/birdazzone-api/docs"
 	"git.hjkl.gq/team13/birdazzone-api/fantacitorio"
+	"git.hjkl.gq/team13/birdazzone-api/model"
 	"git.hjkl.gq/team13/birdazzone-api/server"
 	"git.hjkl.gq/team13/birdazzone-api/tvgames"
+	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,8 +34,31 @@ func helloWorld(ctx *gin.Context) {
 	})
 }
 
+// user godoc
+// @Summary Get a Twitter user
+// @Tags    test
+// @Produce json
+// @Param   username path     string      true "Username of the player to query"
+// @Success 200      {object} model.User  "The requiested user"
+// @Failure 404      {object} model.Error "User not found"
+// @Router  /hello/user/{username} [get]
+func user(ctx *gin.Context) {
+	username := ctx.Param("username")
+	res, err := twitter.GetUser(username)
+	if err != nil || res.Data.Username == "" {
+		ctx.JSON(http.StatusNotFound, model.Error{
+			Code:    http.StatusNotFound,
+			Message: "User not found",
+		})
+		return
+	}
+	user := model.MakeUser(*res)
+	ctx.JSON(http.StatusOK, user)
+}
+
 func helloGroup(group *gin.RouterGroup) {
 	group.GET("/", helloWorld)
+	group.GET("user/:username", user)
 }
 
 func v1Group(group *gin.RouterGroup) {
