@@ -34,7 +34,6 @@ var gamesById = map[int]*model.Game{}
 const fromDateParsingErrorMessage = "date parsing error (from)"
 const toDateParsingErrorMessage = "date parsing error (to)"
 const fromGreaterThanToErrorMessage = "from > to"
-const toGreaterThenNowErrorMessage = "to > now"
 const noGameInstancePlayed = "no game instance has been played"
 
 func TvGamesGroup(group *gin.RouterGroup) {
@@ -316,9 +315,6 @@ func checkToStrGameAttemptsStatsTimes(fromTime time.Time, toTime time.Time) (str
 	if fromStr > toStr {
 		return "", errors.New(fromGreaterThanToErrorMessage)
 	}
-	if toStr > util.DateToString(time.Now()) {
-		return "", errors.New(toGreaterThenNowErrorMessage)
-	}
 	if fromTime.Day() != toTime.Day() || fromTime.Month() != toTime.Month() || fromTime.Year() != toTime.Year() {
 		return "", errors.New("from and to are not in the same day")
 	}
@@ -453,9 +449,6 @@ func extractGameResultsTimes(gameTracker *gametracker.GameTracker, fromStr strin
 		if fromStr > toStr {
 			return "", "", model.Error{Code: http.StatusBadRequest, Message: fromGreaterThanToErrorMessage}
 		}
-		if toStr > util.DateToString(time.Now()) {
-			return "", "", model.Error{Code: http.StatusBadRequest, Message: toGreaterThenNowErrorMessage}
-		}
 	} else {
 		//from && !to
 		sol, _ := gameTracker.Solution(time.Date(fromTime.Year(), fromTime.Month(), fromTime.Day(), 0, 0, 0, 0, time.UTC))
@@ -490,7 +483,7 @@ func extractGameResultsEach(eachStr string, hasEach bool) (int, model.Error) {
 // @Param   each query    int                false "Number of seconds for the duration of each time interval bin the retrieved tweets are to be grouped by"                                            minimum(1)
 // @Success 200  {array}  model.BooleanChart "An array of boolean charts comparing successes and failures in the game. Each boolean chart is labeled as the starting instant of its time interval bin"
 // @Success 204  {string} string             "no game instance has been played"
-// @Failure 400  {object} model.Error        "integer parsing error (id) or date parsing error (from) or date parsing error (to) or to > today or from > to or integer parsing error (each) or each < 1"
+// @Failure 400  {object} model.Error        "integer parsing error (id) or date parsing error (from) or date parsing error (to) or from > to or integer parsing error (each) or each < 1"
 // @Failure 404  {object} model.Error        "game id not found"
 // @Router  /tvgames/{id}/results [get]
 func gameResults(ctx *gin.Context) {
