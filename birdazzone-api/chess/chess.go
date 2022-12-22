@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
@@ -54,14 +55,18 @@ func getChessMove(ctx *gin.Context) {
 		return
 	}
 	res, error := uncheckedGetCheckMove(username, date, turn)
-	if error == nil {
-		ctx.JSON(http.StatusOK, res)
-	} else {
+	if error != nil {
 		ctx.JSON(error.Code, model.Error{
 			Code:    error.Code,
 			Message: error.Message,
 		})
+		return
 	}
+	if res == "" {
+		ctx.JSON(http.StatusNoContent, "")
+		return
+	}
+	ctx.JSON(http.StatusOK, res)
 }
 
 const MaxResults = 100
@@ -81,6 +86,29 @@ func uncheckedGetCheckMove(username string, date string, turn int) (string, *mod
 	return mostPopularChessMove(tweets.Data[length-turn]), nil
 }
 
+var chessMove = regexp.MustCompile("[a-h][1-8][a-h][1-8]")
+
 func mostPopularChessMove(tweet twitter.ProfileTweet) string {
-	return "e7e5"
+	tweets, err := twitter.GetRecentQuotingTweets(tweet.ID)
+	if err != nil {
+		return ""
+	}
+	var counters map[string]int
+	maxMove, maxCounter := "", 0
+	for _, tweet := range tweets.Data {
+		move := chessMove.FindString(strings.ToLower(tweet.Text))
+		if move != "" {
+			_, ok := counters[move]
+			if ok {
+				counters[move] += 1
+			} else {
+				counters[move] = 1
+			}
+			newCounter := counters[move]
+			if newCounter > maxCounter {
+				maxMove, maxCounter = move, newCounter
+			}
+		}
+	}
+	return maxMove
 }
