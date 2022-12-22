@@ -1,11 +1,12 @@
 package chess
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
-	// "git.hjkl.gq/team13/birdazzone-api/twitter"
+	"git.hjkl.gq/team13/birdazzone-api/twitter"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,7 +21,7 @@ func ChessGroup(group *gin.RouterGroup) {
 // @Param   user path     string      true "player 1's username"
 // @Param   game path     string      true "game identifier, i.e. its starting instant" Format(date-time)
 // @Param   turn path     int         true "second player's turn number"                minimum(1)
-// @Success 200  {string} string      "The second player's move"
+// @Success 200  {string} string      "The second player's move. It is recognized by the [a-h][1-8][a-h][1-8] regexp."
 // @Success 204  {string} string      "No one has played yet"
 // @Failure 400  {object} model.Error "integer parsing error on turn or turn <= 0"
 // @Failure 404  {object} model.Error "No user or no post found"
@@ -55,5 +56,20 @@ func getChessMove(ctx *gin.Context) {
 }
 
 func uncheckedGetCheckMove(username string, date string, turn int) (string, *model.Error) {
-	return "e2e4", nil
+	tweets, err := twitter.GetTweetsFromUser(username, 100, date)
+	if err != nil {
+		return "", &model.Error{Code: http.StatusNotFound, Message: err.Error()}
+	}
+	length := len(tweets.Data)
+	if length < turn {
+		return "", &model.Error{
+			Code:    http.StatusNotFound,
+			Message: fmt.Sprintf("Wanted to retrieve turn #%d. Tweets not found: %d.", turn, length),
+		}
+	}
+	return mostPopularChessMove(tweets.Data[length-turn]), nil
+}
+
+func mostPopularChessMove(tweet twitter.ProfileTweet) string {
+	return "e7e5"
 }
