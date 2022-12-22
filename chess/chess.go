@@ -42,6 +42,11 @@ func getChessMove(ctx *gin.Context) {
 	}
 	// Date
 	date := ctx.Param("game")
+	minimumLimit := time.Now().AddDate(0, 0, -7).Format(time.RFC3339)
+	if date < minimumLimit {
+		date = minimumLimit
+	}
+	// Turn
 	turn, err := strconv.Atoi(ctx.Param("turn"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, model.Error{
@@ -50,11 +55,6 @@ func getChessMove(ctx *gin.Context) {
 		})
 		return
 	}
-	minimumLimit := time.Now().AddDate(0, 0, -7).Format(time.RFC3339)
-	if date < minimumLimit {
-		date = minimumLimit
-	}
-	// Turn
 	if turn < 1 {
 		ctx.JSON(http.StatusBadRequest, model.Error{
 			Code:    http.StatusBadRequest,
