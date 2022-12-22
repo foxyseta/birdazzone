@@ -18,8 +18,8 @@ onBeforeMount(() => {
           <div style="width: 10rem">
             <img
               :src="props.data.profileImageUrl"
-              class="aspect-square"
-              style="width: 100%; border-radius: 50%"
+              class="aspect-square p-2"
+              style="width: 6rem; border-radius: 50%"
               alt="propic"
               onerror="this.onerror = null; this.src='/icons/user.svg' "
             />

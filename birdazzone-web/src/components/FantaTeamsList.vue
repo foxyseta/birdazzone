@@ -9,20 +9,17 @@ const props = defineProps<{ teams: FantaTeam[] }>();
   <div v-if="teams.length == 1" class="flex justify-center">
     <div v-for="(item, index) in teams" :key="index">
       <FantaTeamWidget :data="item" />
-      <!-- <img :src="item.imageUrl" class="fantaTeam" :alt="'@' + item.username + ' team'" width="800" /> -->
     </div>
   </div>
   <div v-else>
     <div v-if="teams.length % 2 == 0" class="mx-10 md:mx-20 grid gap-4 md:gap-10 grid-cols-1 md:grid-cols-2 mb-10">
       <div v-for="(item, index) in teams" :key="index">
         <FantaTeamWidget :data="item" />
-        <!-- <img :src="item.imageUrl" class="fantaTeam" :alt="'@' + item.username + ' team'" /> -->
       </div>
     </div>
     <div v-else class="mx-10 md:mx-20 grid gap-4 lg:gap-10 grid-cols-1 lg:grid-cols-3 mb-10">
       <div v-for="(item, index) in teams" :key="index">
         <FantaTeamWidget :data="item" />
-        <!-- <img :src="item.imageUrl" class="fantaTeam" :alt="'@' + item.username + ' team'" /> -->
       </div>
     </div>
   </div>
