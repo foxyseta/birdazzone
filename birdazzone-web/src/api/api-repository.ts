@@ -139,8 +139,16 @@ export default class ApiRepository {
   };
 
   public static readonly getTwitterTimestamp = async (): Promise<Date> => {
-    const repsonse = await fetch('https://api.twitter.com/1/help/test.json', { method: 'HEAD' });
-    const date = repsonse.headers.get('date');
-    return date ? new Date(date) : new Date(Date.now());
-  };
+    /*return fetch('https://api.twitter.com/1.1/help/languages.json', { method: 'HEAD', })
+    .then(response => {
+      const date = response.headers.get('date');
+      if (!response.ok) {
+        const error = response.status;
+        return Promise.reject(error);
+      }
+      return date ? new Date(date): new Date(Date.now());
+    })*/
+
+    return new Date()
+ }
 }

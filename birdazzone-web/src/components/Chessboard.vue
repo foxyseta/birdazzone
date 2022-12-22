@@ -91,7 +91,7 @@ const handleCheckmate = (isMated: string) => {
 };
 
 const setGameId = async () => {
-  gameId.value = (await ApiRepository.getTwitterTimestamp()).getMilliseconds().toString();
+  gameId.value = Date.parse((await ApiRepository.getTwitterTimestamp()).toISOString()).toString()
 };
 
 onBeforeMount(() => {
@@ -129,7 +129,7 @@ onBeforeMount(() => {
         :style="`background-color: #1eb980aa`"
         class="flex items-center justify-center absolute z-1 p-20 rounded-full"
       >
-        <img src="/public/icons/lock.svg" class="w-40" alt="lock" />
+        <img src="/icons/lock.svg" class="w-40" alt="lock" />
       </div>
     </div>
   </div>
