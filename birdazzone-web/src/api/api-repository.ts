@@ -149,6 +149,6 @@ export default class ApiRepository {
       return date ? new Date(date): new Date(Date.now());
     })*/
 
-    return new Date()
- }
+    return new Date();
+  };
 }

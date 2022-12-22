@@ -26,7 +26,10 @@ const boardConfig = ref<BoardConfig>({
   viewOnly: false,
   orientation: props.startingColor,
   events: {
-    move: (_) => twitterIntent(),
+    move: (_) => {
+      twitterIntent();
+      boardLocked.value = true;
+    },
   },
 });
 const boardLocked = ref<boolean>(false);
@@ -40,8 +43,7 @@ function sleep(ms: number) {
 }
 
 const loadLastMove = async () => {
-  if (!gameId.value )
-    return;
+  if (!gameId.value) return;
   isError.value = false;
 
   const response = await ApiRepository.getChessMoves(props.user.username, gameId.value, turn.value.toString());
@@ -51,13 +53,13 @@ const loadLastMove = async () => {
   } else if (response.statusCode === 204) {
     isError.value = true;
     error.value = 'Nobody answered yet...be patient';
-    await sleep(5000)
-    isError.value = false
+    await sleep(5000);
+    isError.value = false;
   } else {
     isError.value = true;
     error.value = 'You should make a new post first!';
-    await sleep(5000)
-    isError.value = false
+    await sleep(5000);
+    isError.value = false;
   }
 };
 
@@ -67,14 +69,22 @@ const constructMove = (apiMove: string): IMove => ({
 });
 
 const doOpponentMove = (move: IMove) => {
-  // TODO check correct moves
+  const oldState = boardAPI.value?.board.getFen();
   boardAPI.value?.makeMove(move.from, move.to);
-  turn.value++;
+  const newState = boardAPI.value?.board.getFen();
+  if (oldState !== newState){
+    turn.value++;
+    console.log("board did change") 
+  } else {
+    console.log("board did not change") 
+  }
 };
 
 const onMoveDone = () => {
   if (boardAPI.value?.board.state.turnColor === BLACK_TURN) {
+    console.log(boardAPI.value?.boardState);
     twitterIntent();
+    boardLocked.value = true;
   }
   return 1;
 };
@@ -90,9 +100,6 @@ const twitterIntent = () => {
       '&text=Your%20move.%20Please%20retweet%20using%20the%20%22a1b2%22%20format.%20This%20is%20a%20majority%20vote.',
     '_blank'
   );
-
-  console.log('intent aperto');
-  boardLocked.value = true;
 };
 
 const handleCheckmate = (isMated: string) => {
@@ -100,7 +107,7 @@ const handleCheckmate = (isMated: string) => {
 };
 
 const setGameId = async () => {
-  gameId.value = Date.parse((await ApiRepository.getTwitterTimestamp()).toISOString()).toString()
+  gameId.value = Date.parse((await ApiRepository.getTwitterTimestamp()).toISOString()).toString();
 };
 
 onBeforeMount(() => {
@@ -108,30 +115,37 @@ onBeforeMount(() => {
   if (props.startingColor === 'black') {
     console.log('dakdaskds');
     twitterIntent();
+    boardLocked.value = true;
   }
 });
 
 const onCheckOpponentClicked = () => {
-  if (!boardLocked.value) return
-  loadLastMove()
-}
+  if (!boardLocked.value) return;
+  loadLastMove();
+};
 
 const onTweetAgainClicked = () => {
-  if (!boardLocked.value) return
-  twitterIntent()
-}
+  if (!boardLocked.value) return;
+  twitterIntent();
+  boardLocked.value = true;
+};
 </script>
 <template>
   <div>
     <!-- HEAD -->
     <div class="flex mb-3">
       <UserInfo class="w-full" :user="props.user" :turn="turn" :game-id="gameId" />
-      <BirdazzoneSmartButton class="ml-3" :text="'CHECK OPPONENTS'" :clickable="boardLocked" @click="onCheckOpponentClicked" />
-      <BirdazzoneSmartButton class="ml-3" :text="'TWEET AGAIN'" :clickable="boardLocked" @click="onTweetAgainClicked" />
+      <BirdazzoneSmartButton
+        class="ml-3"
+        :text="'CHECK OPPONENTS'"
+        :clickable="boardLocked"
+        @click="onCheckOpponentClicked"
+      />
+      <BirdazzoneSmartButton :class="'ml-3'" :text="'TWEET AGAIN'" :clickable="boardLocked" @click="onTweetAgainClicked" />
     </div>
     <!-- CONTENT -->
     <div v-show="isError" class="flex justify-center m-3">
-      <div  class="animate-pulse border rounded-2xl border-lred p-3">
+      <div class="animate-pulse border rounded-2xl border-lred p-3">
         <h1 class="text-lred font-bold">{{ error }}</h1>
       </div>
     </div>
@@ -147,10 +161,14 @@ const onTweetAgainClicked = () => {
       <!-- Lock -->
       <div
         v-if="boardLocked"
-        :style="`background-color: #1eb980aa`"
-        class="flex items-center justify-center absolute z-1 p-20 rounded-full"
+        :style="`height: ${CHESSBOARD_SIZE}rem; width: ${CHESSBOARD_SIZE}rem;`"
+        class="flex absolute z-1 items-center justify-center"
       >
-        <img src="/icons/lock.svg" class="w-40" alt="lock" />
+      <div 
+        :style="`background-color: #1eb980aa`"
+        class="flex items-center justify-center absolute z-1 p-20 rounded-full">
+          <img src="/icons/lock.svg" class="w-40" alt="lock" />
+      </div>
       </div>
     </div>
   </div>

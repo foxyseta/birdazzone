@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 const props = defineProps<{
-   text: string;
-   clickable: boolean
- }>();
- const emit = defineEmits(['click'])
+  text: string;
+  clickable: boolean;
+}>();
+const emit = defineEmits(['click']);
 
- const onClick = () => {
-  emit('click')
- }
+const onClick = () => {
+  emit('click');
+};
 </script>
 <template>
   <!-- Active -->
