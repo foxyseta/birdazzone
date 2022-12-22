@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 
 const username = ref('');
+
 </script>
 <template>
   <div class="p-5 w-full flex justify-center">
