@@ -67,6 +67,14 @@ func TestGetTweetsFromUser(t *testing.T) {
 	testTweets(t, response, err)
 }
 
+func TestGetRecentQuotingTweets(t *testing.T) {
+	response, err := GetRecentQuotingTweets("1460323737035677698")
+	testTweets(t, response, err)
+	if len(response.Data) != 9 {
+		t.Fatalf("%d quoting tweets found. Exptected 9.", len(response.Data))
+	}
+}
+
 func TestGetTweetsFromHashtag(t *testing.T) {
 	response, err := GetManyRecentTweetsFromQuery("hello", util.LastInstantAtGivenTime(time.Now(), 18), "")
 	testTweets(t, response, err)
