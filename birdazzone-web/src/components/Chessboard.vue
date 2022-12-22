@@ -146,7 +146,7 @@ const onTweetAgainClicked = () => {
       </div>
       <div v-show="error" class="flex-col justify-center items-center m-3">
         <div class="flex justify-center items-center">
-          <img style="height: 12rem; widows: 12rem" src="/bchess.png" />
+          <img style="height: 12rem; widows: 12rem" src="/bchess.png" alt="A bird playing chess." />
         </div>
         <div class="animate-pulse rounded-2xl p-3">
           <h1 class="text-lred text-center text-xl font-bold">{{ error }}</h1>
