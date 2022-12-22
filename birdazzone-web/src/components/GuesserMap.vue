@@ -82,7 +82,7 @@ onBeforeMount(async () => {
 
 <template>
   <!-- Error -->
-  <div v-if="error" class="flex justify-center items-center w-full">
+  <div v-if="error" class="flex justify-center items-center w-screen">
     <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
   </div>
 

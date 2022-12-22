@@ -10,7 +10,7 @@ export interface Tweet {
 export interface User {
   username: string;
   name: string;
-  profileImageUrl: string;
+  profile_image_url: string;
 }
 
 export interface Metrics {

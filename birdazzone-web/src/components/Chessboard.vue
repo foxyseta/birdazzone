@@ -103,18 +103,23 @@ onBeforeMount(() => {
 });
 </script>
 <template>
-  <div>
+  <div class="h-screen flex justify-evenly">
     <!-- HEAD -->
-    <div class="flex mb-3">
-      <UserInfo class="w-full" :user="props.user" :turn="turn" :game-id="gameId" />
-      <BirdazzoneButton class="ml-3" :text="'CHECK OPPONENTS'" :active="boardLocked" @click="loadLastMove" />
-      <BirdazzoneButton class="ml-3" :text="'TWEET AGAIN'" :active="boardLocked" @click="twitterIntent" />
+    <div class="ml-10 mt-5 justify-center grid grid-rows-5 grid-flow-col mb-0">
+      <div></div>
+      <div class="mb-6 flex flex-wrap content-center justify-center">
+        <UserInfo class="w-1000" :user="props.user" :turn="turn" :game-id="gameId" />
+      </div>
+      <div class="grid grid-cols-2 gap-4 h-10">
+        <BirdazzoneButton class="ml-3" :text="'CHECK OPPONENTS'" :active="boardLocked" @click="loadLastMove" />
+        <BirdazzoneButton class="ml-3" :text="'TWEET AGAIN'" :active="boardLocked" @click="twitterIntent" />
+      </div>
     </div>
     <!-- CONTENT -->
     <div v-show="isError">
       <h1 class="text-lred font-bold">{{ error }}</h1>
     </div>
-    <div class="w-full flex justify-center items-center m-15">
+    <div class="flex justify-center items-center mt-0">
       <TheChessboard
         :style="`height: ${CHESSBOARD_SIZE}rem; width: ${CHESSBOARD_SIZE}rem;`"
         class="relative z-0"

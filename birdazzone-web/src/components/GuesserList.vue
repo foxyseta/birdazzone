@@ -89,7 +89,7 @@ onBeforeMount(fetchList);
   <!-- Non error -->
   <div class="flex flex-col">
     <CardPerPage
-      class="mt-2 flex justify-start"
+      class="mb-3 flex justify-start"
       v-show="!firstLoad"
       :itemPerPage="itemPerPage"
       @change-item-page="

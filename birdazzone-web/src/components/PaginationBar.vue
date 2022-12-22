@@ -1,16 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 const props = defineProps<{ actualPage: number; max: number }>();
-
-/*let tabs = []
-    for(let i = 1; i<=props.max;i++){
-        tabs +={index:i, actual:(props.actualPage==i)?true:false,}
-    }*/
-
-/* la mia idea sarebbe creare un oggetto del tipo {index: number, actual: boolean}
-        poi fare un ciclo per max volte in cui si popola tabs, ovvero la lista di pulsanti
-        in questo modo si riesce a controllare la barra dei numeri e a sapere che sfondo mettere
-    */
 </script>
 
 <template>

@@ -15,7 +15,7 @@ const onValuesInserted = (user: User, color: ChessColor) => {
 };
 </script>
 <template>
-  <div class="place-content-center place-items-center w-screen mb-10 h-screen p-10 px-0">
+  <div class="place-content-center place-items-center w-screen mb-10 h-screen p-10 pt-0 px-0">
     <div class="flex justify-center">
       <div
         class="shadow-4xl rounded-lg text-white bg-lgreen text-4xl font-semibold py-3 my-8 m-3 mx-0"
@@ -29,6 +29,7 @@ const onValuesInserted = (user: User, color: ChessColor) => {
       v-if="selectedUser && selectedColor && !showAlert"
       :starting-color="selectedColor"
       :user="selectedUser"
+      class="h-full"
     />
   </div>
 </template>
