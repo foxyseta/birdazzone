@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { User } from '@/api/interfaces/tweet';
 
-const props = defineProps<{ user: User; gameId: string | undefined; turn: number }>();
+const props = defineProps<{ user: User; gameId: string | null; turn: number }>();
 </script>
 <template>
   <div class="flex justify-between items-center bg-foreground rounded-2xl p-6">
