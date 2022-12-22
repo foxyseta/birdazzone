@@ -16,9 +16,8 @@ const checkUsername = async () => {
   if (!username.value) return false;
   const response = await ApiRepository.getHelloUser(username.value);
 
-  isError.value = response.statusCode === 2000;
+  isError.value = !response.esit;
 
-  // TODO capire perché non viene mostrato il messaggio di errore
   if (response.statusCode === 200) {
     user.value = response.data!;
     return true;
