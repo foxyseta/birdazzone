@@ -128,9 +128,6 @@ func TestExtractGameResultsTimes(t *testing.T) {
 		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
 	}
 	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "2099-12-15")
-	if err.Code != http.StatusBadRequest {
-		t.Fatalf("Expected code %d but got %d", http.StatusBadRequest, err.Code)
-	}
 	// should be ok
 	_, _, err = extractGameResultsTimes(gameTracker, "2021-12-15", "")
 	if err.Message != "" {
