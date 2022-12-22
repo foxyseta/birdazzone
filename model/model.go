@@ -215,7 +215,7 @@ func StringToCoordinates(s string) (Coordinates, error) {
 
 func MakeCoordinates(l *geojson.Geometry, p twitter.Profile) *Coordinates {
 	if l == nil {
-		result, err := StringToCoordinates(p.Location)
+		result, err := Coordinates{}, errors.New("User has no location")
 		if err != nil {
 			return nil
 		}
