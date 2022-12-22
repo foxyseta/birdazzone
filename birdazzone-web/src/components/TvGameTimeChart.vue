@@ -84,6 +84,7 @@ const fetchAttempts = async () => {
     });
   } else {
     errorMessage.value = response.error!.message;
+    loading.value = false;
   }
   loading.value = false;
 };

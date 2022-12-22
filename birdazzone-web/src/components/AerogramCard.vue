@@ -188,6 +188,6 @@ const popover = () => {
         </div>
       </div>
     </div>
-    <div class="text-sm text-lgray ml-8 mt-3">* data refere only to first 100 attempts</div>
+    <div class="text-sm text-lgray ml-8 mt-3">* data refere only to first 100 attempts per day</div>
   </div>
 </template>

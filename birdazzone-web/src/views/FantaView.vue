@@ -20,7 +20,7 @@ const showTeams = () => {
 </script>
 
 <template>
-  <div class="pl-4 w-full flex flex-col justify-start">
+  <div class="pl-4 w-screen flex flex-col justify-start">
     <div class="flex flex-row">
       <div class="flex flex-col" style="flex: 1 1 auto"></div>
       <div
@@ -38,7 +38,7 @@ const showTeams = () => {
     </div>
 
     <div class="h-full">
-      <div class="flex flex-row" v-show="showPoliticiansTab">
+      <div class="flex justify-center flex-row" v-show="showPoliticiansTab">
         <div>
           <PoliticiansTab class="flex" style="flex: 1 1 auto" />
         </div>

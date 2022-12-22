@@ -4,7 +4,7 @@ import { onBeforeMount, onBeforeUpdate, ref } from 'vue';
 import type { Politician } from '@/api/interfaces/politician';
 
 const SERIE_NAME = 'Politicians';
-const CHART_TITLE = 'Politician distribution TODO';
+const CHART_TITLE = 'Scores distribution';
 const COLUMN_NO = 10;
 const UNIT_BIN = 100;
 

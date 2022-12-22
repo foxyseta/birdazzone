@@ -1,16 +1,16 @@
 export interface Tweet {
   text: string;
-  author: Author;
+  author: User;
   created_at: string;
   coordinates?: Coordinates;
   metrics: Metrics;
   medias: string[];
 }
 
-export interface Author {
+export interface User {
   username: string;
   name: string;
-  profile_image_url: string;
+  profileImageUrl: string;
 }
 
 export interface Metrics {

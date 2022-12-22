@@ -33,7 +33,7 @@ const items = ref<NavItem[]>([
 const select = (url: string) => items.value.forEach((x) => (x.active = x.url === url));
 </script>
 <template>
-  <aside class="w-64 h-100 bg-foreground" aria-label="Sidebar">
+  <aside class="w-64 min-w-5xl max-w-5xl h-100 bg-foreground fixed-left" aria-label="Sidebar">
     <!-- Title -->
     <div class="py-10 flex flex-col items-center">
       <img src="/logo.png" alt="Birdazzone's logo" />

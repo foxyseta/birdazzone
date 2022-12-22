@@ -24,9 +24,3 @@ const props = defineProps<{ teams: FantaTeam[] }>();
     </div>
   </div>
 </template>
-
-<style>
-.fantaTeam {
-  filter: hue-rotate(110deg) brightness(85%);
-}
-</style>
