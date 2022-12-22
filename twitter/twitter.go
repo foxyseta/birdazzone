@@ -142,9 +142,9 @@ func GetRecentTweetsFromQuery(query string, startTime string, endTime string, ma
 	)
 }
 
-func GetRecentQuotingTweets(id int) (*ProfileTweets, error) {
+func GetRecentQuotingTweets(id string) (*ProfileTweets, error) {
 	return getTweets(
-		fmt.Sprintf("https://api.twitter.com/2/tweets/%d/quote_tweets", id),
+		fmt.Sprintf("https://api.twitter.com/2/tweets/%s/quote_tweets", id),
 		[]any{})
 }
 
