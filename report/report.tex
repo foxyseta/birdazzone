@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage[hidelinks]{hyperref}
 \usepackage{verbatim}
+\usepackage{graphicx}
 
 \graphicspath{ {./images/} }
 
@@ -59,26 +60,26 @@ di priorità.
 \subsubsection{Preparazione tecnica}
 
 \begin{itemize}
-	\item Ambiente di sviluppo CAS
-	\item Configurazione dipendente dalle tecnologie
-	\item Partita a Scrumble
-	\item Ambiente di \emph{test}
+	\item \#0 Partita a Scrumble
+	\item \#1 Ambiente di sviluppo CAS
+	\item \#2 Configurazione dipendente dalle tecnologie
+	\item \#3 Ambiente di \emph{test}
 \end{itemize}
 
 \subsubsection{Indovinare la ``ghigliottina''}
 
 \begin{itemize}
-	\item ``Come giocatore da casa, voglio essere a conoscenza della soluzione
+	\item \#4 ``Come giocatore da casa, voglio essere a conoscenza della soluzione
 	      della partita per capire se ho indovintato o meno''
-	\item ``Come giocatore da casa, voglio visualizzare al classifica di chi ha
+	\item \#5 ``Come giocatore da casa, voglio visualizzare al classifica di chi ha
 	      indovinato per vedere la posizione mia e dei miei amici''
-	\item ``Come giocatore da casa, voglio che solo i giocatori che hanno davvero
+	\item \#6 ``Come giocatore da casa, voglio che solo i giocatori che hanno davvero
 	      indovinato vengano mostrati in classifica''
-	\item ``Come appassionato curioso, voglio visualizzare dove si trovano i
+	\item \#7 ``Come appassionato curioso, voglio visualizzare dove si trovano i
 	      giocatori che hanno indovinato per studiare la loro demografia''
-	\item ``Come appassionato curioso, voglio filtrare i risultati temporalmente
+	\item \#8 ``Come appassionato curioso, voglio filtrare i risultati temporalmente
 	      per studiare uno specifico intervallo di tempo''
-	\item ``Come appassionato curioso, voglio vedere lo storico dei risultati
+	\item \#9 ``Come appassionato curioso, voglio vedere lo storico dei risultati
 	      complessivi delle partite per studiare la loro evoluzione''
 \end{itemize}
 
@@ -92,35 +93,52 @@ Ghigliottina.
 \subsubsection{Fantacitorio}
 
 \begin{itemize}
-	\item ``Come giocatore del Fantacitorio, voglio vedere quanti punti ciascun
+	\item \#10 ``Come giocatore del Fantacitorio, voglio vedere quanti punti ciascun
 	      politico ha realizzato per capire come stia andando la partita''
-	\item ``Come giocatore del Fantacitorio, voglio vedere le squadre degli altri
+	\item \#11 ``Come giocatore del Fantacitorio, voglio vedere le squadre degli altri
 	      giocatori per poterle confrontare con la mia''
-	\item ``Come giocatore del Fantacitorio, voglio vedere statistiche aggiuntive
+	\item \#12 ``Come giocatore del Fantacitorio, voglio vedere statistiche aggiuntive
 	      sui politici per strategizzare meglio''
 \end{itemize}
 
 \subsubsection{Scacchi contro la folla}
 
 \begin{itemize}
-	\item ``Come giocatore di scacchi, voglio poter sfidare una folla di utenti
-	      Tweeter per giocare una partita le cui mosse avversarie siano decise a
-	      maggioranza''
-	\item ``Come giocatore di scacchi, voglio poter condividere le mie mosse su
-	      Twitter per rendere le mie partite pubbliche''
+	\item \#13 ``Come giocatore di scacchi, voglio poter sfidare una folla di
+	      utenti Tweeter per giocare una partita le cui mosse avversarie siano
+	      decise a maggioranza''
+	\item \#14 ``Come giocatore di scacchi, voglio poter condividere le mie mosse
+	      su Twitter per rendere le mie partite pubbliche''
 \end{itemize}
 
 \subsection{Diagramma dei casi d'uso}
 
-
+\includegraphics[width=\textwidth]{use-cases}
 
 \subsection{Diagramma delle classi o degli oggetti}
+
+Golang supporta la programmazione orientata agli oggetti, ma non le classi.
+TypeScript supporta le classi, ma come ragionevole convenzione di progetto è
+stata fatta la scelta di evitare la programmazione a oggetti durante lo
+sviluppo front-end, che descrive solo una interfaccia grafica, e non la logica
+di business. Ecco un diagramma pseudo-UML che descrive invece il progetto
+back-end:
+
+\includegraphics[width=\textwidth]{backend-model}
+\includegraphics[width=\textwidth]{backend-gametracker-util}
+\includegraphics[width=\textwidth]{backend-twitter-fantacitorio}
 
 \section{\emph{Sprint} 0}
 
 \subsection{\emph{Sprint goal}}
 
+Lo sprint goal per lo sprint 0 è la "preparazione" dell'intero progetto.
+
 \subsection{\emph{Sprint backlog}}
+
+Lo sprint backlog è consistito di due storie, entrambe tecniche:
+
+
 
 \subsection{\emph{Definition of done}}
 
