@@ -105,7 +105,12 @@ onBeforeMount(() => {
           <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
         </div>
         <div class="flex flex-col items-center">
-          <NumberOfPoliticians class="flex align-center m-2 mb-3" style="flex: 1 1 auto" v-if="!loading" :num="list.length"/>
+          <NumberOfPoliticians
+            class="flex align-center m-2 mb-3"
+            style="flex: 1 1 auto"
+            v-if="!loading"
+            :num="list.length"
+          />
           <FantaRankChart class="flex align-center m-2 mb-6" style="flex: 1 1 auto" v-if="!loading" :list="list" />
           <FantacitorioHistogram class="flex align-center mt-2" style="flex: 1 1 auto" v-if="!loading" :list="list" />
         </div>

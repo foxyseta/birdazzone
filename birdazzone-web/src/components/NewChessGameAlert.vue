@@ -57,7 +57,9 @@ const verifyAndConfirm = async () => {
 
       <div class="flex w-full justify-evenly m-5">
         <div>
-          <button v-if="color !== 'black'" @click="selectBlack()" class="bg-lblack p-10 text-white rounded-lg">black</button>
+          <button v-if="color !== 'black'" @click="selectBlack()" class="bg-lblack p-10 text-white rounded-lg">
+            black
+          </button>
           <button
             v-if="color === 'black'"
             @click="selectBlack()"
@@ -67,7 +69,9 @@ const verifyAndConfirm = async () => {
           </button>
         </div>
         <div>
-          <button v-if="color !== 'white'" @click="selectWhite()" class="bg-white p-10 text-lblack rounded-lg">white</button>
+          <button v-if="color !== 'white'" @click="selectWhite()" class="bg-white p-10 text-lblack rounded-lg">
+            white
+          </button>
           <button
             v-if="color === 'white'"
             @click="selectWhite()"
@@ -78,7 +82,12 @@ const verifyAndConfirm = async () => {
         </div>
       </div>
 
-      <BirdazzoneButton @click="verifyAndConfirm" class="h-20 w-40 mt-10 border-2" :active="username !== ''" :text="'Done!'" />
+      <BirdazzoneButton
+        @click="verifyAndConfirm"
+        class="h-20 w-40 mt-10 border-2"
+        :active="username !== ''"
+        :text="'Done!'"
+      />
     </div>
   </div>
 </template>
