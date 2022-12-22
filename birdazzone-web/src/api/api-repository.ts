@@ -103,7 +103,14 @@ export default class ApiRepository {
     ApiManager.get<User>(this.stringFormat(this._BASE_URL + this._HELLO_USER, username));
 
   public static readonly getChessMoves = (user: string, gameId: string, turn: string) =>
-    ApiManager.get<string>(this.stringFormat(this._BASE_URL + this._CHESS_USER_GAME_TURN, user, gameId, turn));
+    ApiManager.get<string>(
+      this.stringFormat(
+        this._BASE_URL + this._CHESS_USER_GAME_TURN,
+        user,
+        new Date(parseInt(gameId)).toISOString(),
+        turn
+      )
+    );
 
   /// Takes a string in input containing placeholders in the form of {n}, where
   /// n is a number >= 0. Then replace all the occurence of the {n} pattern with
@@ -129,5 +136,11 @@ export default class ApiRepository {
     } else {
       return new ApiResponse<string>(response.status, undefined, { code: 400, message: await response.text() });
     }
+  };
+
+  public static readonly getTwitterTimestamp = async (): Promise<Date> => {
+    const repsonse = await fetch('https://api.twitter.com/1/help/test.json', { method: 'HEAD' });
+    const date = repsonse.headers.get('date');
+    return date ? new Date(date) : new Date(Date.now());
   };
 }

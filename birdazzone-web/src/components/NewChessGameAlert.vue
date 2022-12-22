@@ -10,35 +10,33 @@ const username = ref<string>('');
 const user = ref<User>();
 const error = ref<string>('');
 const isError = ref<boolean>(false);
-const color = ref<ChessColor>('white')
+const color = ref<ChessColor>('white');
 
 const checkUsername = async () => {
-  if (!username.value) return false
+  if (!username.value) return false;
   const response = await ApiRepository.getHelloUser(username.value);
 
   isError.value = response.statusCode === 2000;
 
   // TODO capire perché non viene mostrato il messaggio di errore
   if (response.statusCode === 200) {
-    user.value = response.data!
-    return true
+    user.value = response.data!;
+    return true;
   }
   error.value = 'User not found :/ Try again!';
-  return false
+  return false;
 };
 
 const selectWhite = () => {
-  color.value = "white"
-}
+  color.value = 'white';
+};
 const selectBlack = () => {
- color.value = "black"
-}
+  color.value = 'black';
+};
 
 const verifyAndConfirm = async () => {
-  if (await checkUsername())
-    emit("done", user.value, color.value)
-}
-
+  if (await checkUsername()) emit('done', user.value, color.value);
+};
 </script>
 <template>
   <div class="shadow bg-foreground rounded-2xl flex justify-start items-center m-10 p-10 flex-col">
@@ -59,16 +57,28 @@ const verifyAndConfirm = async () => {
 
       <div class="flex w-full justify-evenly m-5">
         <div>
-          <button v-if="color !== 'black'" @click="selectBlack()" class="bg-lblack p-10 text-white"> black </button>
-          <button v-if="color === 'black'" @click="selectBlack()" class="bg-lblack p-10 text-white border-lgreen border-2"> black </button>
+          <button v-if="color !== 'black'" @click="selectBlack()" class="bg-lblack p-10 text-white">black</button>
+          <button
+            v-if="color === 'black'"
+            @click="selectBlack()"
+            class="bg-lblack p-10 text-white border-lgreen border-2"
+          >
+            black
+          </button>
         </div>
         <div>
-          <button v-if="color !== 'white'" @click="selectWhite()" class="bg-white p-10 text-lblack"> white </button>
-          <button v-if="color === 'white'" @click="selectWhite()" class="bg-white p-10 text-lblack border-2 border-lgreen"> white </button>
+          <button v-if="color !== 'white'" @click="selectWhite()" class="bg-white p-10 text-lblack">white</button>
+          <button
+            v-if="color === 'white'"
+            @click="selectWhite()"
+            class="bg-white p-10 text-lblack border-2 border-lgreen"
+          >
+            white
+          </button>
         </div>
       </div>
 
-      <BirdazzoneButton @click="verifyAndConfirm" class="h-20 w-40 mt-10" :active="username !== ''" :text="'Done!'"/>
+      <BirdazzoneButton @click="verifyAndConfirm" class="h-20 w-40 mt-10" :active="username !== ''" :text="'Done!'" />
     </div>
   </div>
 </template>
