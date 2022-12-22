@@ -29,7 +29,7 @@ export default class ApiRepository {
 
   private static readonly _HELLO_USER = '/hello/user/{0}';
 
-  private static readonly _CHESS_USER_GAME_TURN = "/chess/{0}/{1}/{2}"
+  private static readonly _CHESS_USER_GAME_TURN = '/chess/{0}/{1}/{2}';
 
   public static readonly getPoliticians = (): Promise<ApiResponse<Politician[]>> =>
     ApiManager.get<Politician[]>(this._BASE_URL + this._FANTACITORIO_POLITICIANS);
@@ -102,8 +102,8 @@ export default class ApiRepository {
   public static readonly getHelloUser = (username: string): Promise<ApiResponse<User>> =>
     ApiManager.get<User>(this.stringFormat(this._BASE_URL + this._HELLO_USER, username));
 
-  public static readonly getChessMoves = (user: string, gameId: string, turn: string) => 
-    ApiManager.get<string>(this.stringFormat(this._BASE_URL + this._CHESS_USER_GAME_TURN, user, gameId, turn))
+  public static readonly getChessMoves = (user: string, gameId: string, turn: string) =>
+    ApiManager.get<string>(this.stringFormat(this._BASE_URL + this._CHESS_USER_GAME_TURN, user, gameId, turn));
 
   /// Takes a string in input containing placeholders in the form of {n}, where
   /// n is a number >= 0. Then replace all the occurence of the {n} pattern with

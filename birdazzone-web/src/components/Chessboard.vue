@@ -8,96 +8,115 @@ import type { User } from '@/api/interfaces/tweet';
 import UserInfo from './UserInfo.vue';
 import ApiRepository from '@/api/api-repository';
 
+export type ChessColor = "white" | "black"
+
 interface IMove {
-    from: string
-    to: string
+  from: string;
+  to: string;
 }
 
-const WHITE_TURN = "white"
-const BLACK_TURN = "black"
-const CHESSBOARD_SIZE = 50
+const WHITE_TURN = 'white';
+const BLACK_TURN = 'black';
+const CHESSBOARD_SIZE = 50;
 
-const props = defineProps<{user: User}>()
+const props = defineProps<{ user: User, startingColor: ChessColor}>();
 
 const boardAPI = ref<ChessboardAPI>();
 const boardConfig = ref<BoardConfig>({
   viewOnly: false,
+  orientation: props.startingColor,
   events: {
-    move: (from, to, _) => twitterIntent()
-  }
-})
-const boardLocked = ref<boolean>(false)
-const turn = ref<number>(1)
-const gameId = ref<string>()
+    move: (_) => twitterIntent(),
+  },
+});
+const boardLocked = ref<boolean>(false);
+const turn = ref<number>(1);
+const gameId = ref<string>();
 
 const loadLastMove = async () => {
-    if (!gameId.value)
-        return
-    const response = await ApiRepository.getChessMoves(props.user.username, gameId.value, turn.value.toString())
-    if (response.statusCode === 200) {
-        doOpponentMove(constructMove(response.data!))
-        boardLocked.value = false
-    } else if (response.statusCode === 204) {
-    } else {
- 
-    } 
-}
+  if (!gameId.value) return;
+  const response = await ApiRepository.getChessMoves(props.user.username, gameId.value, turn.value.toString());
+  if (response.statusCode === 200) {
+    doOpponentMove(constructMove(response.data!));
+    boardLocked.value = false;
+  } else if (response.statusCode === 204) {
+    // TODO
+  } else {
+    // TODO
+  }
+};
 
 const constructMove = (apiMove: string): IMove => ({
-    from: apiMove.slice(0,2),
-    to: apiMove.slice(2, 4)
-}) 
+  from: apiMove.slice(0, 2),
+  to: apiMove.slice(2, 4),
+});
 
 const doOpponentMove = (move: IMove) => {
-    boardAPI.value?.makeMove(move.from, move.to)
+  boardAPI.value?.makeMove(move.from, move.to);
+};
+
+const onMoveDone = () => {
+  if (boardAPI.value?.board.state.turnColor === BLACK_TURN) {
+    twitterIntent()
+  }
+  return 1;
 }
 
 const twitterIntent = () => {
-    console.log(boardAPI.value?.board.state.turnColor)
-    if (boardAPI.value?.board.state.turnColor === BLACK_TURN) {
-      /*window.open(
+    /*window.open(
         "https://twitter.com/intent/tweet?url=https%3A%2F%2Ffen2image.chessvision.ai%2F" +
         encodeURIComponent(
           encodeURIComponent(boardAPI?.value?.board.getFen() ?? 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
         ) +
-        "&text=Your%20move.%20Please%20use%20the%20%22a1b2%22%20format.%20This%20is%20a%20majority%20vote.",
+        "&text=Your%20move.%20Please%20retweet%20using%20the%20%22a1b2%22%20format.%20This%20is%20a%20majority%20vote.",
         "_blank");*/
 
-        console.log("intent aperto")
-        boardLocked.value = true
-      }
-
-    return 1
-}
+    console.log('intent aperto');
+    boardLocked.value = true;
+};
 
 const handleCheckmate = (isMated: string) => {
   alert((isMated === 'w' ? 'Black' : 'White') + 'wins!');
-}
+};
 
 const setGameId = () => {
-    gameId.value = Date.now().toString()
-}
+  gameId.value = Date.now().toString();
+};
 
-onBeforeMount(()=>{
-    setGameId()
-})
-
+onBeforeMount(() => {
+  setGameId();
+  if (props.startingColor === "black") {
+    console.log("dakdaskds")
+    twitterIntent()
+  }
+  
+});
 </script>
 <template>
-    <div>
-        <!-- HEAD -->
-        <div class="p-3 flex">
-            <BirdazzoneButton :text="'Check for a new move'" :active="boardLocked" @click="loadLastMove" />
-            <UserInfo :user="props.user" :turn="turn" :game-id="gameId"/>
-        </div>
-        <!-- CONTENT -->
-        <div class="flex flex-row place-content-center flex-initial justify-start place-items-center mb-10">
-        <TheChessboard :style="`height: ${CHESSBOARD_SIZE}rem; width: ${CHESSBOARD_SIZE}rem;`" class="p-3 relative z-0" :board-config="boardConfig" :after-move-cb="twitterIntent" @board-created="(api) => (boardAPI = api)"
-            @checkmate="handleCheckmate" />
-        <!-- Lock -->
-        <div v-show="boardLocked" :style="`height: ${CHESSBOARD_SIZE}rem; width: ${CHESSBOARD_SIZE}rem;`" class="bg-lgreen flex items-center justify-center absolute z-1">
-            <img src="/public/icons/lock.svg" class="w-40" alt="lock" />
-        </div>
-        </div>
+  <div>
+    <!-- HEAD -->
+    <div class="flex mb-3">
+      <UserInfo class="w-full" :user="props.user" :turn="turn" :game-id="gameId" />
+      <BirdazzoneButton class="ml-3" :text="'CHECK OPPONENTS'" :active="boardLocked" @click="loadLastMove" />
     </div>
+    <!-- CONTENT -->
+    <div class="w-full flex justify-center items-center m-15">
+      <TheChessboard
+        :style="`height: ${CHESSBOARD_SIZE}rem; width: ${CHESSBOARD_SIZE}rem;`"
+        class="relative z-0"
+        :board-config="boardConfig"
+        :after-move-cb="onMoveDone"
+        @board-created="(api) => (boardAPI = api)"
+        @checkmate="handleCheckmate"
+      />
+      <!-- Lock -->
+      <div
+        v-if="boardLocked"
+        :style="`background-color: #1eb980aa`"
+        class="flex items-center justify-center absolute z-1 p-20 rounded-full"
+      >
+        <img src="/public/icons/lock.svg" class="w-40" alt="lock" />
+      </div>
+    </div>
+  </div>
 </template>

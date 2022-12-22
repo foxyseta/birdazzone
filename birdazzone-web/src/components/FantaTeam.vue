@@ -26,9 +26,14 @@ onBeforeMount(() => {
           </div>
           <div class="flex flex-col mx-4" style="flex: 1 1 auto">
             <p class="flex flex-1 text-white font-bold">@{{ props.data.username }}</p>
-            <img :src="props.data.imageUrl" alt="fantacitorio team" style="border-radius: 5%" />
+            <img class="fanta-team" :src="props.data.imageUrl" alt="fantacitorio team" style="border-radius: 5%" />
           </div></div
       ></a>
     </button>
   </div>
 </template>
+<style>
+.fanta-team {
+  filter: hue-rotate(110deg) brightness(85%);
+}
+</style>
