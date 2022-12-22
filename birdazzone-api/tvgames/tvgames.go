@@ -398,6 +398,9 @@ func gameAttemptsStats(ctx *gin.Context) {
 
 func gameResultsHelper(solution model.GameKey, tweets *[]twitter.ProfileTweet, each int, chart []model.BooleanChart, err error, updateNextTime bool) []model.BooleanChart {
 	if err == nil {
+		if len(*tweets) == 0 {
+			return chart
+		}
 		successes := 0
 		fails := 0
 		lt, _ := util.StringToDateTime((*tweets)[0].CreatedAt)
