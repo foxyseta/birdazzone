@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"git.hjkl.gq/team13/birdazzone-api/model"
 	"git.hjkl.gq/team13/birdazzone-api/twitter"
@@ -29,6 +30,7 @@ func ChessGroup(group *gin.RouterGroup) {
 // @Failure 404  {object} model.Error "No user or no post found"
 // @Router  /chess/{user}/{game}/{turn} [get]
 func getChessMove(ctx *gin.Context) {
+	// Username
 	username := ctx.Param("user")
 	validUsername, _ := regexp.MatchString("^[A-Za-z0-9_]+$", username)
 	if !validUsername {
@@ -38,6 +40,7 @@ func getChessMove(ctx *gin.Context) {
 		})
 		return
 	}
+	// Date
 	date := ctx.Param("game")
 	turn, err := strconv.Atoi(ctx.Param("turn"))
 	if err != nil {
@@ -47,6 +50,11 @@ func getChessMove(ctx *gin.Context) {
 		})
 		return
 	}
+	minimumLimit := time.Now().AddDate(0, 0, -7).Format(time.RFC3339)
+	if date < minimumLimit {
+		date = minimumLimit
+	}
+	// Turn
 	if turn < 1 {
 		ctx.JSON(http.StatusBadRequest, model.Error{
 			Code:    http.StatusBadRequest,
@@ -54,6 +62,7 @@ func getChessMove(ctx *gin.Context) {
 		})
 		return
 	}
+	// Result
 	res, error := uncheckedGetCheckMove(username, date, turn)
 	if error != nil {
 		ctx.JSON(error.Code, model.Error{
@@ -80,7 +89,7 @@ func uncheckedGetCheckMove(username string, date string, turn int) (string, *mod
 	if length < turn {
 		return "", &model.Error{
 			Code:    http.StatusNotFound,
-			Message: fmt.Sprintf("Wanted to retrieve turn #%d. Tweets not found: %d.", turn, length),
+			Message: fmt.Sprintf("Wanted to retrieve turn #%d. Tweets found: just %d.", turn, length),
 		}
 	}
 	return mostPopularChessMove(tweets.Data[length-turn]), nil
@@ -93,7 +102,7 @@ func mostPopularChessMove(tweet twitter.ProfileTweet) string {
 	if err != nil {
 		return ""
 	}
-	var counters map[string]int
+	counters := map[string]int{}
 	maxMove, maxCounter := "", 0
 	for _, tweet := range tweets.Data {
 		move := chessMove.FindString(strings.ToLower(tweet.Text))
