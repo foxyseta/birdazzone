@@ -15,9 +15,9 @@ const onValuesInserted = (user: User, color: ChessColor) => {
 };
 </script>
 <template>
-  <div class="place-content-center place-items-center w-full mb-10 h-screen p-10">
+  <div class="place-content-center w-full mb-10 h-screen p-4">
     <div class="flex justify-center">
-      <div class="shadow-4xl rounded-lg text-white bg-lgreen text-4xl font-semibold p-3 my-12 m-3">CHESS</div>
+      <div class="shadow-4xl rounded-lg text-white bg-lgreen text-4xl font-semibold p-3 m-3">CHESS</div>
     </div>
     <NewChessGameAlert v-if="showAlert" @done="onValuesInserted" />
     <Chessboard

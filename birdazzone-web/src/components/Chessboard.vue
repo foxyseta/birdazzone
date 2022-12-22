@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BirdazzoneButton from '../components/BirdazzoneButton.vue';
+import BirdazzoneSmartButton from '../components/BirdazzoneSmartButton.vue';
 import { onBeforeMount, ref } from 'vue';
 import { TheChessboard } from 'vue3-chessboard';
 import 'vue3-chessboard/style.css';
@@ -7,7 +7,6 @@ import type { ChessboardAPI, BoardConfig } from 'vue3-chessboard';
 import type { User } from '@/api/interfaces/tweet';
 import UserInfo from './UserInfo.vue';
 import ApiRepository from '@/api/api-repository';
-import { ErrorTypes } from 'vue-router';
 
 export type ChessColor = 'white' | 'black';
 
@@ -36,19 +35,29 @@ const gameId = ref<string>();
 const isError = ref<boolean>(false);
 const error = ref<string>('');
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 const loadLastMove = async () => {
-  if (!gameId.value) return;
+  if (!gameId.value )
+    return;
+  isError.value = false;
+
   const response = await ApiRepository.getChessMoves(props.user.username, gameId.value, turn.value.toString());
   if (response.statusCode === 200) {
-    isError.value = false;
     doOpponentMove(constructMove(response.data!));
     boardLocked.value = false;
   } else if (response.statusCode === 204) {
     isError.value = true;
     error.value = 'Nobody answered yet...be patient';
+    await sleep(5000)
+    isError.value = false
   } else {
     isError.value = true;
     error.value = 'You should make a new post first!';
+    await sleep(5000)
+    isError.value = false
   }
 };
 
@@ -101,18 +110,30 @@ onBeforeMount(() => {
     twitterIntent();
   }
 });
+
+const onCheckOpponentClicked = () => {
+  if (!boardLocked.value) return
+  loadLastMove()
+}
+
+const onTweetAgainClicked = () => {
+  if (!boardLocked.value) return
+  twitterIntent()
+}
 </script>
 <template>
   <div>
     <!-- HEAD -->
     <div class="flex mb-3">
       <UserInfo class="w-full" :user="props.user" :turn="turn" :game-id="gameId" />
-      <BirdazzoneButton class="ml-3" :text="'CHECK OPPONENTS'" :active="boardLocked" @click="loadLastMove" />
-      <BirdazzoneButton class="ml-3" :text="'TWEET AGAIN'" :active="boardLocked" @click="twitterIntent" />
+      <BirdazzoneSmartButton class="ml-3" :text="'CHECK OPPONENTS'" :clickable="boardLocked" @click="onCheckOpponentClicked" />
+      <BirdazzoneSmartButton class="ml-3" :text="'TWEET AGAIN'" :clickable="boardLocked" @click="onTweetAgainClicked" />
     </div>
     <!-- CONTENT -->
-    <div v-show="isError">
-      <h1 class="text-lred font-bold">{{ error }}</h1>
+    <div v-show="isError" class="flex justify-center m-3">
+      <div  class="animate-pulse border rounded-2xl border-lred p-3">
+        <h1 class="text-lred font-bold">{{ error }}</h1>
+      </div>
     </div>
     <div class="w-full flex justify-center items-center m-15">
       <TheChessboard
