@@ -82,7 +82,6 @@ const doOpponentMove = (move: IMove) => {
 
 const onMoveDone = () => {
   if (boardAPI.value?.board.state.turnColor === BLACK_TURN) {
-    console.log(boardAPI.value?.boardState);
     twitterIntent();
     boardLocked.value = true;
   }
@@ -135,25 +134,30 @@ const onTweetAgainClicked = () => {
     <!-- HEAD -->
     <div class="ml-10 mt-5 justify-center grid grid-rows-5 grid-flow-col mb-0">
       <div class="mb-6 flex flex-wrap content-center justify-center">
-        <UserInfo class="w-1000" :user="props.user" :turn="turn" :game-id="gameId" />
+        <UserInfo v-if="gameId" class="w-1000" :user="props.user" :turn="turn" :game-id="gameId" />
       </div>
       <div class="grid grid-cols-2 gap-4 h-10">
-      <BirdazzoneSmartButton
-        class="ml-3"
-        :text="'CHECK OPPONENTS'"
-        :clickable="boardLocked"
-        @click="onCheckOpponentClicked"
-      />
-      <BirdazzoneSmartButton :class="'ml-3'" :text="'TWEET AGAIN'" :clickable="boardLocked" @click="onTweetAgainClicked" />
+      <div class="ml-3">
+        <BirdazzoneSmartButton
+          :text="'CHECK OPPONENTS'"
+          :clickable="boardLocked"
+          @click="onCheckOpponentClicked"
+        />
       </div>
-
+      <div class="ml-3">
+        <BirdazzoneSmartButton  :text="'TWEET AGAIN'" :clickable="boardLocked" @click="onTweetAgainClicked" />
+      </div>
+      </div>
+    <div v-show="error"  class="flex-col justify-center items-center m-3">
+      <div class="flex justify-center items-center">
+        <img style="height: 12rem; widows: 12rem;" src="/bchess.png" />
+      </div>
+      <div class="animate-pulse rounded-2xl p-3">
+        <h1 class="text-lred text-center text-xl font-bold">{{ error }}</h1>
+      </div>
+    </div>
     </div>
     <!-- CONTENT -->
-    <div v-show="isError" class="flex justify-center m-3">
-      <div class="animate-pulse border rounded-2xl border-lred p-3">
-        <h1 class="text-lred font-bold">{{ error }}</h1>
-      </div>
-    </div>
     <div class="flex justify-center items-center mt-0">
       <TheChessboard
         :style="`height: ${CHESSBOARD_SIZE}rem; width: ${CHESSBOARD_SIZE}rem;`"
