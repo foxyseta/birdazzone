@@ -24,7 +24,7 @@ onBeforeMount(() => {
         <div class="flex flex-row" style="border-radius: 50%; flex: 1 1 auto">
           <div class="flex" style="width: 4rem; height: 4rem">
             <img
-              :src="props.data.author.profile_image_url"
+              :src="props.data.author.profileImageUrl"
               class="aspect-square"
               style="width: 10em; border-radius: 50%"
               alt="propic"
