@@ -53,6 +53,8 @@
 
 \subsection{\emph{Scope e backlog} di prodotto}
 
+\includegraphics[width=\textwidth]{planning-poker}
+
 Le storie effettivamente svolte sono organizzate in epiche di origine.
 All'interno di ciascuna epica, le storie sono organizzate in ordine decrescente
 di priorità.
@@ -67,6 +69,9 @@ di priorità.
 \end{itemize}
 
 \subsubsection{Indovinare la ``ghigliottina''}
+
+\includegraphics[width=\textwidth]{mock-ghigliottina-tweet-list}
+\includegraphics[width=\textwidth]{mock-ghigliottina-map}
 
 \begin{itemize}
 	\item \#4 ``Come giocatore da casa, voglio visualizzare al classifica di chi ha
@@ -92,6 +97,8 @@ Ghigliottina.
 
 \subsubsection{Fantacitorio}
 
+\includegraphics[width=\textwidth]{mock-fantacitorio-teams}
+
 \begin{itemize}
 	\item \#10 ``Come giocatore del Fantacitorio, voglio vedere quanti punti ciascun
 	      politico ha realizzato per capire come stia andando la partita''
@@ -102,6 +109,8 @@ Ghigliottina.
 \end{itemize}
 
 \subsubsection{Scacchi contro la folla}
+
+\includegraphics[width=\textwidth]{mock-chess-moves}
 
 \begin{itemize}
 	\item \#13 ``Come giocatore di scacchi, voglio poter sfidare una folla di
@@ -226,7 +235,7 @@ infatti verteva sui luoghi (la mappa) e sui filtri temporali.
 
 \subsection{\emph{Sprint backlog}}
 
-Le storie coinvolte sono state \#7, \8 e \#9.
+Le storie coinvolte sono state \#7, \#8 e \#9.
 
 \subsection{\emph{Definition of done}}
 
@@ -251,34 +260,101 @@ Queste cinque storie sono testate in \verb!tvgames/tvgames_test.go! e
 
 \subsection{\emph{Sprint goal}}
 
+Il duplice sprint goal qui era "Fantacitorio e scaTTo matto".
+
 \subsection{\emph{Sprint backlog}}
+
+Le storie coinvolte erano \#10, \#11, \#12, \#13 e \#14.
 
 \subsection{\emph{Definition of done}}
 
+Siccome la definizione di fatto era ben lontana dall'essere soddisfatta, lo
+Scrum Master ha acconsentito ad allungare lo sprint.
+
 \subsection{\emph{Test} di ciascuna storia}
+
+Esistono numerosi test per ciascuna storia in
+\verb!fantacitorio/fantacitorio_test.go! e \verb!chess/chess_test.go!.
 
 \subsection{\emph{Burndown} dello sprint}
 
+Questo sprint si compone di due burndown chart perché ha subito un
+prolungamento.
+
+\includegraphics[width=\textwidth]{burndown-4-0}
+\includegraphics[width=\textwidth]{burndown-4-1}
+
 \subsection{Retrospettiva con \emph{Essence}}
 
+\includegraphics[width=\textwidth]{essence-4-0}
+
 \section{Qualità del codice}
+
+Backend:
+
+\includegraphics[width=\textwidth]{quality-backend-overall}
+\includegraphics[width=\textwidth]{quality-backend-activity}
+
+Frontend:
+
+\includegraphics[width=\textwidth]{quality-frontend-overall}
+\includegraphics[width=\textwidth]{quality-frontend-activity}
 
 \section{Processo seguito}
 
 \subsection{Numero e durata degli sprint}
 
+Incluso lo sprint preparatorio, abbiamo svolto un totale di cinque scatti,
+numerati da 0 a 4 inclusi. Ciascuno ha avuto durata di due settimane, tranne
+l'ultimo che ne è stato prolungato di una settimana in corso d'opera. Questa
+sequenza di sprint ha dato vita al seguente burndown chart:
+
+\includegraphics[width=\textwidth]{burndown}
+
+Con un totale di 216 punti ripartiti (non in ugual modo) fra cinque scatti, la
+velocità media è di 43,2 punti per sprint.
+
 \subsection{Autodescrizione del \emph{team}}
+
+Il gruppo nasce da una ripartizione interna a una cerchia di amici di circa
+quindici studenti di informatica che sono riusciti a suddividersi in gruppi da
+circa cinque persone bilanciati per esperienza.
+
+\includegraphics[width=\textwidth]{ui-team}
 
 \subsection{Risultato dello Scrumble iniziale}
 
-\subsection{Sintesi dei dati di \emph{Gitinspector}}
+\includegraphics[width=\textwidth]{scrumble}
+\includegraphics[width=\textwidth]{scrumble-bis}
+
+\subsection{Definizione di fatto}
+
+
+\subsection{Sintesi dei dati del controllo della versione}
 
 \subsection{Retrospettiva finale con \emph{Essence}}
+
+Come mostrato dalle seguenti foto, nella retrospettiva finale con Essence
+abbiamo collegato a mo' di grafo le carte Essence che ci siamo scambiati.
+L'intento era quello di comprendere le relazioni a cavallo fra esse.
+
+\includegraphics[width=\textwidth]{essence-4-1}
+\includegraphics[width=\textwidth]{essence-4-2}
+\includegraphics[width=\textwidth]{essence-4-3}
+\includegraphics[width=\textwidth]{essence-4-4}
 
 \subsection{Diagramma del \emph{deployment} del prodotto}
 
 \section{Demo}
 
+Un video che illustra l'uso del prodotto è disponibile
+\underline{\href{https://liveunibo-my.sharepoint.com/:v:/g/personal/federica_grisendi_studio_unibo_it/EaOojpKKw9ZIreuXeDcHFicBxvcOjSGP4zPOGXMwKPtEcA?e=QVfOKm}{a questo indirizzo}}.
+
 \section{Artefatti}
+
+\begin{itemize}
+	\item API: \url{http://team13.hjkl.gq:8000/swagger/index.html}
+	\item frontend web: \url{http://team13.hjkl.gq/}
+\end{itemize}
 
 \end{document}
