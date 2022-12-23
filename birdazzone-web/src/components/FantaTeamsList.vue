@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { FantaTeam } from '../api/interfaces/fanta-team';
+import FantaTeamWidget from '../components/FantaTeam.vue';
 
 const props = defineProps<{ teams: FantaTeam[] }>();
 </script>
@@ -7,25 +8,19 @@ const props = defineProps<{ teams: FantaTeam[] }>();
 <template>
   <div v-if="teams.length == 1" class="flex justify-center">
     <div v-for="(item, index) in teams" :key="index">
-      <img :src="item.imageUrl" class="fantaTeam" :alt="'@' + item.username + ' team'" width="800" />
+      <FantaTeamWidget :data="item" />
     </div>
   </div>
   <div v-else>
     <div v-if="teams.length % 2 == 0" class="mx-10 md:mx-20 grid gap-4 md:gap-10 grid-cols-1 md:grid-cols-2 mb-10">
       <div v-for="(item, index) in teams" :key="index">
-        <img :src="item.imageUrl" class="fantaTeam" :alt="'@' + item.username + ' team'" />
+        <FantaTeamWidget :data="item" />
       </div>
     </div>
     <div v-else class="mx-10 md:mx-20 grid gap-4 lg:gap-10 grid-cols-1 lg:grid-cols-3 mb-10">
       <div v-for="(item, index) in teams" :key="index">
-        <img :src="item.imageUrl" class="fantaTeam" :alt="'@' + item.username + ' team'" />
+        <FantaTeamWidget :data="item" />
       </div>
     </div>
   </div>
 </template>
-
-<style>
-.fantaTeam {
-  filter: hue-rotate(110deg) brightness(85%);
-}
-</style>

@@ -21,11 +21,12 @@ onBeforeMount(() => {
     <div class="flex flex-row flex-1 w-full">
       <span class="mr-3 text-lgray">{{ index }}.</span>
       <button class="btn rounded-lg bg-foreground hover:bg-lgray/50 p-4 flex-1" @click="changeVisibility()">
-        <div class="flex flex-row" style="border-radius: 50%; flex: 1 1 auto">
-          <div class="flex" style="height: 4rem">
+        <div class="flex flex-row" style="flex: 1 1 auto">
+          <div class="flex" style="width: 4rem; height: 4rem">
             <img
-              :src="props.data.author.profile_image_url"
-              style="border-radius: 50%"
+              :src="props.data.author.profileImageUrl"
+              class="aspect-square rounded-lg"
+              style="width: 10em; border-radius: 50%"
               alt="propic"
               onerror="this.onerror = null; this.src='/icons/user.svg' "
             />
@@ -43,11 +44,15 @@ onBeforeMount(() => {
             <div class="text-lgray text-xs">{{ hours }}:{{ mins > 10 ? mins : '0' + mins }}</div>
           </div>
         </div>
-        <div id="wholeTweet" class="flex flex-1 flex-col mt-3 p-2 border border-lgray rounded-lg" v-show="showAll">
+        <div
+          id="wholeTweet"
+          class="flex flex-1 flex-col mt-3 p-2 border border-2 border-lgray rounded-lg"
+          v-show="showAll"
+        >
           <div id="bodyTweet" class="flex flex-1 text-white">
             {{ props.data.text }}
           </div>
-          <div id="paramTweet" class="flex flex-row text-lgray" style="justify-content: left; max-height: 1.5rem">
+          <div id="paramTweet" class="flex flex-row mt-1 text-lgray" style="justify-content: left; max-height: 1.5rem">
             <div class="flex flex-row mr-2">
               <img class="mr-1" alt="replies" style="max-height: 1.5rem" src="/icons/comment.svg" />
               {{ props.data.metrics.reply_count }}

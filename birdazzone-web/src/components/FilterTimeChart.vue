@@ -11,11 +11,9 @@ export default defineComponent({
 
   data() {
     return {
-      dates: null /** to save dates values */,
-      sDate: null /** to save start date */,
-      eDate: null /** to save end date */,
-      choosenDates: false /** to verify if dates has been chosen */,
-      openD: false /** to close dates popup */,
+      date: null /** to save date values */,
+      choosenDate: false /** to verify if date has been chosen */,
+      openD: false /** to close date popup */,
 
       openClose: false /** to open/close filters card */,
     };
@@ -26,38 +24,34 @@ export default defineComponent({
     openCloseFunction() {
       /** to open/close filters card */
       this.openClose = !this.openClose;
-      this.dates = null;
-      this.sDate = null;
-      this.eDate = null;
-      this.choosenDates = false;
+      this.date = null;
+      this.choosenDate = false;
     },
     sendData() {
       /** confirm button */
       this.openCloseFunction();
     },
 
-    /** DATES */
+    /** DATE */
     closeD() {
-      /** to close dates popup */
+      /** to close date popup */
       this.openD = false;
     },
-    disabledDates(date: Date) {
-      /** to disabilitate days after today and before last week in dates popup */
+    disabledDate(date: Date) {
+      /** to disabilitate days after today and before last week in date popup */
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
       return date > today || date < new Date(today.getTime() - 6 * 24 * 3600 * 1000);
     },
-    selectDates() {
-      /** to confirm selected dates */
-      if (this.dates != null) {
-        // entered dates
-        this.sDate = this.dates;
-        this.choosenDates = true;
-      } // ELSE -> didnt enter dates -> by default: today
+    selectDate() {
+      /** to confirm selected date */
+      if (this.date != null) {
+        this.choosenDate = true;
+      } // ELSE -> didnt enter date -> by default: today
     },
-    modifyDates() {
-      this.choosenDates = false;
+    modifyDate() {
+      this.choosenDate = false;
     },
   },
 });
@@ -89,20 +83,20 @@ export default defineComponent({
     v-if="openClose"
     class="z-10 bg-foreground border border-background p-4 font-semibold text-md rounded-lg m-2 mr-0 place-self-start"
   >
-    <div class="flex flex-row items-stretch" aria-labelledby="dropdownDividerButton">
-      <label for="Dates" class="justify-self-start self-center text-white text-sm w-9">dates</label>
-      <div class="flex justify-self-start" id="Dates">
+    <div class="flex flex-row items-stretch justify-center" aria-labelledby="dropdownDividerButton">
+      <label for="Date" class="justify-self-start self-center text-white text-sm w-9">date</label>
+      <div class="flex justify-self-start" id="Date">
         <date-picker
           class="m-2 mr-0"
           type="date"
-          v-model:value="dates"
+          v-model:value="date"
           v-model:open="openD"
           value-type="format"
           format="YYYY-MM-DD"
-          placeholder="select start and end date"
+          placeholder="select date"
           :clearable="true"
-          :disabled-date="disabledDates"
-          :disabled="choosenDates"
+          :disabled-date="disabledDate"
+          :disabled="choosenDate"
         >
           <template #footer>
             <button class="mx-btn mx-btn-text" @click="closeD()">close</button>
@@ -110,31 +104,31 @@ export default defineComponent({
         </date-picker>
       </div>
     </div>
-    <div v-if="choosenDates" class="flex justify-center">
+    <div v-if="choosenDate" class="flex justify-center">
       <button
         class="font-semibold text-white hover:text-lgreen text-center text-sm"
         type="button"
-        @click="modifyDates()"
+        @click="modifyDate()"
       >
-        modify dates
+        modify date
       </button>
     </div>
     <div v-else class="flex justify-center">
       <button
         class="font-semibold text-white hover:text-lgreen text-center text-sm"
         type="button"
-        @click="selectDates()"
+        @click="selectDate()"
       >
-        select dates
+        select date
       </button>
     </div>
 
-    <div v-if="choosenDates" class="flex justify-end">
+    <div v-if="choosenDate" class="flex justify-end">
       <button
         class="font-semibold text-white border-b border-lgreen bg-foreground hover:bg-lgreen rounded-lg p-2 text-center text-sm"
         type="button"
         @click="
-          $emit('changeFromTo', sDate, eDate);
+          $emit('changeDate', date);
           sendData();
         "
       >

@@ -25,7 +25,7 @@ const a = (f: string | null, t: string | null) => {
   </div>
 
   <div class="flex pl-20">
-    <div class="justify-items-start">
+    <div class="justify-center">
       <GuesserMap :game-id="props.gameId" :key="mapKey" :from="from" :to="to" />
     </div>
   </div>

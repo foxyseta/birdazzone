@@ -159,11 +159,11 @@ const popover = () => {
           <div class="text-white m-2">{{ nAttempts }} tried</div>
           <div class="m-2">
             <div class="text-lgreen inline">{{ nSucc }}</div>
-            <div class="text-white inline">succeded</div>
+            <div class="text-white inline">&nbsp;succeded</div>
           </div>
           <div class="m-2">
             <div class="text-lred inline">{{ nFail }}</div>
-            <div class="text-white inline">failed</div>
+            <div class="text-white inline">&nbsp;failed</div>
           </div>
         </div>
 
@@ -188,6 +188,6 @@ const popover = () => {
         </div>
       </div>
     </div>
-    <div class="text-sm text-lgray ml-8 mt-3">* data refere only to first 100 attempts</div>
+    <div class="text-sm text-lgray ml-8 mt-3">* data refere only to first 100 attempts per day</div>
   </div>
 </template>

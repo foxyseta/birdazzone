@@ -1,7 +1,7 @@
 import { ApiManager, ApiResponse } from './api';
 import type { ApiList } from './interfaces/api-list';
 import type { TvGame } from './interfaces/tv-game';
-import type { Tweet } from './interfaces/tweet';
+import type { Tweet, User } from './interfaces/tweet';
 import type { Results } from './interfaces/results';
 import type { ChartEntry } from './interfaces/chart-entry';
 import type { WordCloudOptions } from './interfaces/wordcloud-options';
@@ -26,6 +26,10 @@ export default class ApiRepository {
   private static readonly _FANTACITORIO_POLITICIANS = '/fantacitorio/politicians';
   private static readonly _FANTACITORIO_TEAMS = '/fantacitorio/teams';
   private static readonly _FANTACITORIO_TEAMS_USERNAME = '/fantacitorio/teams?username={0}';
+
+  private static readonly _HELLO_USER = '/hello/user/{0}';
+
+  private static readonly _CHESS_USER_GAME_TURN = '/chess/{0}/{1}/{2}';
 
   public static readonly getPoliticians = (): Promise<ApiResponse<Politician[]>> =>
     ApiManager.get<Politician[]>(this._BASE_URL + this._FANTACITORIO_POLITICIANS);
@@ -95,6 +99,19 @@ export default class ApiRepository {
   public static readonly getTvGameSolutionByIdFiltered = (id: string, date: string): Promise<ApiResponse<Solution>> =>
     ApiManager.get<Solution>(this.stringFormat(this._BASE_URL + this._TV_GAMES_ID_SOLUTION_FILTERED, id, date));
 
+  public static readonly getHelloUser = (username: string): Promise<ApiResponse<User>> =>
+    ApiManager.get<User>(this.stringFormat(this._BASE_URL + this._HELLO_USER, username));
+
+  public static readonly getChessMoves = (user: string, gameId: string, turn: string) =>
+    ApiManager.get<string>(
+      this.stringFormat(
+        this._BASE_URL + this._CHESS_USER_GAME_TURN,
+        user,
+        new Date(parseInt(gameId)).toISOString(),
+        turn
+      )
+    );
+
   /// Takes a string in input containing placeholders in the form of {n}, where
   /// n is a number >= 0. Then replace all the occurence of the {n} pattern with
   /// the n-th word of args field. For example:
@@ -119,5 +136,19 @@ export default class ApiRepository {
     } else {
       return new ApiResponse<string>(response.status, undefined, { code: 400, message: await response.text() });
     }
+  };
+
+  public static readonly getTwitterTimestamp = async (): Promise<Date> => {
+    /*return fetch('https://api.twitter.com/1.1/help/languages.json', { method: 'HEAD', })
+    .then(response => {
+      const date = response.headers.get('date');
+      if (!response.ok) {
+        const error = response.status;
+        return Promise.reject(error);
+      }
+      return date ? new Date(date): new Date(Date.now());
+    })*/
+
+    return new Date();
   };
 }

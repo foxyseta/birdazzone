@@ -17,8 +17,8 @@ const errorTitle = ref<string>();
 const errorText = ref<string>();
 const game = ref<TvGame>();
 
-const showListTab = ref<boolean>(true);
-const showMapTab = ref<boolean>(false);
+const showListTab = ref<boolean>(false);
+const showMapTab = ref<boolean>(true);
 const showChartTab = ref<boolean>(false);
 
 const fetchGame = async () => {
@@ -77,9 +77,9 @@ onBeforeMount(fetchGame);
 
     <!-- Buttons -->
     <div class="flex justify-start w-100 m-3">
-      <BirdazzoneButton :text="'LIST'" :active="showListTab" @click="showList">ciao</BirdazzoneButton>
-      <BirdazzoneButton :text="'MAP'" :active="showMapTab" @click="showMap">ciao</BirdazzoneButton>
-      <BirdazzoneButton :text="'CHARTS'" :active="showChartTab" @click="showChart">ciao</BirdazzoneButton>
+      <BirdazzoneButton :text="'MAP'" :active="showMapTab" @click="showMap"></BirdazzoneButton>
+      <BirdazzoneButton :text="'LIST'" :active="showListTab" @click="showList"></BirdazzoneButton>
+      <BirdazzoneButton :text="'CHARTS'" :active="showChartTab" @click="showChart"></BirdazzoneButton>
     </div>
 
     <!-- Content -->

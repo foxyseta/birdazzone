@@ -53,7 +53,7 @@ const fetchCoordinates = async () => {
       '1',
       '100'
     );
-    if (response.esit) {
+    if (response.esit && response.data) {
       coordinates.value = response
         .data!.entries.map((tweet) => tweet.coordinates)
         .filter((c) => c)
@@ -82,7 +82,7 @@ onBeforeMount(async () => {
 
 <template>
   <!-- Error -->
-  <div v-if="error" class="flex justify-center items-center w-full">
+  <div v-if="error" class="flex justify-center items-center w-screen">
     <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
   </div>
 

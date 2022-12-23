@@ -11,37 +11,8 @@ const errorTitle = ref<string>();
 const errorText = ref<string>();
 
 const error = ref<boolean>(false);
-const loading = ref<boolean>(false);
-const list = ref<Politician[]>([
-  {
-    name: 'Giorgia Meloni',
-    score: 1000,
-  },
-  {
-    name: 'Matteo Salvini',
-    score: 900,
-  },
-  {
-    name: 'Mattia di Maio',
-    score: 800,
-  },
-  {
-    name: 'Carlo Calenda',
-    score: 700,
-  },
-  {
-    name: 'Matteo Renzi',
-    score: 600,
-  },
-  {
-    name: 'Silvio Berlusconi',
-    score: 500,
-  },
-  {
-    name: 'Gianni Agnelli',
-    score: 400,
-  },
-]);
+const loading = ref<boolean>(true);
+const list = ref<Politician[]>([]);
 
 const fetchPoliticiansList = async () => {
   loading.value = true;
@@ -83,9 +54,9 @@ const changeAndSort = async (index: number, newScore: string) => {
   return list.value[index].score.toString();
 };
 
-//onBeforeMount(() => {
-//  fetchPoliticiansList();
-//});
+onBeforeMount(() => {
+  fetchPoliticiansList();
+});
 </script>
 
 <template>
@@ -94,9 +65,9 @@ const changeAndSort = async (index: number, newScore: string) => {
       <ErrorWidget :open="true" :title="errorTitle" :text="errorText" />
     </div>
     <div v-if="list.length > 0" class="flex flex-row w-full" style="flex: 1 1 auto">
-      <div class="flex flex-col mx-4" style="flex: 1 1 auto; width: 22rem">
+      <div class="flex flex-col" style="flex: 1 1 auto; width: 22rem">
         <div v-for="(item, index) in list" :key="index">
-          <div class="flex flex-row my-2 text-lgray">
+          <div class="flex flex-row my-3 text-lgray">
             <div class="flex" style="flex: 1 1 auto; width: 1rem">{{ index + 1 }}.</div>
             <div class="flex flex-row rounded-lg bg-foreground p-4 ml-3 items-center">
               <div class="font-semibold text-white" style="flex: 1 1 auto; width: 100%">
@@ -129,21 +100,24 @@ const changeAndSort = async (index: number, newScore: string) => {
           </div>
         </div>
       </div>
-      <div class="flex mx-4 justify-center align-center flex-1">
+      <div class="flex ml-20 justify-center align-center flex-1">
         <div v-show="loading" class="flex justify-center items-center">
           <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
         </div>
         <div class="flex flex-col items-center">
           <NumberOfPoliticians
-            class="flex align-center m-2"
+            class="flex align-center m-2 mb-3"
             style="flex: 1 1 auto"
             v-if="!loading"
             :num="list.length"
           />
-          <FantaRankChart class="flex align-center m-2" style="flex: 1 1 auto" v-if="!loading" :list="list" />
+          <FantaRankChart class="flex align-center m-2 mb-6" style="flex: 1 1 auto" v-if="!loading" :list="list" />
           <FantacitorioHistogram class="flex align-center mt-2" style="flex: 1 1 auto" v-if="!loading" :list="list" />
         </div>
       </div>
+    </div>
+    <div v-else class="m-5 text-white font-semibold">
+      <div v-if="!loading">No politicians ranked &#9203;</div>
     </div>
   </div>
 </template>

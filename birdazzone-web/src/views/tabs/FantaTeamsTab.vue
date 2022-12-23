@@ -31,14 +31,14 @@ onBeforeMount(async () => {
 
 const onUsernameChanged = async (newUsername: string) => {
   loading.value = true;
-  teams.value = cache.value.filter((x: FantaTeam) => x.username.startsWith(newUsername));
+  teams.value = cache.value.filter((x: FantaTeam) => x.username.toLowerCase().startsWith(newUsername.toLowerCase()));
   loading.value = false;
 };
 </script>
 
 <template>
   <div class="h-full">
-    <FantaSearchUser class="m-10" @changed="onUsernameChanged" />
+    <FantaSearchUser class="mt-0 my-10" @changed="onUsernameChanged" />
     <div v-show="loading" class="h-screen flex justify-center items-center">
       <semipolar-spinner :animation-duration="2000" :size="70" color="#1eb980" />
     </div>
