@@ -69,10 +69,10 @@ di priorità.
 \subsubsection{Indovinare la ``ghigliottina''}
 
 \begin{itemize}
-	\item \#4 ``Come giocatore da casa, voglio essere a conoscenza della soluzione
-	      della partita per capire se ho indovintato o meno''
-	\item \#5 ``Come giocatore da casa, voglio visualizzare al classifica di chi ha
+	\item \#4 ``Come giocatore da casa, voglio visualizzare al classifica di chi ha
 	      indovinato per vedere la posizione mia e dei miei amici''
+	\item \#5 ``Come giocatore da casa, voglio essere a conoscenza della soluzione
+	      della partita per capire se ho indovintato o meno''
 	\item \#6 ``Come giocatore da casa, voglio che solo i giocatori che hanno davvero
 	      indovinato vengano mostrati in classifica''
 	\item \#7 ``Come appassionato curioso, voglio visualizzare dove si trovano i
@@ -136,67 +136,116 @@ Lo sprint goal per lo sprint 0 è la "preparazione" dell'intero progetto.
 
 \subsection{\emph{Sprint backlog}}
 
-Lo sprint backlog è consistito di due storie, entrambe tecniche:
-
-
+Lo sprint backlog è consistito di due storie, entrambe tecniche: \#0 e \#1.
 
 \subsection{\emph{Definition of done}}
 
+La definition of done del progetto è stata definita proprio in questo sprint.
+Non è stata usata per verificare la qualità del lavoro svolto poiché sono state
+effettuate solo prove tecniche. Si ha comunque fatto uso di una definition of
+done "giocattolo" per la partita di prova a Scrumble.
+
 \subsection{\emph{Test} di ciascuna storia}
+
+Essendoci state solo storie teniche, il sistema di test non era ancora
+disponibile nello sprint 0.
 
 \subsection{\emph{Burndown} dello sprint}
 
-\subsection{Qualità del codice}
+\includegraphics[width=\textwidth]{burndown-0}
 
 \subsection{Retrospettiva con \emph{Essence}}
+
+\includegraphics[width=\textwidth]{essence-0}
 
 \section{\emph{Sprint} 1}
 
 \subsection{\emph{Sprint goal}}
 
+Il tema di questo sprint è "Last Word Guessing Games (A)".
+
 \subsection{\emph{Sprint backlog}}
+
+Lo sprint backlog è composto dalle storie \#2, \#3, \#4.
 
 \subsection{\emph{Definition of done}}
 
+La definition of done definita durante lo sprint 0 è stata rispettata per tutte
+le storie dello sprint 1.
+
 \subsection{\emph{Test} di ciascuna storia}
+
+\#2 e \#3 sono storie tecniche. Per \#4, abbiamo testato l'analisi del testo dei
+Tweet in \verb!tvgames/tvgames_test.go!.
 
 \subsection{\emph{Burndown} dello sprint}
 
-\subsection{Qualità del codice}
+\includegraphics[width=\textwidth]{burndown-1}
 
 \subsection{Retrospettiva con \emph{Essence}}
+
+\includegraphics[width=\textwidth]{essence-1}
 
 \section{\emph{Sprint} 2}
 
 \subsection{\emph{Sprint goal}}
 
+Il tema di questo sprint è "Last Word Guessing Games (B)".
+
 \subsection{\emph{Sprint backlog}}
+
+Le storie coinvolte sono state \#5 e \#6.
 
 \subsection{\emph{Definition of done}}
 
+Le storie \#5 e \#6. Non hanno tutte superato la definition of
+done: il frontend non gestiva tutti i casi particolari del backend, né tutti i
+vincoli temporali. Il backend superava i propri test solo in alcune fasce
+orarie. Questo ha causato del debito tecnico, che però è stato recuperato dopo
+la recensione e prima della fine dello sprint.
+
 \subsection{\emph{Test} di ciascuna storia}
+
+Queste cinque storie sono testate in \verb!tvgames/tvgames_test.go! e
+\verb!model/model_test.go!.
 
 \subsection{\emph{Burndown} dello sprint}
 
-\subsection{Qualità del codice}
+\includegraphics[width=\textwidth]{burndown-2}
 
 \subsection{Retrospettiva con \emph{Essence}}
+
+\includegraphics[width=\textwidth]{essence-2}
 
 \section{\emph{Sprint} 3}
 
 \subsection{\emph{Sprint goal}}
 
+Lo sprint goal si intitolava "A Time and a Place for Everythin". Lo sprint
+infatti verteva sui luoghi (la mappa) e sui filtri temporali.
+
 \subsection{\emph{Sprint backlog}}
+
+Le storie coinvolte sono state \#7, \8 e \#9.
 
 \subsection{\emph{Definition of done}}
 
+In questo sprint la definition of done è stata rispettata. Perché i test
+passavano tutti. Solo in seguito ci siamo accorti di tutti i casi particolari
+non gestiti.
+
 \subsection{\emph{Test} di ciascuna storia}
+
+Queste cinque storie sono testate in \verb!tvgames/tvgames_test.go! e
+\verb!model/model_test.go!.
 
 \subsection{\emph{Burndown} dello sprint}
 
-\subsection{Qualità del codice}
+\includegraphics[width=\textwidth]{burndown-3}
 
 \subsection{Retrospettiva con \emph{Essence}}
+
+\includegraphics[width=\textwidth]{essence-3}
 
 \section{\emph{Sprint} 4}
 
@@ -210,9 +259,9 @@ Lo sprint backlog è consistito di due storie, entrambe tecniche:
 
 \subsection{\emph{Burndown} dello sprint}
 
-\subsection{Qualità del codice}
-
 \subsection{Retrospettiva con \emph{Essence}}
+
+\section{Qualità del codice}
 
 \section{Processo seguito}
 
