@@ -53,7 +53,7 @@ const fetchCoordinates = async () => {
       '1',
       '100'
     );
-    if (response.esit) {
+    if (response.esit && response.data) {
       coordinates.value = response
         .data!.entries.map((tweet) => tweet.coordinates)
         .filter((c) => c)

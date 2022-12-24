@@ -15,6 +15,9 @@ export interface HistogramProps {
 const CHART_HEIGHT = 500;
 const CHART_WIDTH = 800;
 
+const GREEN = '#1eb980';
+const RED = '#ff937f';
+
 const props = defineProps<HistogramProps>();
 
 const categories = ref<string[]>([]);
@@ -37,6 +40,12 @@ const processProps = () => {
     xaxis: {
       position: 'top',
       categories: categories.value,
+      labels: {
+        style: {
+          colors: categories.value.map(_ => '#fff'),
+          fontSize: '14px'
+        }
+      }
     },
     plotOptions: {
       bar: {
