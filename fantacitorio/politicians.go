@@ -1,7 +1,6 @@
 package fantacitorio
 
 import (
-	"fmt"
 	"sort"
 	"strconv"
 	"strings"

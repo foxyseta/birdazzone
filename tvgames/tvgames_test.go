@@ -1,7 +1,6 @@
 package tvgames
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"

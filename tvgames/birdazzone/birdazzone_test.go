@@ -18,10 +18,10 @@ func TestBirdazzoneTracker(t *testing.T) {
 func TestSolution(t *testing.T) {
 	// checking last solution
 	sol, err := lastSolution()
-	if err != nil {
+	if err.Error() != "couldn't find Birdazzone solution" {
 		t.Fatal(err.Error())
 	}
-	if sol.Key == "" {
+	if err == nil && sol.Key == "" {
 		t.Fatal("Empty solution #1")
 	}
 	now := time.Now()
