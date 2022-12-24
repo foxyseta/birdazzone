@@ -14,21 +14,19 @@ onBeforeMount(() => {
   <div class="flex flex-col flex-1 my-3 w-full" style="flex: 1 1 auto">
     <button class="btn rounded-lg bg-foreground hover:bg-lgray/30">
       <a :href="props.data.postUrl" target="_blank" rel="noopener noreferrer nofollow">
-        <div class="flex flex-row p-4" style="border-radius: 50%; flex: 1 1 auto">
-          <div style="width: 10rem">
-            <img
-              :src="props.data.profileImageUrl"
-              class="aspect-square p-2"
-              style="width: 6rem; border-radius: 50%"
-              alt="propic"
-              onerror="this.onerror = null; this.src='/icons/user.svg' "
-            />
-          </div>
-          <div class="flex flex-col mx-4" style="flex: 1 1 auto">
+        <div class="flex flex-row items-start gap-x-3 p-4" style="border-radius: 50%">
+          <img
+            :src="props.data.profileImageUrl"
+            class="align-top rounded-full object-scale-down aspect-square"
+            alt="propic"
+            onerror="this.onerror = null; this.src='/icons/user.svg' "
+          />
+          <div class="flex flex-col grow">
             <p class="flex flex-1 text-white font-bold mb-2">@{{ props.data.username }}</p>
             <img class="fanta-team rounded-lg" :src="props.data.imageUrl" alt="fantacitorio team" />
-          </div></div
-      ></a>
+          </div>
+        </div>
+      </a>
     </button>
   </div>
 </template>
