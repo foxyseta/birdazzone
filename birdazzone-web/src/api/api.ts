@@ -32,7 +32,7 @@ export class ApiManager {
       // success
       if (responseStatusCode === 200) {
         // Status ok
-        const responseBody = camelcaseKeys(await response.json()) as T;
+        const responseBody = camelcaseKeys(await response.json(), { deep: true }) as T;
         return new ApiResponse<T>(responseStatusCode, responseBody);
       } else {
         return new ApiResponse(responseStatusCode);
