@@ -27,7 +27,7 @@ func GetGhigliottinaTracker() gametracker.GameTracker {
 }
 
 func solution(startTime string, endTime string) (model.GameKey, error) {
-	tweets, err := twitter.GetRecentTweetsFromQuery("La #parola della #ghigliottina de #leredita di oggi -is:retweet", startTime, endTime, 10)
+	tweets, err := twitter.GetRecentTweetsFromQuery("from:birdazzone #ghigliottina -is:retweet", startTime, endTime, 10)
 
 	if err != nil {
 		return model.GameKey{}, err
@@ -35,8 +35,8 @@ func solution(startTime string, endTime string) (model.GameKey, error) {
 	if tweets.Meta.ResultCount == 0 {
 		return model.GameKey{}, errors.New("couldn't find Ghigliottina solution")
 	}
-	m := regexp.MustCompile(`La #parola della #ghigliottina de #leredita di oggi è:\s([A-Z]|[a-z])+`)
-	a := strings.ToLower(strings.Trim(m.FindString(tweets.Data[0].Text), "La #parola della #ghigliottina de #leredita di oggi è: "))
+	m := regexp.MustCompile(`\b\p{Lu}+\s`)
+	a := strings.ToLower(strings.TrimSpace(m.FindString(tweets.Data[0].Text)))
 	return gametracker.MakeGameKey("Ghigliottina", a, tweets.Data[0].CreatedAt)
 }
 
