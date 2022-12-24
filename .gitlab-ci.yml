@@ -3,7 +3,9 @@ compile_pdf:
   image: timnn/texlive
   script:
     - echo GE_JOB_ID=$CI_JOB_ID >> compile_pdf.env
-    - xelatex report/report.tex
+    - cd report
+    - xelatex report.tex -output-directory=..
+    - xelatex report.tex -output-directory=.. # One more for good measure
   artifacts:
     paths:
       - report.pdf
