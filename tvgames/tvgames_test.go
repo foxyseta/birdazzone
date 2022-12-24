@@ -43,7 +43,6 @@ func TestGameAttemptsWParams(t *testing.T) {
 
 	c.Params = []gin.Param{{Key: "id", Value: "0"}}
 	//ti := time.Now().AddDate(0, 0, -1)
-	fmt.Println(c.Request)
 
 	//c.Request.URL, _ = url.Parse("?from=" + util.DateToString(time.Date(ti.Year(), ti.Month(), ti.Day(), 0, 0, 0, 0, time.UTC)))
 	//c.Request.URL.Query().Set("from", util.DateToString(time.Date(ti.Year(), ti.Month(), ti.Day(), 0, 0, 0, 0, time.UTC)))

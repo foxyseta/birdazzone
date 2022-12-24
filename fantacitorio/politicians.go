@@ -107,7 +107,6 @@ func (this *Politicians) Less(i int, j int) bool {
 	if firstScore > secondScore {
 		return true
 	}
-	// println(firstPolitician.Name + " VS " + secondPolitician.Name)
 	firstName := strings.Split(firstPolitician.Name, " ")
 	secondName := strings.Split(secondPolitician.Name, " ")
 	return firstName[1] < secondName[1] || firstName[1] == secondName[1] &&
@@ -128,14 +127,12 @@ func getPoliticiansPoints() ([]model.Politician, error) {
 	// From Twitter
 	result, err := twitter.GetManyRecentTweetsFromQuery("(from:fanta_citorio OR from:birdazzone) punti -squadre -squadra", "", "")
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	tweets := result.Data
 	// Map every politician name to its score
 	dict := make(map[string]int, 0)
 	for i := 0; i < result.Meta.ResultCount; i++ {
-		println(tweets[i].Text)
 		politicians, err := extractPoliticianPoints(tweets[i].Text)
 		if err != nil {
 			return nil, err

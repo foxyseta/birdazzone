@@ -37,7 +37,6 @@ func solution(startTime string, endTime string) (model.GameKey, error) {
 	}
 	m := regexp.MustCompile(`\b\p{Lu}+\s`)
 	a := strings.ToLower(strings.TrimSpace(m.FindString(tweets.Data[0].Text)))
-	println((tweets.Data[0].Text))
 	return gametracker.MakeGameKey("Ghigliottina", a, tweets.Data[0].CreatedAt)
 }
 
