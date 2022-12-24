@@ -9,7 +9,7 @@ compile_pdf:
     - cd ..
   artifacts:
     paths:
-      - report.pdf
+      - report/report.pdf
     reports:
       # To ensure we've access to this file in the next stage
       dotenv: compile_pdf.env
