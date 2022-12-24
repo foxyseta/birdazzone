@@ -115,7 +115,7 @@ onBeforeMount(() => {
             <FantaRankChart :list="list" />
           </div>
           <div class="flex align-center mt-2" style="flex: 1 1 auto" v-if="!loading">
-            <FantacitorioHistogram  :list="list" />
+            <FantacitorioHistogram :list="list" />
           </div>
         </div>
       </div>

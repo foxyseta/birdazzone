@@ -42,10 +42,10 @@ const processProps = () => {
       categories: categories.value,
       labels: {
         style: {
-          colors: categories.value.map(_ => '#fff'),
-          fontSize: '14px'
-        }
-      }
+          colors: categories.value.map((_) => '#fff'),
+          fontSize: '14px',
+        },
+      },
     },
     plotOptions: {
       bar: {
