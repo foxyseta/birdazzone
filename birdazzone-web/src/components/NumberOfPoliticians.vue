@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 const propss = defineProps<{ num: number }>();
-console.log(propss.num);
 </script>
 
 <template>
