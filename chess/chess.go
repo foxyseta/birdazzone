@@ -104,10 +104,8 @@ func mostPopularChessMove(tweet twitter.ProfileTweet) string {
 	}
 	counters := map[string]int{}
 	maxMove, maxCounter := "", 0
-	println(len(tweets.Data))
 	for _, tweet := range tweets.Data {
 		move := chessMove.FindString(strings.ToLower(tweet.Text))
-		println(tweet.Text)
 		likes := 1 + tweet.PublicMetrics.LikeCount
 		if move != "" {
 			_, ok := counters[move]
