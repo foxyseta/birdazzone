@@ -41,4 +41,4 @@ release_job:
         - name: "production.yml"
           url: "https://git.hjkl.gq/team13/birdazzone-full/-/raw/v0.$CI_PIPELINE_IID/production.yml"
         - name: "Report"
-          url: "https://git.hjkl.gq/team13/birdazzone-full/-/jobs/$GE_JOB_ID/artifacts/raw/report.pdf?inline=false"
+          url: "https://git.hjkl.gq/team13/birdazzone-full/-/jobs/$GE_JOB_ID/artifacts/raw/report/report.pdf?inline=false"
