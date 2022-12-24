@@ -4,8 +4,9 @@ compile_pdf:
   script:
     - echo GE_JOB_ID=$CI_JOB_ID >> compile_pdf.env
     - cd report
-    - xelatex report.tex
-    - xelatex report.tex # One more for good measure
+    - xelatex report.tex -output-directory=..
+    - xelatex report.tex -output-directory=..# One more for good measure
+    - cd ..
   artifacts:
     paths:
       - report.pdf
