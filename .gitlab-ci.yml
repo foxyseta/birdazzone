@@ -4,11 +4,12 @@ compile_pdf:
   script:
     - echo GE_JOB_ID=$CI_JOB_ID >> compile_pdf.env
     - cd report
-    - xelatex report.tex
-    - xelatex report.tex # One more for good measure
+    - xelatex report.tex -output-directory=..
+    - xelatex report.tex -output-directory=..# One more for good measure
+    - cd ..
   artifacts:
     paths:
-      - report.pdf
+      - report/report.pdf
     reports:
       # To ensure we've access to this file in the next stage
       dotenv: compile_pdf.env
@@ -40,4 +41,4 @@ release_job:
         - name: "production.yml"
           url: "https://git.hjkl.gq/team13/birdazzone-full/-/raw/v0.$CI_PIPELINE_IID/production.yml"
         - name: "Report"
-          url: "https://git.hjkl.gq/team13/birdazzone-full/-/jobs/$GE_JOB_ID/artifacts/raw/report.pdf?inline=false"
+          url: "https://git.hjkl.gq/team13/birdazzone-full/-/jobs/$GE_JOB_ID/artifacts/raw/report/report.pdf?inline=false"
