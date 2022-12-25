@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const props = defineProps<{ text: string; active: boolean }>();
+  const props = defineProps<{ text: string; active: boolean }>();
 </script>
 <template>
   <!-- Active -->
