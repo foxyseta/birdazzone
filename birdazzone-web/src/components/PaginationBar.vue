@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-const props = defineProps<{ actualPage: number; max: number }>();
+  import { ref } from 'vue';
+  const props = defineProps<{ actualPage: number; max: number }>();
 </script>
 
 <template>
-  <div v-if="actualPage >= 1 && actualPage <= max" class="flex flex-row justify-center" style="max-width: 30rem">
+  <div
+    v-if="actualPage >= 1 && actualPage <= max"
+    class="flex flex-row justify-center"
+    style="max-width: 30rem"
+  >
     <div
       v-if="actualPage === 1"
       @click="$emit('changeActual', 1)"
@@ -23,7 +27,10 @@ const props = defineProps<{ actualPage: number; max: number }>();
       1
     </div>
 
-    <div v-if="actualPage > 1" class="flex flex-row">
+    <div
+      v-if="actualPage > 1"
+      class="flex flex-row"
+    >
       <div v-if="actualPage === 2">
         <div
           v-if="props.max > 2"
@@ -34,8 +41,15 @@ const props = defineProps<{ actualPage: number; max: number }>();
           {{ actualPage }}
         </div>
       </div>
-      <div v-else class="flex flex-row">
-        <div v-if="actualPage !== 3" class="text-lgray mx-2">...</div>
+      <div
+        v-else
+        class="flex flex-row"
+      >
+        <div
+          v-if="actualPage !== 3"
+          class="text-lgray mx-2"
+          >...</div
+        >
         <div
           @click="$emit('changeActual', actualPage - 1)"
           class="mx-2 p-1 text-lgreen text-center hover:bg-lgreen hover:text-foreground"
@@ -62,7 +76,11 @@ const props = defineProps<{ actualPage: number; max: number }>();
       {{ actualPage + 1 }}
     </div>
 
-    <div v-if="actualPage + 2 < max" class="text-lgray mx-2">...</div>
+    <div
+      v-if="actualPage + 2 < max"
+      class="text-lgray mx-2"
+      >...</div
+    >
     <div v-if="props.max !== 1">
       <div
         v-if="actualPage === props.max"

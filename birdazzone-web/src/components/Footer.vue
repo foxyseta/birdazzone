@@ -5,7 +5,10 @@
         <span>Get connected with us on social networks:</span>
       </div>
       <div class="flex justify-center">
-        <a href="#!" class="mr-6 text-lgray">
+        <a
+          href="#!"
+          class="mr-6 text-lgray"
+        >
           <svg
             aria-hidden="true"
             focusable="false"
@@ -22,7 +25,10 @@
             ></path>
           </svg>
         </a>
-        <a href="#!" class="mr-6 text-lgray">
+        <a
+          href="#!"
+          class="mr-6 text-lgray"
+        >
           <svg
             aria-hidden="true"
             focusable="false"
@@ -39,7 +45,10 @@
             ></path>
           </svg>
         </a>
-        <a href="#!" class="mr-6 text-lgray">
+        <a
+          href="#!"
+          class="mr-6 text-lgray"
+        >
           <svg
             aria-hidden="true"
             focusable="false"
@@ -56,7 +65,10 @@
             ></path>
           </svg>
         </a>
-        <a href="#!" class="mr-6 text-lgray">
+        <a
+          href="#!"
+          class="mr-6 text-lgray"
+        >
           <svg
             aria-hidden="true"
             focusable="false"
@@ -73,7 +85,10 @@
             ></path>
           </svg>
         </a>
-        <a href="#!" class="mr-6 text-lgray">
+        <a
+          href="#!"
+          class="mr-6 text-lgray"
+        >
           <svg
             aria-hidden="true"
             focusable="false"
@@ -90,7 +105,10 @@
             ></path>
           </svg>
         </a>
-        <a href="#!" class="text-lgray">
+        <a
+          href="#!"
+          class="text-lgray"
+        >
           <svg
             aria-hidden="true"
             focusable="false"
@@ -112,7 +130,10 @@
     <div class="mx-6 py-10 text-center md:text-left">
       <div class="flex justify-evenly">
         <div>
-          <img alt="logo" src="/logo.png" />
+          <img
+            alt="logo"
+            src="/logo.png"
+          />
           <h2 class="text-lgreen text-center font-black">IL BIRDAZZONE</h2>
         </div>
         <div class="">

@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
+  import { ref } from 'vue';
+  import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
 
-const props = defineProps<{ open: boolean; title: string | undefined; text: string | undefined }>();
-const open = ref<boolean>();
+  const props = defineProps<{ open: boolean; title: string | undefined; text: string | undefined }>();
+  const open = ref<boolean>();
 </script>
 
 <template>
-  <Dialog v-if="open" as="div" class="relative z-10" @close="open = false">
+  <Dialog
+    v-if="open"
+    as="div"
+    class="relative z-10"
+    @close="open = false"
+  >
     <div class="fixed inset-0 z-10 overflow-y-auto">
       <div class="flex min-h-full items-end justify-center font-semibold p-4 text-center sm:items-center sm:p-0">
         <DialogPanel
@@ -16,7 +21,11 @@ const open = ref<boolean>();
           <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div class="sm:flex sm:items-start">
               <div class="mt-3 text-center sm:mt-0 sm:ml-4">
-                <DialogTitle as="h3" class="text-lg font-medium leading-6">{{ title }}</DialogTitle>
+                <DialogTitle
+                  as="h3"
+                  class="text-lg font-medium leading-6"
+                  >{{ title }}</DialogTitle
+                >
                 <div class="mt-2">
                   <p class="text-sm text-lgray">{{ text }}</p>
                 </div>

@@ -12,7 +12,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "backend": "docker run --rm -p 8080:8080 --pull always registry.hjkl.gq/team13/birdazzone-api:develop",
-    "format": "npx prettier --write src/"
+    "format": "npx prettier --write --arrow-parens avoid --html-whitespace-sensitivity strict --jsx-single-quote --prose-wrap always --vue-indent-script-and-style --single-attribute-per-line --single-quote --trailing-comma none src/ tests/ *.json"
   },
   "engines": {
     "node": "16.x",

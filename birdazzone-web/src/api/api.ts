@@ -46,7 +46,7 @@ export class ApiManager {
   public static async get<T>(url: string): Promise<ApiResponse<T>> {
     const config: RequestInit = {
       method: 'GET',
-      headers: { Accept: 'Application/Json' },
+      headers: { Accept: 'Application/Json' }
     };
 
     return await this.generalRequest<T>(url, config);
@@ -57,9 +57,9 @@ export class ApiManager {
       method: 'POST',
       headers: {
         Accept: 'Application/Json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     };
 
     return await this.generalRequest<T>(url, config);

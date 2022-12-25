@@ -126,7 +126,7 @@ export default class ApiRepository {
     const config: RequestInit = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(options),
+      body: JSON.stringify(options)
     };
 
     const response = await fetch(url, config);
