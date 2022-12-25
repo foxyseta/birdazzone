@@ -60,7 +60,6 @@ export default defineComponent({
       /** to confirm date was select */
       if (this.date != null) this.choosenDate = true;
       else this.choosenDate = false;
-      console.log('date: ' + this.date);
     },
     modifyDate() {
       this.choosenDate = false;

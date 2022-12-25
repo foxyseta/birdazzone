@@ -74,9 +74,6 @@ const doOpponentMove = (move: IMove) => {
   const newState = boardAPI.value?.board.getFen();
   if (oldState !== newState) {
     turn.value++;
-    console.log('board did change');
-  } else {
-    console.log('board did not change');
   }
 };
 
@@ -112,7 +109,6 @@ const setGameId = async () => {
 onBeforeMount(() => {
   setGameId();
   if (props.startingColor === 'black') {
-    console.log('dakdaskds');
     twitterIntent();
     boardLocked.value = true;
   }

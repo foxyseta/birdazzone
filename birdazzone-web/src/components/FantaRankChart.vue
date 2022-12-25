@@ -12,5 +12,5 @@ const politicianToValue = (p: Politician): HistogramValue => ({
 });
 </script>
 <template>
-  <Histogram :serie-name="serieName" :chart-title="chartTitle" :values="props.list.reverse().map(politicianToValue)" />
+  <Histogram :serie-name="serieName" :chart-title="chartTitle" :values="props.list.map(politicianToValue)" />
 </template>

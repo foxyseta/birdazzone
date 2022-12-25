@@ -111,8 +111,12 @@ onBeforeMount(() => {
             v-if="!loading"
             :num="list.length"
           />
-          <FantaRankChart class="flex align-center m-2 mb-6" style="flex: 1 1 auto" v-if="!loading" :list="list" />
-          <FantacitorioHistogram class="flex align-center mt-2" style="flex: 1 1 auto" v-if="!loading" :list="list" />
+          <div class="flex align-center m-2 mb-6" style="flex: 1 1 auto" v-if="!loading">
+            <FantaRankChart :list="list" />
+          </div>
+          <div class="flex align-center mt-2" style="flex: 1 1 auto" v-if="!loading">
+            <FantacitorioHistogram :list="list" />
+          </div>
         </div>
       </div>
     </div>
