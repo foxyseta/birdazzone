@@ -15,31 +15,31 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: GAMES_PATH,
+      redirect: GAMES_PATH
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      component: NotFoundView,
+      component: NotFoundView
     },
     {
       path: GAMES_PATH,
-      component: TvGamesView,
+      component: TvGamesView
     },
     {
       path: CHESS_PATH,
-      component: ChessView,
+      component: ChessView
     },
     {
       path: FANTA_PATH,
-      component: FantaView,
+      component: FantaView
     },
     {
       path: GAME_ID_PATH,
       component: TvGameView,
-      props: true,
-    },
-  ],
+      props: true
+    }
+  ]
 });
 
 export default router;
