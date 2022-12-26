@@ -1,7 +1,7 @@
 export interface Tweet {
   text: string;
   author: User;
-  created_at: string;
+  createdAt: string;
   coordinates?: Coordinates;
   metrics: Metrics;
   medias: string[];
@@ -14,9 +14,9 @@ export interface User {
 }
 
 export interface Metrics {
-  like_count: number;
-  reply_count: number;
-  retweet_count: number;
+  likeCount: number;
+  replyCount: number;
+  retweetCount: number;
 }
 
 export interface Coordinates {
