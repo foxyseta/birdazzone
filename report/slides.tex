@@ -1,0 +1,175 @@
+\documentclass{beamer}
+
+\usepackage[italian]{babel}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\graphicspath{ {./images/} }
+
+\usetheme{CambridgeUS}
+\usecolortheme{orchid}
+\setbeamertemplate{navigation symbols}{}
+
+\title{Progetto di Ingegneria del software}
+\author{Gruppo 13}
+\institute{Università di Bologna}
+\date{29 dicembre 2022}
+
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}{Indice}
+	\tableofcontents
+\end{frame}
+
+\section{Il gruppo}
+\begin{frame}{Il gruppo}
+	\begin{itemize}
+		\item Paolo Ceroni (sviluppatore front-end, UI/UX)
+		\item Gabriele Crestanello (sviluppatore back-end, esperto di dominio)
+		\item Mattia Girolimetto (\textbf{PO}, sviluppatore front-end \& DevOps)
+		\item Federica Grisendi (sviluppatrice front-end, artista mock)
+		\item Stefano Volpe (\textbf{SM}, sviluppatore full-stack, progettista software)
+	\end{itemize}
+\end{frame}
+
+\section{Backlog di prodotto}
+\begin{frame}{Backlog di prodotto (1/2)}
+	\begin{table}
+		\begin{tabular}{|c|c|c|c|}
+			\hline
+			\textbf{\#} & \textbf{Nome}             & \textbf{Punti} & \textbf{Stato} \\
+			\hline
+			\multicolumn{4}{|l|}{Sprint 0: "Preparazione"}                            \\
+			\hline
+			0           & Partita a Scrumble        & 3              & \#done         \\
+			\hline
+			1           & Ambiente di sviluppo CAS  & 10             & \#done         \\
+			\hline
+			\multicolumn{4}{|l|}{Sprint 1: "Indovina la parola (A)"}                  \\
+			\hline
+			2           & Configurazione tecnologie & 12             & \#done         \\
+			\hline
+			3           & Ambiente di test          & 16             & \#done         \\
+			\hline
+			4           & Classifica parole         & 15.5           & \#done         \\
+			\hline
+			\multicolumn{4}{|l|}{Sprint 2: "Indovina la parola (B)"}                  \\
+			\hline
+			5           & Parola esatta             & 39             & \#done         \\
+			\hline
+			6           & Analisi testuale          & 39             & \#done         \\
+			\hline
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+\begin{frame}{Backlog di prodotto (2/2)}
+	\begin{table}
+		\begin{tabular}{|c|c|c|c|}
+			\hline
+			\textbf{\#} & \textbf{Nome}           & \textbf{Punti} & \textbf{Stato} \\
+			\hline
+			\multicolumn{4}{|l|}{Sprint 3: "C'è un tempo e un luogo per ogni cosa"} \\
+			\hline
+			7           & Mappa                   & 20             & \#done         \\
+			\hline
+			8           & Filtri temporali        & 14             & \#done         \\
+			\hline
+			9           & Storico partite         & 5.5            & \#done         \\
+			\hline
+			\multicolumn{4}{|l|}{Sprint 4: "Fantacitorio e scaTTo matto"}           \\
+			\hline
+			10          & Classifica politici     & 16             & \#done         \\
+			\hline
+			11          & Squadre Fantacitorio    & 12             & \#done         \\
+			\hline
+			12          & Statistiche politici    & 12             & \#done         \\
+			\hline
+			13          & Partite a schacchi      & 26.5           & \#done         \\
+			\hline
+			14          & Condivisione su Twitter & 3.5            & \#done         \\
+			\hline
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+\section{Casi d'uso}
+\begin{frame}{Casi d'uso}
+	\begin{figure}
+		\includegraphics[width=0.5\textwidth]{use-cases}
+		\caption{diagramma dei casi d'uso}
+	\end{figure}
+\end{frame}
+
+\section{Diagramma dei tipi}
+\begin{frame}{\texttt{model}}
+	\begin{figure}
+		\includegraphics[width=0.6\textwidth]{backend-model}
+		\caption{diagramma dei tipi di \texttt{model}}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{\texttt{gametracker}, \texttt{util}, \texttt{twitter},
+		\texttt{fantacitorio}}
+	\begin{figure}
+		\includegraphics[width=0.6\textwidth]{backend-gametracker-util}
+		\includegraphics[width=0.6\textwidth]{backend-twitter-fantacitorio}
+		\caption{diagramma dei tipi di \texttt{gametracker}, \texttt{util},
+			\texttt{twitter}, \texttt{fantacitorio}}
+	\end{figure}
+\end{frame}
+
+\section{Qualità del codice}
+\begin{frame}{Backend: panoramica}
+	\begin{figure}
+		\includegraphics[width=0.8\textwidth]{quality-backend-overall}
+		\caption{qualità del codice backend (panoramica)}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Backend: attività}
+	\begin{figure}
+		\includegraphics[width=0.75\textwidth]{quality-backend-activity}
+		\caption{qualità del codice backend (attività)}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Frontend: panoramica}
+	\begin{figure}
+		\includegraphics[width=0.8\textwidth]{quality-frontend-overall}
+		\caption{qualità del codice frontend (panoramica)}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Frontend: attività}
+	\begin{figure}
+		\includegraphics[width=0.75\textwidth]{quality-frontend-activity}
+		\caption{qualità del codice frontend (attività)}
+	\end{figure}
+\end{frame}
+
+\section{Diagramma di deployment}
+\begin{frame}{Diagramma di deployment}
+	\begin{figure}
+		\includegraphics[width=\textwidth]{deployment}
+		\caption{diagramma di deployment}
+	\end{figure}
+\end{frame}
+
+\section{Demo}
+\begin{frame}{Demo}
+	Un'istanza privata del progetto è disponibile su:
+	\begin{itemize}
+		\item \href{http://team13.hjkl.gq:8000/swagger/index.html}{\beamerbutton{Birdazzone API}}
+		\item \href{http://team13.hjkl.gq}{\beamerbutton{Birdazzone Web}}
+	\end{itemize}
+	Gli spazi di dipartimento non avrebberlo potuto ospitarlo: offono una gamma di
+	immagini Docker troppo limitata.
+\end{frame}
+
+\end{document}
