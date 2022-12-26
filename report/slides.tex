@@ -1,0 +1,241 @@
+\documentclass{beamer}
+
+\usepackage[italian]{babel}
+\usepackage{array}
+\usepackage{hyperref}
+
+\usetheme{CambridgeUS}
+\usecolortheme{orchid}
+\setbeamertemplate{navigation symbols}{}
+
+\title{Progetto di Ingegneria del software}
+\author{Gruppo 13}
+\institute{Università di Bologna}
+\date{29 dicembre 2022}
+
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}{Indice}
+	\tableofcontents
+\end{frame}
+
+\section{Introduzione}
+\begin{frame}{Introduzione}
+	Due categorie di studenti di Ingegneria del software all'Università di Miami
+	svolgono lo stesso progetto in piccoli gruppi:
+	\begin{itemize}
+		\item i gruppi ``di controllo`` (C) fanno uso di metodi di sviluppo
+		      tradizionali;
+		\item i gruppi ``di trattamento`` (T) hanno studiato i \textbf{metodi
+			      formali per lo sviluppo di programmi} .
+	\end{itemize}
+\end{frame}
+
+\section{Approccio sperimentale}
+\begin{frame}{Approccio sperimentale}
+	\begin{table}
+		\begin{tabular}{|p{0.5\linewidth}|c|c|}
+			\hline
+			                                            & C  & T  \\
+			\hline
+			Introduzione alla derivavione dei programmi & No & Sì \\
+			\hline
+			Semantica delle strutture di dati           & Sì & Sì \\
+			\hline
+			Progettazione orientata agli oggetti        & Sì & Sì \\
+			\hline
+			Analisi formale di programmi concorrenti    & No & Sì \\
+			\hline
+			Ingegneria del software                     & Sì & Sì \\
+			\hline
+			Laboratorio di sviluppo software            & Sì & Sì \\
+			\hline
+		\end{tabular}
+		\caption{al di là della formazione specifica sui metodi formali, le due
+			categorie condividono lo stesso curriculum}
+	\end{table}
+
+\end{frame}
+
+\section{Il progetto}
+\begin{frame}{Il progetto}
+	Ogni gruppo deve realizzare un \textbf{sistema incorporato} per la gestione
+	delle richieste effettuate nei confronti di \textbf{un ascensore}. È richiesto
+	l'uso:
+	\begin{itemize}
+		\item dei principi della progettazione orientata agli oggetti
+		      ;
+		\item di \texttt{C++} per l'implementazione;
+		\item di MFC per l'interfaccia grafica.
+	\end{itemize}
+\end{frame}
+
+\section{Progettazione}
+\begin{frame}
+	\vfill
+	\centering
+	\usebeamerfont{title}
+	Progettazione
+	\vfill
+\end{frame}
+
+\subsection{Gruppi di controllo}
+\begin{frame}{Progettazione: gruppi di controllo}
+	Nessun gruppo ha consegnato diagrammi UML.
+	\\~\\
+	Tredici gruppi hanno consegnato prototipi. Di questi, nove hanno esibito
+	codice sorgente.
+	\\~\\
+	Tutti i progetti sorgente consegnati mostrano un \textbf{grado di
+		accoppiamento estremamente alto}: il sistema dell'ascensore e la gestione
+	delle schermate convivono negli stessi moduli.
+\end{frame}
+
+\subsection{Gruppi di trattamento}
+\begin{frame}{Progettazione: gruppi di trattamento}
+	Tre gruppi su sei hanno consegnato diagrammi UML; di questi, uno solo presenta
+	un alto grado di accoppiamento.
+	\\~\\
+	Quattro gruppi su sei presentano specifiche formali complete. Ad esempio:
+	\begin{exampleblock}{Postcondizione per ogni operazione dell'ascensore}
+		\[
+			\begin{array}{l}
+				(\exists p : Person \mid OnFloor(e, p)                                               \\
+				\wedge \quad e.direction == p.direction : AddPerson(p))                              \\
+				\wedge \quad (GoingDown(e) \rightarrow e.current\_{}floow := e.current\_{}floor - 1) \\
+				\vee \quad GoingUp(e) \rightarrow e.current\_{}floor := e.current\_{}floor + 1)      \\
+				\wedge \quad (\exists p : Person \mid p.ending\_{}floor ==                           \\
+				e.current\_{}floor : RemovePerson(p)).
+			\end{array}
+		\]
+	\end{exampleblock}
+\end{frame}
+
+\section{Implementazione}
+\begin{frame}
+	\vfill
+	\centering
+	\usebeamerfont{title}
+	Implementazione
+	\vfill
+\end{frame}
+
+
+\subsection{Gruppi di controllo}
+
+\begin{frame}{Implementazione: gruppi di controllo}
+	\begin{table}
+		\begin{tabular}{|l|c|c|}
+			\hline
+			                            & Media & Dev. Std. \\
+			\hline
+			Linee totali                & 136   & 88        \\
+			\hline
+			Linee per la richiesta      & 67    & 83        \\
+			\hline
+			Linee per la pianificazione & 69    & 39        \\
+			\hline
+			Cicli                       & 7     & 6         \\
+			\hline
+			Condizioni                  & 16    & 10        \\
+			\hline
+			Casi                        & 30    & 20        \\
+			\hline
+			Livelli di innesto          & 4     & 1         \\
+			\hline
+		\end{tabular}
+		\caption{analisi delle implementazioni dei gruppi di controllo. Nessuna
+			implementazione passa tutti i test; tutte esibiscono un cattivo stile di
+			programmazione.}
+	\end{table}
+\end{frame}
+
+\subsection{Gruppi di trattamento}
+\begin{frame}{Implementazione: gruppi di trattamento}
+	\begin{table}
+		\begin{tabular}{|l|c|c|}
+			\hline
+			                            & Media & Dev. Std. \\
+			\hline
+			Linee totali                & 117   & 44        \\
+			\hline
+			Linee per la richiesta      & 45    & 38        \\
+			\hline
+			Linee per la pianificazione & 72    & 38        \\
+			\hline
+			Cicli                       & 4     & 5         \\
+			\hline
+			Condizioni                  & 16    & 10        \\
+			\hline
+			Casi                        & 24    & 11        \\
+			\hline
+			Livelli di innesto          & 5     & 3         \\
+			\hline
+		\end{tabular}
+		\caption{analisi delle implementazioni dei gruppi di trattamento. Ogni
+			implementazione passa tutti i test; la qualità dello stile è variabile.}
+	\end{table}
+\end{frame}
+
+\section{Una soluzione interamente formale}
+
+\begin{frame}{Una soluzione interamente formale}
+	Dopo la consegna, uno dei gruppi di trattamento ha ripetuto il progetto
+	tramite un processo formale ancora più rigoroso:
+	\begin{enumerate}
+		\item un'analisi formale dei requisiti;
+		\item un'implementazione intermedia in \texttt{Guarded Command Language}
+		      ;
+		\item una prova che l'implementazione intermedia rispettasse i requisiti
+		      formali;
+		\item una traduzione da \texttt{Guarded Command Language} a \texttt{C++}.
+	\end{enumerate}
+\end{frame}
+
+\subsection{Progettazione}
+\begin{frame}{Soluzione formale: progettazione}
+	Gli errori incontrati in fase di progettazione erano spesso dovuti a
+	specifiche incomplete, che sono state revisionate in corso d'opera.
+	\\~\\
+	Sono stati prodotti sia un diagramma UML che l'implementazione intermedia in
+	\texttt{Guarded Command Language}.
+\end{frame}
+
+\subsection{Implementazione}
+\begin{frame}{Soluzione formale: implementazione}
+	Data l'implementazione intermedia, la fase di implementazione vera e propria
+	è stata meccanica e banale.
+	\\~\\
+	Alla prima stesura del codice, gli unici errori riscontrati erano dovuti al
+	codice non derivato dalle specifiche formali.
+	\\~\\
+	Dalla prima stesura al momento in cui il progetto ha passato ogni caso di
+	prova, \textbf{il codice derivato dalle specifiche formali non ha mai subito
+		modifiche}.
+\end{frame}
+
+\section{Osservazioni}
+
+\begin{frame}{Osservazioni}
+	In questo esperimento comparativo, i gruppi che hanno fatto uso di metodi
+	formali ne hanno beneficiato enormemente in \textbf{correttezza} e
+	considerevolmente in \textbf{qualità dello stile} di programmazione.
+	\\~\\
+	Solo l'ultimo gruppo, che ha derivato e verificato il proprio codice, ne ha
+	anche guadagnato in concisione. Preso singolarmente, però, questo dato non è
+	statisticamente significativo.
+\end{frame}
+
+\section{Conclusioni}
+\begin{frame}{Conclusioni}
+	Sobel e Clarkson, convalidando empiricamente l'ipotesi che l'analisi e la
+	verifica formali siano determinanti per la capacità di risoluzione dei
+	problemi, si augurano che queste pratiche siano incluse anche nei curricula di
+	altri atenei.
+\end{frame}
+
+\end{document}

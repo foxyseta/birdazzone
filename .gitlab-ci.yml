@@ -6,10 +6,13 @@ compile_pdf:
     - cd report
     - xelatex report.tex -output-directory=..
     - xelatex report.tex -output-directory=..# One more for good measure
+    - xelatex slides.tex -output-directory=..
+    - xelatex slides.tex -output-directory=..# One more for good measure
     - cd ..
   artifacts:
     paths:
       - report/report.pdf
+      - report/slides.pdf
     reports:
       # To ensure we've access to this file in the next stage
       dotenv: compile_pdf.env
@@ -42,3 +45,5 @@ release_job:
           url: "https://git.hjkl.gq/team13/birdazzone-full/-/raw/v0.$CI_PIPELINE_IID/production.yml"
         - name: "Report"
           url: "https://git.hjkl.gq/team13/birdazzone-full/-/jobs/$GE_JOB_ID/artifacts/raw/report/report.pdf?inline=false"
+        - name: "Slides"
+          url: "https://git.hjkl.gq/team13/birdazzone-full/-/jobs/$GE_JOB_ID/artifacts/raw/report/slides.pdf?inline=false"
