@@ -3,6 +3,9 @@
 \usepackage[italian]{babel}
 \usepackage{array}
 \usepackage{hyperref}
+\usepackage{graphicx}
+
+\graphicspath{ {./images/} }
 
 \usetheme{CambridgeUS}
 \usecolortheme{orchid}
@@ -23,219 +26,150 @@
 	\tableofcontents
 \end{frame}
 
-\section{Introduzione}
-\begin{frame}{Introduzione}
-	Due categorie di studenti di Ingegneria del software all'Università di Miami
-	svolgono lo stesso progetto in piccoli gruppi:
+\section{Il gruppo}
+\begin{frame}{Il gruppo}
 	\begin{itemize}
-		\item i gruppi ``di controllo`` (C) fanno uso di metodi di sviluppo
-		      tradizionali;
-		\item i gruppi ``di trattamento`` (T) hanno studiato i \textbf{metodi
-			      formali per lo sviluppo di programmi} .
+		\item Paolo Ceroni (sviluppatore front-end, UI/UX)
+		\item Gabriele Crestanello (sviluppatore back-end, esperto di dominio)
+		\item Mattia Girolimetto (\textbf{PO}, sviluppatore front-end \& DevOps)
+		\item Federica Grisendi (sviluppatrice front-end, artista mock)
+		\item Stefano Volpe (\textbf{SM}, sviluppatore full-stack, progettista software)
 	\end{itemize}
 \end{frame}
 
-\section{Approccio sperimentale}
-\begin{frame}{Approccio sperimentale}
+\section{Backlog di prodotto}
+\begin{frame}{Backlog di prodotto (1/2)}
 	\begin{table}
-		\begin{tabular}{|p{0.5\linewidth}|c|c|}
+		\begin{tabular}{|c|c|c|c|}
 			\hline
-			                                            & C  & T  \\
+			\textbf{\#} & \textbf{Nome}             & \textbf{Punti} & \textbf{Stato} \\
 			\hline
-			Introduzione alla derivavione dei programmi & No & Sì \\
+			\multicolumn{4}{|l|}{Sprint 0: "Preparazione"}                            \\
 			\hline
-			Semantica delle strutture di dati           & Sì & Sì \\
+			0           & Partita a Scrumble        & 3              & \#done         \\
 			\hline
-			Progettazione orientata agli oggetti        & Sì & Sì \\
+			1           & Ambiente di sviluppo CAS  & 10             & \#done         \\
 			\hline
-			Analisi formale di programmi concorrenti    & No & Sì \\
+			\multicolumn{4}{|l|}{Sprint 1: "Indovina la parola (A)"}                  \\
 			\hline
-			Ingegneria del software                     & Sì & Sì \\
+			2           & Configurazione tecnologie & 12             & \#done         \\
 			\hline
-			Laboratorio di sviluppo software            & Sì & Sì \\
+			3           & Ambiente di test          & 16             & \#done         \\
+			\hline
+			4           & Classifica parole         & 15.5           & \#done         \\
+			\hline
+			\multicolumn{4}{|l|}{Sprint 2: "Indovina la parola (B)"}                  \\
+			\hline
+			5           & Parola esatta             & 39             & \#done         \\
+			\hline
+			6           & Analisi testuale          & 39             & \#done         \\
 			\hline
 		\end{tabular}
-		\caption{al di là della formazione specifica sui metodi formali, le due
-			categorie condividono lo stesso curriculum}
 	\end{table}
-
 \end{frame}
 
-\section{Il progetto}
-\begin{frame}{Il progetto}
-	Ogni gruppo deve realizzare un \textbf{sistema incorporato} per la gestione
-	delle richieste effettuate nei confronti di \textbf{un ascensore}. È richiesto
-	l'uso:
+\begin{frame}{Backlog di prodotto (2/2)}
+	\begin{table}
+		\begin{tabular}{|c|c|c|c|}
+			\hline
+			\textbf{\#} & \textbf{Nome}           & \textbf{Punti} & \textbf{Stato} \\
+			\hline
+			\multicolumn{4}{|l|}{Sprint 3: "C'è un tempo e un luogo per ogni cosa"} \\
+			\hline
+			7           & Mappa                   & 20             & \#done         \\
+			\hline
+			8           & Filtri temporali        & 14             & \#done         \\
+			\hline
+			9           & Storico partite         & 5.5            & \#done         \\
+			\hline
+			\multicolumn{4}{|l|}{Sprint 4: "Fantacitorio e scaTTo matto"}           \\
+			\hline
+			10          & Classifica politici     & 16             & \#done         \\
+			\hline
+			11          & Squadre Fantacitorio    & 12             & \#done         \\
+			\hline
+			12          & Statistiche politici    & 12             & \#done         \\
+			\hline
+			13          & Partite a schacchi      & 26.5           & \#done         \\
+			\hline
+			14          & Condivisione su Twitter & 3.5            & \#done         \\
+			\hline
+		\end{tabular}
+	\end{table}
+\end{frame}
+
+\section{Casi d'uso}
+\begin{frame}{Casi d'uso}
+	\begin{figure}
+		\includegraphics[width=0.5\textwidth]{use-cases}
+		\caption{diagramma dei casi d'uso}
+	\end{figure}
+\end{frame}
+
+\section{Diagramma dei tipi}
+\begin{frame}{\texttt{model}}
+	\begin{figure}
+		\includegraphics[width=0.6\textwidth]{backend-model}
+		\caption{diagramma dei tipi di \texttt{model}}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{\texttt{gametracker}, \texttt{util}, \texttt{twitter},
+		\texttt{fantacitorio}}
+	\begin{figure}
+		\includegraphics[width=0.6\textwidth]{backend-gametracker-util}
+		\includegraphics[width=0.6\textwidth]{backend-twitter-fantacitorio}
+		\caption{diagramma dei tipi di \texttt{gametracker}, \texttt{util},
+			\texttt{twitter}, \texttt{fantacitorio}}
+	\end{figure}
+\end{frame}
+
+\section{Qualità del codice}
+\begin{frame}{Backend: panoramica}
+	\begin{figure}
+		\includegraphics[width=0.8\textwidth]{quality-backend-overall}
+		\caption{qualità del codice backend (panoramica)}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Backend: attività}
+	\begin{figure}
+		\includegraphics[width=0.75\textwidth]{quality-backend-activity}
+		\caption{qualità del codice backend (attività)}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Frontend: panoramica}
+	\begin{figure}
+		\includegraphics[width=0.8\textwidth]{quality-frontend-overall}
+		\caption{qualità del codice frontend (panoramica)}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Frontend: attività}
+	\begin{figure}
+		\includegraphics[width=0.75\textwidth]{quality-frontend-activity}
+		\caption{qualità del codice frontend (attività)}
+	\end{figure}
+\end{frame}
+
+\section{Diagramma di deployment}
+\begin{frame}{Diagramma di deployment}
+	\begin{figure}
+		\includegraphics[width=0.8\textwidth]{deployment}
+		\caption{diagramma di deployment}
+	\end{figure}
+\end{frame}
+
+\section{Demo}
+\begin{frame}{Demo}
+	Un'istanza privata del progetto è disponibile su:
 	\begin{itemize}
-		\item dei principi della progettazione orientata agli oggetti
-		      ;
-		\item di \texttt{C++} per l'implementazione;
-		\item di MFC per l'interfaccia grafica.
+		\item \hyperlink{team13.hjkl.gq:8000/swagger/index.html}{\beamerbutton{Birdazzone API}}
+		\item \hyperlink{team13.hjkl.gq}{\beamerbutton{Birdazzone Web}}
 	\end{itemize}
-\end{frame}
-
-\section{Progettazione}
-\begin{frame}
-	\vfill
-	\centering
-	\usebeamerfont{title}
-	Progettazione
-	\vfill
-\end{frame}
-
-\subsection{Gruppi di controllo}
-\begin{frame}{Progettazione: gruppi di controllo}
-	Nessun gruppo ha consegnato diagrammi UML.
-	\\~\\
-	Tredici gruppi hanno consegnato prototipi. Di questi, nove hanno esibito
-	codice sorgente.
-	\\~\\
-	Tutti i progetti sorgente consegnati mostrano un \textbf{grado di
-		accoppiamento estremamente alto}: il sistema dell'ascensore e la gestione
-	delle schermate convivono negli stessi moduli.
-\end{frame}
-
-\subsection{Gruppi di trattamento}
-\begin{frame}{Progettazione: gruppi di trattamento}
-	Tre gruppi su sei hanno consegnato diagrammi UML; di questi, uno solo presenta
-	un alto grado di accoppiamento.
-	\\~\\
-	Quattro gruppi su sei presentano specifiche formali complete. Ad esempio:
-	\begin{exampleblock}{Postcondizione per ogni operazione dell'ascensore}
-		\[
-			\begin{array}{l}
-				(\exists p : Person \mid OnFloor(e, p)                                               \\
-				\wedge \quad e.direction == p.direction : AddPerson(p))                              \\
-				\wedge \quad (GoingDown(e) \rightarrow e.current\_{}floow := e.current\_{}floor - 1) \\
-				\vee \quad GoingUp(e) \rightarrow e.current\_{}floor := e.current\_{}floor + 1)      \\
-				\wedge \quad (\exists p : Person \mid p.ending\_{}floor ==                           \\
-				e.current\_{}floor : RemovePerson(p)).
-			\end{array}
-		\]
-	\end{exampleblock}
-\end{frame}
-
-\section{Implementazione}
-\begin{frame}
-	\vfill
-	\centering
-	\usebeamerfont{title}
-	Implementazione
-	\vfill
-\end{frame}
-
-
-\subsection{Gruppi di controllo}
-
-\begin{frame}{Implementazione: gruppi di controllo}
-	\begin{table}
-		\begin{tabular}{|l|c|c|}
-			\hline
-			                            & Media & Dev. Std. \\
-			\hline
-			Linee totali                & 136   & 88        \\
-			\hline
-			Linee per la richiesta      & 67    & 83        \\
-			\hline
-			Linee per la pianificazione & 69    & 39        \\
-			\hline
-			Cicli                       & 7     & 6         \\
-			\hline
-			Condizioni                  & 16    & 10        \\
-			\hline
-			Casi                        & 30    & 20        \\
-			\hline
-			Livelli di innesto          & 4     & 1         \\
-			\hline
-		\end{tabular}
-		\caption{analisi delle implementazioni dei gruppi di controllo. Nessuna
-			implementazione passa tutti i test; tutte esibiscono un cattivo stile di
-			programmazione.}
-	\end{table}
-\end{frame}
-
-\subsection{Gruppi di trattamento}
-\begin{frame}{Implementazione: gruppi di trattamento}
-	\begin{table}
-		\begin{tabular}{|l|c|c|}
-			\hline
-			                            & Media & Dev. Std. \\
-			\hline
-			Linee totali                & 117   & 44        \\
-			\hline
-			Linee per la richiesta      & 45    & 38        \\
-			\hline
-			Linee per la pianificazione & 72    & 38        \\
-			\hline
-			Cicli                       & 4     & 5         \\
-			\hline
-			Condizioni                  & 16    & 10        \\
-			\hline
-			Casi                        & 24    & 11        \\
-			\hline
-			Livelli di innesto          & 5     & 3         \\
-			\hline
-		\end{tabular}
-		\caption{analisi delle implementazioni dei gruppi di trattamento. Ogni
-			implementazione passa tutti i test; la qualità dello stile è variabile.}
-	\end{table}
-\end{frame}
-
-\section{Una soluzione interamente formale}
-
-\begin{frame}{Una soluzione interamente formale}
-	Dopo la consegna, uno dei gruppi di trattamento ha ripetuto il progetto
-	tramite un processo formale ancora più rigoroso:
-	\begin{enumerate}
-		\item un'analisi formale dei requisiti;
-		\item un'implementazione intermedia in \texttt{Guarded Command Language}
-		      ;
-		\item una prova che l'implementazione intermedia rispettasse i requisiti
-		      formali;
-		\item una traduzione da \texttt{Guarded Command Language} a \texttt{C++}.
-	\end{enumerate}
-\end{frame}
-
-\subsection{Progettazione}
-\begin{frame}{Soluzione formale: progettazione}
-	Gli errori incontrati in fase di progettazione erano spesso dovuti a
-	specifiche incomplete, che sono state revisionate in corso d'opera.
-	\\~\\
-	Sono stati prodotti sia un diagramma UML che l'implementazione intermedia in
-	\texttt{Guarded Command Language}.
-\end{frame}
-
-\subsection{Implementazione}
-\begin{frame}{Soluzione formale: implementazione}
-	Data l'implementazione intermedia, la fase di implementazione vera e propria
-	è stata meccanica e banale.
-	\\~\\
-	Alla prima stesura del codice, gli unici errori riscontrati erano dovuti al
-	codice non derivato dalle specifiche formali.
-	\\~\\
-	Dalla prima stesura al momento in cui il progetto ha passato ogni caso di
-	prova, \textbf{il codice derivato dalle specifiche formali non ha mai subito
-		modifiche}.
-\end{frame}
-
-\section{Osservazioni}
-
-\begin{frame}{Osservazioni}
-	In questo esperimento comparativo, i gruppi che hanno fatto uso di metodi
-	formali ne hanno beneficiato enormemente in \textbf{correttezza} e
-	considerevolmente in \textbf{qualità dello stile} di programmazione.
-	\\~\\
-	Solo l'ultimo gruppo, che ha derivato e verificato il proprio codice, ne ha
-	anche guadagnato in concisione. Preso singolarmente, però, questo dato non è
-	statisticamente significativo.
-\end{frame}
-
-\section{Conclusioni}
-\begin{frame}{Conclusioni}
-	Sobel e Clarkson, convalidando empiricamente l'ipotesi che l'analisi e la
-	verifica formali siano determinanti per la capacità di risoluzione dei
-	problemi, si augurano che queste pratiche siano incluse anche nei curricula di
-	altri atenei.
+	Gli spazi di dipartimento non avrebberlo potuto ospitarlo: offono una gamma di
+	immagini Docker troppo limitata.
 \end{frame}
 
 \end{document}
