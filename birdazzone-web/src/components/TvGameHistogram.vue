@@ -11,6 +11,8 @@
   }>();
 
   const SERIE_NAME = 'attempts';
+  const MAX_COLS = 5
+  const LOWER_BOUND = 3
 
   const histogramValues = ref<HistogramValue[]>([]);
   const error = ref<boolean>(false);
@@ -28,7 +30,7 @@
     error.value = response.esit;
     if (response.esit) {
       histogramValues.value = response
-        .data!.filter(x => x.absoluteFrequency > 3)
+        .data!.filter(x => response.data!.length < MAX_COLS || x.absoluteFrequency > LOWER_BOUND)
         .map(
           x =>
             ({
