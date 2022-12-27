@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import type {User} from '@/api/interfaces/tweet';
+  import type { User } from '@/api/interfaces/tweet';
 
   const props = defineProps<{
     user: User;
@@ -22,15 +22,11 @@
     </div>
     <div class="flex flex-col justify-center mx-10">
       <h1 class="text-lgreen text-center">Turn</h1>
-      <h1 class="text-lgreen font-bold text-4xl text-center">{{
-        props.turn
-      }}</h1>
+      <h1 class="text-lgreen font-bold text-4xl text-center">{{ props.turn }}</h1>
     </div>
     <div class="flex flex-col justify-center ml-5">
       <h1 class="text-white text-center">Game id</h1>
-      <h1 class="text-white text-4xl font-bold text-center">{{
-        props.gameId
-      }}</h1>
+      <h1 class="text-white text-4xl font-bold text-center">{{ props.gameId }}</h1>
     </div>
   </div>
 </template>

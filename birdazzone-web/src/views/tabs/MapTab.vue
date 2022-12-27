@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-  import {ref} from 'vue';
+  import { ref } from 'vue';
   import FilterMap from '../../components/FilterList.vue';
   import GuesserMap from '../../components/GuesserMap.vue';
 
-  const props = defineProps<{gameId: string}>();
+  const props = defineProps<{ gameId: string }>();
 
   const from = ref<string | null>(null);
   const to = ref<string | null>(null);

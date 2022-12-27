@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  const props = defineProps<{itemPerPage: number}>();
+  const props = defineProps<{ itemPerPage: number }>();
   const options = [5, 10, 15, 20];
 </script>
 

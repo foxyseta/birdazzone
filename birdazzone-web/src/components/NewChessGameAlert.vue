@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-  import {ref} from 'vue';
+  import { ref } from 'vue';
   import ApiRepository from '@/api/api-repository';
-  import type {ChessColor} from './Chessboard.vue';
+  import type { ChessColor } from './Chessboard.vue';
   import BirdazzoneButton from './BirdazzoneButton.vue';
-  import type {User} from '@/api/interfaces/tweet';
+  import type { User } from '@/api/interfaces/tweet';
 
   const emit = defineEmits(['done']);
   const username = ref<string>('');
@@ -38,12 +38,8 @@
   };
 </script>
 <template>
-  <div
-    class="shadow bg-foreground rounded-2xl flex justify-start items-center my-5 mx-20 p-10 flex-col font-semibold"
-  >
-    <h1 class="font-bold text-4xl text-white"
-      >Welcome to the Birdazzone chess game!</h1
-    >
+  <div class="shadow bg-foreground rounded-2xl flex justify-start items-center my-5 mx-20 p-10 flex-col font-semibold">
+    <h1 class="font-bold text-4xl text-white">Welcome to the Birdazzone chess game!</h1>
     <div class="m-10 flex flex-col items-center justify-evenly">
       <div
         v-show="isError"
@@ -59,9 +55,7 @@
         type="text"
       />
 
-      <p class="mt-10 text-white text-xl text-center"
-        >And which color do you like more</p
-      >
+      <p class="mt-10 text-white text-xl text-center">And which color do you like more</p>
 
       <div class="flex w-full justify-evenly m-5">
         <div>

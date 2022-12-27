@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-  import Histogram, {type HistogramValue} from './Histogram.vue';
+  import Histogram, { type HistogramValue } from './Histogram.vue';
   import ApiRepository from '../api/api-repository';
-  import {onBeforeMount, ref} from 'vue';
+  import { onBeforeMount, ref } from 'vue';
 
   const props = defineProps<{
     gameId: string;
@@ -11,8 +11,8 @@
   }>();
 
   const SERIE_NAME = 'attempts';
-  const MAX_COLS = 5
-  const LOWER_BOUND = 1
+  const MAX_COLS = 5;
+  const LOWER_BOUND = 1;
 
   const histogramValues = ref<HistogramValue[]>([]);
   const error = ref<boolean>(false);
@@ -22,14 +22,10 @@
   const fetchAttempts = async () => {
     loading.value = true;
 
-    const response = await ApiRepository.getTvGameAttemptsStat(
-      props.gameId,
-      props.from,
-      props.to
-    );
+    const response = await ApiRepository.getTvGameAttemptsStat(props.gameId, props.from, props.to);
     error.value = response.esit;
     if (response.esit) {
-      console.log(response.data!)
+      console.log(response.data!);
       histogramValues.value = response
         .data!.filter(x => response.data!.length < MAX_COLS || x.absoluteFrequency > LOWER_BOUND)
         .map(
@@ -50,19 +46,11 @@
   });
 
   function itaJetLagFrom() {
-    return (
-      ((Number(props.from!.substring(11, 13)) + 1) as unknown as string) +
-      ':' +
-      props.from!.substring(14, 16)
-    );
+    return ((Number(props.from!.substring(11, 13)) + 1) as unknown as string) + ':' + props.from!.substring(14, 16);
   }
 
   function itaJetLagTo() {
-    return (
-      ((Number(props.to!.substring(11, 13)) + 1) as unknown as string) +
-      ':' +
-      props.to!.substring(14, 16)
-    );
+    return ((Number(props.to!.substring(11, 13)) + 1) as unknown as string) + ':' + props.to!.substring(14, 16);
   }
 </script>
 <template>

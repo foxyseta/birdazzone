@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import ApiRepository from '../api/api-repository';
-  import type {Coordinates} from '../api/interfaces/tweet';
-  import {onBeforeMount, ref} from 'vue';
+  import type { Coordinates } from '../api/interfaces/tweet';
+  import { onBeforeMount, ref } from 'vue';
   import ErrorWidget from './ErrorWidget.vue';
-  import {SemipolarSpinner} from 'epic-spinners';
+  import { SemipolarSpinner } from 'epic-spinners';
 
   const errorTitle = ref<string>();
   const errorText = ref<string>();
@@ -29,22 +29,13 @@
   const from = ref<string | null>(props.from);
   const to = ref<string | null>(props.to);
 
-  const unpackCoordinates = (coordinates: Coordinates) => [
-    coordinates.longitude,
-    coordinates.latitude
-  ];
+  const unpackCoordinates = (coordinates: Coordinates) => [coordinates.longitude, coordinates.latitude];
 
   const fetchCoordinates = async () => {
     if (!from.value || !to.value) {
-      const response = await ApiRepository.getListOfGuesser(
-        props.gameId,
-        '1',
-        '100'
-      );
+      const response = await ApiRepository.getListOfGuesser(props.gameId, '1', '100');
       if (response.esit) {
-        const packed = response
-          .data!.entries.map(tweet => tweet.coordinates)
-          .filter(c => c);
+        const packed = response.data!.entries.map(tweet => tweet.coordinates).filter(c => c);
         // @ts-ignore
         coordinates.value = packed.map(unpackCoordinates); // Remove undefined and nulls
       } else {
@@ -145,9 +136,7 @@
         <ol-vector-layer>
           <ol-source-vector>
             <ol-feature>
-              <ol-geom-multi-point
-                :coordinates="coordinates"
-              ></ol-geom-multi-point>
+              <ol-geom-multi-point :coordinates="coordinates"></ol-geom-multi-point>
               <ol-style>
                 <ol-style-circle :radius="radius">
                   <ol-style-fill :color="fillColor"></ol-style-fill>

@@ -1,13 +1,13 @@
 <script lang="ts">
-  import {checkCompatEnabled} from '@vue/compiler-core';
-  import {ref} from 'vue';
-  import {defineComponent} from 'vue';
+  import { checkCompatEnabled } from '@vue/compiler-core';
+  import { ref } from 'vue';
+  import { defineComponent } from 'vue';
   import DatePicker from 'vue-datepicker-next';
   import 'vue-datepicker-next/index.css';
   import ErrorWidget from './ErrorWidget.vue';
 
   export default defineComponent({
-    components: {DatePicker},
+    components: { DatePicker },
 
     data() {
       return {
@@ -46,10 +46,7 @@
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        return (
-          date > today ||
-          date < new Date(today.getTime() - 6 * 24 * 3600 * 1000)
-        );
+        return date > today || date < new Date(today.getTime() - 6 * 24 * 3600 * 1000);
       },
       selectDates() {
         /** to confirm selected dates */

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import {onBeforeMount, ref} from 'vue';
+  import { onBeforeMount, ref } from 'vue';
   import ApiRepository from '@/api/api-repository';
-  import type {TvGame} from '@/api/interfaces/tv-game';
+  import type { TvGame } from '@/api/interfaces/tv-game';
   import ErrorWidget from '../components/ErrorWidget.vue';
 
   const errorTitle = ref<string>();
@@ -29,10 +29,7 @@
 
   const fetchLogo = async () => {
     for (var game in games.value) {
-      logo_list.value.push(
-        (await ApiRepository.getTvGameById(games.value[game].id.toString()))
-          .data!
-      );
+      logo_list.value.push((await ApiRepository.getTvGameById(games.value[game].id.toString())).data!);
     }
   };
 
@@ -96,16 +93,10 @@
             :to="`/tv-games/${game.id}`"
             style="flex: 1 1 auto; width: 25rem"
           >
-            <div
-              class="flex flex-row rounded-lg m-10 bg-foreground hover:bg-lgray/50 p-4 flex-1"
-            >
+            <div class="flex flex-row rounded-lg m-10 bg-foreground hover:bg-lgray/50 p-4 flex-1">
               <div class="flex flex-row px-3">
                 <img
-                  :src="
-                    logo_list[game.id]
-                      ? BASE + logo_list[game.id].logo
-                      : '/icons/user.svg'
-                  "
+                  :src="logo_list[game.id] ? BASE + logo_list[game.id].logo : '/icons/user.svg'"
                   style="height: 6rem"
                   alt="gameIcon"
                 />
@@ -113,9 +104,7 @@
 
               <div class="flex flex-col flex-1"></div>
               <div class="flex flex-col justify-center align-center">
-                <div class="text-white font-semibold p-3">{{
-                  game.name.toUpperCase()
-                }}</div>
+                <div class="text-white font-semibold p-3">{{ game.name.toUpperCase() }}</div>
                 <div class="text-lgray">{{ game.hashtag }}</div>
               </div>
               <div class="flex flex-col flex-1"></div>

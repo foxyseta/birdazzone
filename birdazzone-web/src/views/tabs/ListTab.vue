@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-  import {ref} from 'vue';
+  import { ref } from 'vue';
   import GuesserList from '../../components/GuesserList.vue';
   import WordCloud from '../../components/WordCloud.vue';
   import FilterList from '../../components/FilterList.vue';
 
-  const props = defineProps<{gameId: string}>();
+  const props = defineProps<{ gameId: string }>();
 
   const from = ref<string | null>(null);
   const to = ref<string | null>(null);

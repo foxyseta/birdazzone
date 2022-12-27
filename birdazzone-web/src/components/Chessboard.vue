@@ -1,13 +1,13 @@
 <script setup lang="ts">
   import BirdazzoneSmartButton from '../components/BirdazzoneSmartButton.vue';
-  import {onBeforeMount, ref} from 'vue';
-  import {TheChessboard} from 'vue3-chessboard';
+  import { onBeforeMount, ref } from 'vue';
+  import { TheChessboard } from 'vue3-chessboard';
   import 'vue3-chessboard/style.css';
-  import type {ChessboardAPI, BoardConfig} from 'vue3-chessboard';
-  import type {User} from '@/api/interfaces/tweet';
+  import type { ChessboardAPI, BoardConfig } from 'vue3-chessboard';
+  import type { User } from '@/api/interfaces/tweet';
   import UserInfo from './UserInfo.vue';
   import ApiRepository from '@/api/api-repository';
-  import {SemipolarSpinner} from 'epic-spinners';
+  import { SemipolarSpinner } from 'epic-spinners';
 
   export type ChessColor = 'white' | 'black';
 
@@ -20,7 +20,7 @@
   const BLACK_TURN = 'black';
   const CHESSBOARD_SIZE = 50;
 
-  const props = defineProps<{user: User; startingColor: ChessColor}>();
+  const props = defineProps<{ user: User; startingColor: ChessColor }>();
 
   const boardAPI = ref<ChessboardAPI>();
   const boardConfig = ref<BoardConfig>({
@@ -38,7 +38,7 @@
   const gameId = ref<string>();
   const isError = ref<boolean>(false);
   const error = ref<string>('');
-  const loading = ref<boolean>(false)
+  const loading = ref<boolean>(false);
 
   function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -47,18 +47,14 @@
   const loadLastMove = async () => {
     if (!gameId.value) return;
     isError.value = false;
-    loading.value = true
-    await sleep(1000)
+    loading.value = true;
+    await sleep(1000);
 
-    const response = await ApiRepository.getChessMoves(
-      props.user.username,
-      gameId.value,
-      turn.value.toString()
-    );
-    loading.value = false 
-    
+    const response = await ApiRepository.getChessMoves(props.user.username, gameId.value, turn.value.toString());
+    loading.value = false;
+
     if (response.statusCode === 200) {
-      const valid = doOpponentMove(constructMove(response.data!)) 
+      const valid = doOpponentMove(constructMove(response.data!));
       if (valid) {
         boardLocked.value = false;
       } else {
@@ -68,7 +64,7 @@
     } else if (response.statusCode === 204) {
       isError.value = true;
       error.value = 'Nobody answered yet...be patient';
-    } else if (response.statusCode === 404){
+    } else if (response.statusCode === 404) {
       isError.value = true;
       error.value = 'You should make a new post first!';
     } else {
@@ -90,11 +86,11 @@
     // Get new board state
     const newState = boardAPI.value?.board.getFen();
     // Check if the move was valid
-    const valid = oldState !== newState
+    const valid = oldState !== newState;
     if (valid) {
       turn.value++;
     }
-    return valid
+    return valid;
   };
 
   const onMoveDone = () => {
@@ -110,8 +106,7 @@
       'https://twitter.com/intent/tweet?url=https%3A%2F%2Ffen2image.chessvision.ai%2F' +
         encodeURIComponent(
           encodeURIComponent(
-            boardAPI?.value?.board.getFen() ??
-              'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+            boardAPI?.value?.board.getFen() ?? 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
           )
         ) +
         '&text=Your%20move.%20Please%20retweet%20using%20the%20%22a1b2%22%20format.%20This%20is%20a%20majority%20vote.',
@@ -124,9 +119,7 @@
   };
 
   const setGameId = async () => {
-    gameId.value = Date.parse(
-      (await ApiRepository.getTwitterTimestamp()).toISOString()
-    ).toString();
+    gameId.value = Date.parse((await ApiRepository.getTwitterTimestamp()).toISOString()).toString();
   };
 
   onBeforeMount(() => {
@@ -178,16 +171,16 @@
         </div>
       </div>
       <!-- LOADING -->
-        <div
-          v-if="loading"
-          class="flex p-5 h-screen align-center justify-center"
-        >
-          <semipolar-spinner
-            :animation-duration="2000"
-            :size="50"
-            color="#1eb980"
-          />
-        </div>
+      <div
+        v-if="loading"
+        class="flex p-5 h-screen align-center justify-center"
+      >
+        <semipolar-spinner
+          :animation-duration="2000"
+          :size="50"
+          color="#1eb980"
+        />
+      </div>
       <!-- ERROR -->
       <div
         v-show="isError"

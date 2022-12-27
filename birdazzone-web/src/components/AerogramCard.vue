@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import {ref, onMounted} from 'vue';
-  import {createPopper} from '@popperjs/core';
+  import { ref, onMounted } from 'vue';
+  import { createPopper } from '@popperjs/core';
   import ApiRepository from '../api/api-repository';
   import ErrorWidget from './ErrorWidget.vue';
-  import {SemipolarSpinner} from 'epic-spinners';
+  import { SemipolarSpinner } from 'epic-spinners';
 
   const error = ref<boolean>(false);
   const errorTitle = ref<string>();
@@ -127,14 +127,7 @@
     context.closePath();
 
     context.beginPath(); // fail
-    context.arc(
-      centerX,
-      centerY,
-      radius,
-      start + succPerc + spaceBetween,
-      start + succPerc + failPerc,
-      false
-    );
+    context.arc(centerX, centerY, radius, start + succPerc + spaceBetween, start + succPerc + failPerc, false);
     context.strokeStyle = '#ff937f';
     context.lineWidth = 20;
     context.stroke();
@@ -206,7 +199,7 @@
           ></canvas>
           <div
             ref="popoverRef"
-            v-bind:class="{hidden: !see, block: see}"
+            v-bind:class="{ hidden: !see, block: see }"
             class="absolute text-sm font-semibold text-center rounded-lg bg-lblack p-2"
           >
             <div class="items-center">
@@ -217,16 +210,12 @@
           <div class="bottom-0 left-0 w-full">
             <div class="flex space-x-6 justify-center">
               <div class="text-lred inline">{{ (fail * 100).toFixed(0) }}%</div>
-              <div class="text-lgreen inline"
-                >{{ (success * 100).toFixed(0) }}%</div
-              >
+              <div class="text-lgreen inline">{{ (success * 100).toFixed(0) }}%</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="text-sm text-lgray ml-8 mt-3"
-      >* data refere only to first 100 attempts per day</div
-    >
+    <div class="text-sm text-lgray ml-8 mt-3">* data refere only to first 100 attempts per day</div>
   </div>
 </template>

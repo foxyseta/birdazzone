@@ -1,10 +1,10 @@
 <script lang="ts" setup>
   import FantaTeamsList from '../../components/FantaTeamsList.vue';
   import FantaSearchUser from '../../components/FantaSearchUser.vue';
-  import type {FantaTeam} from '../../api/interfaces/fanta-team';
-  import {onBeforeMount, ref} from 'vue';
+  import type { FantaTeam } from '../../api/interfaces/fanta-team';
+  import { onBeforeMount, ref } from 'vue';
   import ApiRepository from '@/api/api-repository';
-  import {SemipolarSpinner} from 'epic-spinners';
+  import { SemipolarSpinner } from 'epic-spinners';
 
   const teams = ref<FantaTeam[]>([]);
   const cache = ref<FantaTeam[]>([]);
@@ -31,9 +31,7 @@
 
   const onUsernameChanged = async (newUsername: string) => {
     loading.value = true;
-    teams.value = cache.value.filter((x: FantaTeam) =>
-      x.username.toLowerCase().startsWith(newUsername.toLowerCase())
-    );
+    teams.value = cache.value.filter((x: FantaTeam) => x.username.toLowerCase().startsWith(newUsername.toLowerCase()));
     loading.value = false;
   };
 </script>

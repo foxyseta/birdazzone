@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import ChessView from '../views/ChessView.vue';
 import FantaView from '../views/FantaView.vue';
 import TvGamesView from '../views/TvGamesView.vue';

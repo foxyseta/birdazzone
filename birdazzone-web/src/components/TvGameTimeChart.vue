@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-  import {ref, onBeforeMount} from 'vue';
+  import { ref, onBeforeMount } from 'vue';
   import ApiRepository from '../api/api-repository';
-  import type {Results} from '../api/interfaces/results';
-  import {SemipolarSpinner} from 'epic-spinners';
+  import type { Results } from '../api/interfaces/results';
+  import { SemipolarSpinner } from 'epic-spinners';
 
-  const props = defineProps<{gameId: string; date: string | null}>();
+  const props = defineProps<{ gameId: string; date: string | null }>();
 
   const CHART_TITLE = 'Time chart';
   const CHART_HEIGHT = 500;
@@ -66,12 +66,7 @@
     chartOptions.value.series = [];
 
     const response = props.date
-      ? await ApiRepository.getResultsFiltered(
-          props.gameId,
-          props.date,
-          null,
-          DEFAULT_EACH
-        )
+      ? await ApiRepository.getResultsFiltered(props.gameId, props.date, null, DEFAULT_EACH)
       : await ApiRepository.getResults(props.gameId, DEFAULT_EACH);
     error.value = response.esit;
     if (response.esit) {
