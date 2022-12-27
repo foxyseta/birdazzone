@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { onBeforeMount, ref } from 'vue';
+  import {onBeforeMount, ref} from 'vue';
 
   export interface HistogramValue {
     label: any;

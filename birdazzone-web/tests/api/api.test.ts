@@ -1,5 +1,5 @@
-import { ApiResponse } from '/src/api/api';
-import { test, assert, expect } from 'vitest';
+import {ApiResponse} from '/src/api/api';
+import {test, assert, expect} from 'vitest';
 
 test('Successfull ApiResponse', () => {
   // Arrange

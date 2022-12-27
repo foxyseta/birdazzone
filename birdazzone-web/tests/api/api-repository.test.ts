@@ -1,5 +1,5 @@
 import ApiRepository from '/src/api/api-repository';
-import { test, expect } from 'vitest';
+import {test, expect} from 'vitest';
 
 test('stringFormat works without additional arguments', () => {
   let testVar = 'var test';

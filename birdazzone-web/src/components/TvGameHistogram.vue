@@ -1,9 +1,14 @@
 <script lang="ts" setup>
-  import Histogram, { type HistogramValue } from './Histogram.vue';
+  import Histogram, {type HistogramValue} from './Histogram.vue';
   import ApiRepository from '../api/api-repository';
-  import { onBeforeMount, ref } from 'vue';
+  import {onBeforeMount, ref} from 'vue';
 
-  const props = defineProps<{ gameId: string; key: number; from: string | null; to: string | null }>();
+  const props = defineProps<{
+    gameId: string;
+    key: number;
+    from: string | null;
+    to: string | null;
+  }>();
 
   const SERIE_NAME = 'attempts';
 
@@ -15,7 +20,11 @@
   const fetchAttempts = async () => {
     loading.value = true;
 
-    const response = await ApiRepository.getTvGameAttemptsStat(props.gameId, props.from, props.to);
+    const response = await ApiRepository.getTvGameAttemptsStat(
+      props.gameId,
+      props.from,
+      props.to
+    );
     error.value = response.esit;
     if (response.esit) {
       histogramValues.value = response
@@ -38,11 +47,19 @@
   });
 
   function itaJetLagFrom() {
-    return ((Number(props.from!.substring(11, 13)) + 1) as unknown as string) + ':' + props.from!.substring(14, 16);
+    return (
+      ((Number(props.from!.substring(11, 13)) + 1) as unknown as string) +
+      ':' +
+      props.from!.substring(14, 16)
+    );
   }
 
   function itaJetLagTo() {
-    return ((Number(props.to!.substring(11, 13)) + 1) as unknown as string) + ':' + props.to!.substring(14, 16);
+    return (
+      ((Number(props.to!.substring(11, 13)) + 1) as unknown as string) +
+      ':' +
+      props.to!.substring(14, 16)
+    );
   }
 </script>
 <template>
@@ -51,7 +68,8 @@
       v-if="from && to"
       class="text-md text-white text-semibold mb-3"
     >
-      Data refere to the following date-time range: from {{ from.substring(0, 10) }}, {{ itaJetLagFrom() }} to
+      Data refere to the following date-time range: from
+      {{ from.substring(0, 10) }}, {{ itaJetLagFrom() }} to
       {{ itaJetLagTo() }}
     </div>
     <Histogram

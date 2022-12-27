@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import BirdazzoneSmartButton from '../components/BirdazzoneSmartButton.vue';
-  import { onBeforeMount, ref } from 'vue';
-  import { TheChessboard } from 'vue3-chessboard';
+  import {onBeforeMount, ref} from 'vue';
+  import {TheChessboard} from 'vue3-chessboard';
   import 'vue3-chessboard/style.css';
-  import type { ChessboardAPI, BoardConfig } from 'vue3-chessboard';
-  import type { User } from '@/api/interfaces/tweet';
+  import type {ChessboardAPI, BoardConfig} from 'vue3-chessboard';
+  import type {User} from '@/api/interfaces/tweet';
   import UserInfo from './UserInfo.vue';
   import ApiRepository from '@/api/api-repository';
 
@@ -19,7 +19,7 @@
   const BLACK_TURN = 'black';
   const CHESSBOARD_SIZE = 50;
 
-  const props = defineProps<{ user: User; startingColor: ChessColor }>();
+  const props = defineProps<{user: User; startingColor: ChessColor}>();
 
   const boardAPI = ref<ChessboardAPI>();
   const boardConfig = ref<BoardConfig>({
@@ -46,7 +46,11 @@
     if (!gameId.value) return;
     isError.value = false;
 
-    const response = await ApiRepository.getChessMoves(props.user.username, gameId.value, turn.value.toString());
+    const response = await ApiRepository.getChessMoves(
+      props.user.username,
+      gameId.value,
+      turn.value.toString()
+    );
     if (response.statusCode === 200) {
       doOpponentMove(constructMove(response.data!));
       boardLocked.value = false;
@@ -90,7 +94,8 @@
       'https://twitter.com/intent/tweet?url=https%3A%2F%2Ffen2image.chessvision.ai%2F' +
         encodeURIComponent(
           encodeURIComponent(
-            boardAPI?.value?.board.getFen() ?? 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+            boardAPI?.value?.board.getFen() ??
+              'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
           )
         ) +
         '&text=Your%20move.%20Please%20retweet%20using%20the%20%22a1b2%22%20format.%20This%20is%20a%20majority%20vote.',
@@ -103,7 +108,9 @@
   };
 
   const setGameId = async () => {
-    gameId.value = Date.parse((await ApiRepository.getTwitterTimestamp()).toISOString()).toString();
+    gameId.value = Date.parse(
+      (await ApiRepository.getTwitterTimestamp()).toISOString()
+    ).toString();
   };
 
   onBeforeMount(() => {

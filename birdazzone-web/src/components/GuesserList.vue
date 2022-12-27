@@ -1,16 +1,21 @@
 <script setup lang="ts">
   import GuesserListItem from '../components/GuesserListItem.vue';
   import ApiRepository from '../api/api-repository';
-  import { onBeforeMount, ref } from 'vue';
-  import type { Tweet } from '../api/interfaces/tweet';
-  import { SemipolarSpinner } from 'epic-spinners';
+  import {onBeforeMount, ref} from 'vue';
+  import type {Tweet} from '../api/interfaces/tweet';
+  import {SemipolarSpinner} from 'epic-spinners';
   import PaginationBar from '../components/PaginationBar.vue';
   import CardPerPage from './ItemPerPage.vue';
   import ErrorWidget from './ErrorWidget.vue';
 
   const loading = ref<boolean>(false);
   const list = ref<Tweet[]>([]);
-  const props = defineProps<{ gameId: string; key: number; from: string | null; to: string | null }>();
+  const props = defineProps<{
+    gameId: string;
+    key: number;
+    from: string | null;
+    to: string | null;
+  }>();
   const max = ref<number>(0);
   const actualPage = ref<number>(1);
   const itemPerPage = ref<number>(5);

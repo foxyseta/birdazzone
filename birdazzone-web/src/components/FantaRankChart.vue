@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-  import type { Politician } from '@/api/interfaces/politician';
-  import Histogram, { type HistogramValue } from './Histogram.vue';
+  import type {Politician} from '@/api/interfaces/politician';
+  import Histogram, {type HistogramValue} from './Histogram.vue';
 
-  const props = defineProps<{ list: Politician[] }>();
+  const props = defineProps<{list: Politician[]}>();
   const chartTitle = 'Politicians Ranking';
   const serieName = 'Politician';
 
