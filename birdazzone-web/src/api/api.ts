@@ -24,10 +24,7 @@ export interface ApiError {
 }
 
 export class ApiManager {
-  private static async generalRequest<T>(
-    url: string,
-    config: RequestInit
-  ): Promise<ApiResponse<T>> {
+  private static async generalRequest<T>(url: string, config: RequestInit): Promise<ApiResponse<T>> {
     const response = await fetch(url, config);
 
     const responseStatusCode = response.status;
@@ -51,7 +48,7 @@ export class ApiManager {
   public static async get<T>(url: string): Promise<ApiResponse<T>> {
     const config: RequestInit = {
       method: 'GET',
-      headers: {Accept: 'Application/Json'}
+      headers: { Accept: 'Application/Json' }
     };
 
     return await this.generalRequest<T>(url, config);

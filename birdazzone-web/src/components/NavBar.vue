@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import {ref} from 'vue';
-  import {GAMES_PATH, CHESS_PATH, FANTA_PATH} from '../router/index';
+  import { ref } from 'vue';
+  import { GAMES_PATH, CHESS_PATH, FANTA_PATH } from '../router/index';
 
   interface NavItem {
     title: string;
@@ -30,8 +30,7 @@
     }
   ]);
 
-  const select = (url: string) =>
-    items.value.forEach(x => (x.active = x.url === url));
+  const select = (url: string) => items.value.forEach(x => (x.active = x.url === url));
 </script>
 <template>
   <aside
@@ -44,8 +43,7 @@
         src="/logo.png"
         alt="Birdazzone's logo"
       />
-      <h1 class="text-lgreen font-black text-xl">IL</h1>
-      <h1 class="text-lgreen font-black text-xl">BIRDAZZONE</h1>
+      <h1 class="text-lgreen font-black text-xl">IL BIRDAZZONE</h1>
     </div>
     <div class="overflow-y-auto py-4 px-3 rounded">
       <ul class="my-5 space-y-2">
@@ -95,8 +93,7 @@
     width: 2rem;
   }
   .gray-filter {
-    filter: invert(48%) sepia(79%) saturate(0%) hue-rotate(86deg)
-      brightness(118%) contrast(10%);
+    filter: invert(48%) sepia(79%) saturate(0%) hue-rotate(86deg) brightness(118%) contrast(10%);
   }
   .white-filter {
     filter: invert(48%) saturate(100%) brightness(200%) contrast(200%);

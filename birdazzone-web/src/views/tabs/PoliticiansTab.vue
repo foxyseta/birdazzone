@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-  import {ref, onBeforeMount} from 'vue';
+  import { ref, onBeforeMount } from 'vue';
   import ErrorWidget from '@/components/ErrorWidget.vue';
   import ApiRepository from '../../api/api-repository';
-  import type {Politician} from '../../api/interfaces/politician';
+  import type { Politician } from '../../api/interfaces/politician';
   import FantacitorioHistogram from '@/components/FantacitorioHistogram.vue';
-  import {SemipolarSpinner} from 'epic-spinners';
+  import { SemipolarSpinner } from 'epic-spinners';
   import FantaRankChart from '@/components/FantaRankChart.vue';
   import NumberOfPoliticians from '@/components/NumberOfPoliticians.vue';
   const errorTitle = ref<string>();
@@ -48,9 +48,7 @@
   const changeAndSort = async (index: number, newScore: string) => {
     loading.value = true;
     await sleep(1000);
-    list.value[index].score = isNumber(newScore)
-      ? parseInt(newScore)
-      : list.value[index].score;
+    list.value[index].score = isNumber(newScore) ? parseInt(newScore) : list.value[index].score;
     list.value = list.value.sort((a, b) => b.score - a.score);
     loading.value = false;
     return list.value[index].score.toString();
@@ -92,9 +90,7 @@
               style="flex: 1 1 auto; width: 1rem"
               >{{ index + 1 }}.</div
             >
-            <div
-              class="flex flex-row rounded-lg bg-foreground p-4 ml-3 items-center"
-            >
+            <div class="flex flex-row rounded-lg bg-foreground p-4 ml-3 items-center">
               <div
                 class="font-semibold text-white"
                 style="flex: 1 1 auto; width: 100%"

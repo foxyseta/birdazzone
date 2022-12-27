@@ -1,8 +1,6 @@
 <template>
   <footer class="text-center lg:text-left bg-background text-lgray">
-    <div
-      class="flex justify-center items-center lg:justify-center p-6 border-t border-gray-300"
-    >
+    <div class="flex justify-center items-center lg:justify-center p-6 border-t border-gray-300">
       <div class="mr-12 hidden lg:block">
         <span>Get connected with us on social networks:</span>
       </div>
@@ -139,10 +137,7 @@
           <h2 class="text-lgreen text-center font-black">IL BIRDAZZONE</h2>
         </div>
         <div class="">
-          <h6
-            class="uppercase font-semibold mb-4 flex justify-center md:justify-start"
-            >Contact</h6
-          >
+          <h6 class="uppercase font-semibold mb-4 flex justify-center md:justify-start">Contact</h6>
           <p class="flex items-center justify-center md:justify-start mb-4">
             <svg
               aria-hidden="true"

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import {ref} from 'vue';
+  import { ref } from 'vue';
   import FilterA from '../../components/FilterAerogram.vue';
   import FilterH from '../../components/FilterHistogram.vue';
   import FilterL from '../../components/FilterTimeChart.vue';
@@ -7,7 +7,7 @@
   import TvGameTimeChart from '../../components/TvGameTimeChart.vue';
   import TvGameHistogram from '../../components/TvGameHistogram.vue';
 
-  const props = defineProps<{gameId: string}>();
+  const props = defineProps<{ gameId: string }>();
 
   const fromA = ref<string | null>(null);
   const toA = ref<string | null>(null);

@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import ApiRepository from '../api/api-repository';
-  import type {TvGame} from '../api/interfaces/tv-game';
-  import {ref, onBeforeMount} from 'vue';
+  import type { TvGame } from '../api/interfaces/tv-game';
+  import { ref, onBeforeMount } from 'vue';
   import GuesserMap from '../components/GuesserMap.vue';
   import BirdazzoneButton from '../components/BirdazzoneButton.vue';
   import ErrorWidget from '@/components/ErrorWidget.vue';
@@ -9,7 +9,7 @@
   import ChartTab from './tabs/ChartTab.vue';
   import MapTab from './tabs/MapTab.vue';
 
-  const props = defineProps<{id: string}>();
+  const props = defineProps<{ id: string }>();
 
   const loading = ref<boolean>(true);
   const error = ref<boolean>(false);

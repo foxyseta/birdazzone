@@ -1,12 +1,12 @@
 <script setup lang="ts">
-  import type {Tweet} from '@/api/interfaces/tweet';
-  import {onBeforeMount, ref} from 'vue';
+  import type { Tweet } from '@/api/interfaces/tweet';
+  import { onBeforeMount, ref } from 'vue';
 
   let showAll = ref<boolean>(false);
   function changeVisibility() {
     showAll.value = !showAll.value;
   }
-  const props = defineProps<{data: Tweet; index: number}>();
+  const props = defineProps<{ data: Tweet; index: number }>();
 
   const hours: number = new Date(props.data.createdAt).getHours();
   const mins: number = new Date(props.data.createdAt).getMinutes();
@@ -47,9 +47,7 @@
             class="flex flex-col mx-4"
             style="flex: 1 1 auto"
           >
-            <p class="flex flex-1 text-white font-bold"
-              >@{{ props.data.author.username }}</p
-            >
+            <p class="flex flex-1 text-white font-bold">@{{ props.data.author.username }}</p>
             <p class="flex flex-1 text-lgray">{{ props.data.author.name }}</p>
           </div>
           <div class="flex flex-col mx-4">
@@ -73,9 +71,7 @@
                 alt="medal3"
               />
             </div>
-            <div class="text-lgray text-xs"
-              >{{ hours }}:{{ mins > 10 ? mins : '0' + mins }}</div
-            >
+            <div class="text-lgray text-xs">{{ hours }}:{{ mins > 10 ? mins : '0' + mins }}</div>
           </div>
         </div>
         <div

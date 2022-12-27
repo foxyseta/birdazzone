@@ -1,13 +1,13 @@
 <script lang="ts">
-  import {checkCompatEnabled} from '@vue/compiler-core';
-  import {ref} from 'vue';
-  import {defineComponent} from 'vue';
+  import { checkCompatEnabled } from '@vue/compiler-core';
+  import { ref } from 'vue';
+  import { defineComponent } from 'vue';
   import DatePicker from 'vue-datepicker-next';
   import 'vue-datepicker-next/index.css';
   import ErrorWidget from './ErrorWidget.vue';
 
   export default defineComponent({
-    components: {DatePicker},
+    components: { DatePicker },
 
     data() {
       return {
@@ -23,8 +23,7 @@
         eDateTime: null as string | null /** to save end date-time */,
 
         choosenDate: false /** to verify if date has been chosen */,
-        choosenDateTimes:
-          false /** to verify if times and date have been chosen */,
+        choosenDateTimes: false /** to verify if times and date have been chosen */,
         openClose: false /** to open/close filters card */
       };
     },
@@ -55,10 +54,7 @@
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        return (
-          date > today ||
-          date < new Date(today.getTime() - 6 * 24 * 3600 * 1000)
-        );
+        return date > today || date < new Date(today.getTime() - 6 * 24 * 3600 * 1000);
       },
       selectDate() {
         /** to confirm date was select */
@@ -105,25 +101,14 @@
           // the API uses english time zone
           if (Number(this.sTime.substring(0, 2)) != 0) {
             this.sDateTime =
-              ((this.date +
-                'T' +
-                (Number(this.sTime.substring(0, 2)) - 1)) as string) +
+              ((this.date + 'T' + (Number(this.sTime.substring(0, 2)) - 1)) as string) +
               this.sTime.substring(2) +
               ':00Z';
           } else {
-            this.sDateTime =
-              this.date +
-              'T' +
-              this.sTime.substring(0, 2) +
-              this.sTime.substring(2) +
-              ':00Z';
+            this.sDateTime = this.date + 'T' + this.sTime.substring(0, 2) + this.sTime.substring(2) + ':00Z';
           }
           this.eDateTime =
-            ((this.date +
-              'T' +
-              (Number(this.eTime.substring(0, 2)) - 1)) as string) +
-            this.eTime.substring(2) +
-            ':00Z';
+            ((this.date + 'T' + (Number(this.eTime.substring(0, 2)) - 1)) as string) + this.eTime.substring(2) + ':00Z';
 
           this.choosenDateTimes = true;
         }

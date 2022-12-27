@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import {ref} from 'vue';
-  import {Dialog, DialogPanel, DialogTitle} from '@headlessui/vue';
+  import { ref } from 'vue';
+  import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
 
   const props = defineProps<{
     open: boolean;
@@ -18,9 +18,7 @@
     @close="open = false"
   >
     <div class="fixed inset-0 z-10 overflow-y-auto">
-      <div
-        class="flex min-h-full items-end justify-center font-semibold p-4 text-center sm:items-center sm:p-0"
-      >
+      <div class="flex min-h-full items-end justify-center font-semibold p-4 text-center sm:items-center sm:p-0">
         <DialogPanel
           class="relative transform overflow-hidden rounded-lg bg-foreground text-left text-white shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
         >
@@ -38,9 +36,7 @@
               </div>
             </div>
           </div>
-          <div
-            class="bg-background px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
-          >
+          <div class="bg-background px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
             <button
               type="button"
               class="font-semibold text-white border-b border-lgreen bg-foreground hover:bg-lgreen rounded-lg p-2 text-center text-sm"
