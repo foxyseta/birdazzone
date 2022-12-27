@@ -12,7 +12,7 @@
 
   const SERIE_NAME = 'attempts';
   const MAX_COLS = 5
-  const LOWER_BOUND = 3
+  const LOWER_BOUND = 1
 
   const histogramValues = ref<HistogramValue[]>([]);
   const error = ref<boolean>(false);
@@ -29,6 +29,7 @@
     );
     error.value = response.esit;
     if (response.esit) {
+      console.log(response.data!)
       histogramValues.value = response
         .data!.filter(x => response.data!.length < MAX_COLS || x.absoluteFrequency > LOWER_BOUND)
         .map(
@@ -76,7 +77,7 @@
     </div>
     <Histogram
       v-if="!loading"
-      :chart-title="'Played words with more than 3 tentatives'"
+      :chart-title="'Most played words'"
       :values="histogramValues"
       :serie-name="SERIE_NAME"
     />
