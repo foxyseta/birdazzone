@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"strconv"
 	"time"
 	"unicode"
@@ -15,7 +16,16 @@ import (
 	"github.com/swaggo/swag/example/celler/httputil"
 )
 
-const BearerToken = "AAAAAAAAAAAAAAAAAAAAANHikgEAAAAAt0NQtN01tfyiK%2BbDypCiMOeGTQo%3DMyouTiX5Ewc2jwx5QdKjGrs64wNOJfvr2QeujrXt4lgO6uwtPo"
+func getToken() string {
+	token, ok := os.LookupEnv("TOKEN")
+	if !ok {
+		fmt.Fprintf(os.Stderr, "Error: TOKEN environment variable not found.\n")
+		os.Exit(1)
+	}
+	return token
+}
+
+var BearerToken = getToken()
 
 var testingResponseRecorder = httptest.NewRecorder()
 var testingGinContext *gin.Context = nil

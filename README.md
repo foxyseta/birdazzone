@@ -3,6 +3,13 @@
 Project for the University of Bologna Data Structure and Algorithms course
 (a.y. 2020-21).
 
+# Setup
+
+When running both containers (via `docker-compose`) or the backend container
+only, please make sure you set the `TOKEN` environment variable first. It will
+be used as a bearer token for [Twitter API
+v2](https://developer.twitter.com/en/support/twitter-api/v2)
+
 # Run
 
 Production:
