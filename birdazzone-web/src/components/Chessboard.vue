@@ -59,7 +59,7 @@
         boardLocked.value = false;
       } else {
         isError.value = true;
-        error.value = 'Nobody did a valid move...be patient';
+        error.value = 'The majority voted for an invalid move... be patient!';
       }
     } else if (response.statusCode === 204) {
       isError.value = true;
