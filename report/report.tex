@@ -166,7 +166,35 @@ disponibile nello sprint 0.
 
 \subsection{Retrospettiva con \emph{Essence}}
 
+Il \emph{serious game} della prima retrospettiva è stato scelto ad-hoc a partire
+da una conversazione avvenuta fra i membri durante la precedente partita a
+Scrumble. Gli sviluppatori, abituati a un metodo a cascata, si sentivano
+sopraffatti dal dover completamente stravolgere il proprio modo di lavorare.
+Il \emph{serious game} scelto, quindi, si basava sulla costruzione, a turni fra
+i vari membri, di un'ipotetica ``scala di priorità'' fra i vari aspetti dello
+sviluppo \emph{scrum} (dal più al meno importante):
+\begin{enumerate}
+	\item \emph{Vision}: Paolo ha sentito il bisogno che, fra tante novità, almeno
+	      il PO avesse le idee chiare sul futuro del prodotto;
+	\item \emph{Product Goal}: sempre proposto da \emph{Paolo}, sempre per lo
+	      stesso motivo;
+	\item \emph{Stable Teams}: Federica ha esplicitamente chiesto l'impegno di
+	      ogni sviluppatore a non abbandonare il gruppo, né ad accogliere alcun sesto
+	      membro a metà del progetto;
+	\item \emph{Definition of Done}: Mattia (PO), che lavora in \emph{scrum} anche
+	      in ufficio, ha chiesto che la sua futura definizione di fatto venisse sempre
+	      tenuta in considerazione;
+	\item \emph{Improvement}: Stefano (SM) ha fatto presente che il metodo e i
+	      modi di lavoro del progetto sarebbero dovuti essere elastici, e quindi
+	      oggetti di continui miglioramenti.
+\end{enumerate}
+Il gioco, volutamente semplice, voleva vincere anche i membri più diffidenti nei
+confronti di una riunione svolta con carte ``da gioco''.
+
 \includegraphics[width=\textwidth]{essence-0.jpg}
+
+Non avendo nello sprint 0 ancora cominciato lo sviluppo vero e proprio, non sono
+emersi particolari suggerimenti per migliorare il proprio metodo.
 
 \section{\emph{Sprint} 1}
 
@@ -193,6 +221,24 @@ Tweet in \verb!tvgames/tvgames_test.go!.
 \includegraphics[width=\textwidth]{burndown-1.png}
 
 \subsection{Retrospettiva con \emph{Essence}}
+
+Il \emph{serious game} proposto stavolta era una leggera variante del
+precedente: quando un membro aggiunge una nuova carta al ``podio'' delle
+priorità, con essa deve coprirne un'altra (impilandole), in modo che visibili
+sul tavolo rimangano sempre e solo le tre carte considerate più pressanti.
+
+Alla fine della partita, sul tavolo sono rimaste:
+\begin{itemize}
+	\item \emph{Sprint Backlog}: gli sviluppatori più inesperti hanno sentito il
+	      bisogno di uno sprint backlog più dettagliato, e il PO si è ripromesso di
+	      accontentarli;
+	\item \emph{Definition of Done}: viceversa, si è deciso di essere più rigorosi
+	      nel soddisfare la definizione di fatto del PO;
+	\item \emph{Improvement}: è stato richiesto il seguente miglioramento nella
+	      suddivisione dei task: per ogni nuovo \emph{API endpoint}, ora deve anche
+	      essere aggiunto un task per discutere il modello dati usato per comunicare
+	      fra frontend e backend.
+\end{itemize}
 
 \includegraphics[width=\textwidth]{essence-1.jpg}
 
@@ -223,7 +269,22 @@ Queste cinque storie sono testate in \verb!tvgames/tvgames_test.go! e
 
 \includegraphics[width=\textwidth]{burndown-2.png}
 
+Ispirati dagli altri gruppi, per questo sprint si ha optato per un \emph{serious
+	game} più noto: \emph{Patience}.
+
 \subsection{Retrospettiva con \emph{Essence}}
+
+Alle carte nella colonna di destra (``Not good'') sono state associate azioni
+per gli sprint successivi volte a migliorare lo stato di cose attuale:
+\begin{itemize}
+	\item \emph{Self-Management}: per lasciare gli sviluppatori meno disorientati,
+	      abbiamo deciso di assicurarci che non solo ciascun task venisse
+	      auto-assegnato durante la pianificazione dello sprint, ma che si
+	      discutessero anche le tempistiche;
+	\item \emph{Definition of Done}: la Definition of Done su Taiga è stata
+	      rivista specializzandola in due versioni: una per il frontend e una per
+	      il backend.
+\end{itemize}
 
 \includegraphics[width=\textwidth]{essence-2.jpg}
 
@@ -231,7 +292,7 @@ Queste cinque storie sono testate in \verb!tvgames/tvgames_test.go! e
 
 \subsection{\emph{Sprint goal}}
 
-Lo sprint goal si intitolava "A Time and a Place for Everythin". Lo sprint
+Lo sprint goal si intitolava "A Time and a Place for Everything". Lo sprint
 infatti verteva sui luoghi (la mappa) e sui filtri temporali.
 
 \subsection{\emph{Sprint backlog}}
@@ -254,6 +315,27 @@ Queste cinque storie sono testate in \verb!tvgames/tvgames_test.go! e
 \includegraphics[width=\textwidth]{burndown-3.png}
 
 \subsection{Retrospettiva con \emph{Essence}}
+
+Il \emph{serious game} proposto per questo sprint era un gioco di scambi:
+ciascun giocatore partiva da un piccolo mazzetto di carte Essence, ed era libero
+di giocarne ciascuna sul tavolo davanti a un altro giocatore, con l'intento di
+descrivere cosa pensasse del lavoro di quest'ultimo nell'ultimo sprint. I membri
+hanno scelto di declinare queste osservazioni talvolta in positivo e talvolta in
+negativo:
+\begin{itemize}
+	\item a Paolo è stato richiesto più \emph{focus}, ma è stato riconosciuto di
+	      interessarsi al \emph{Daily Scrum} anche quando lo SM se ne é dimenticato;
+	\item Gabriele, che ha dovuto studiare il linguaggio Go per la prima volta in
+	      vita sua, è stato lodato per la sua \emph{Adaptation};
+	\item Mattia, come PO, è stato ringraziato per le sue veloci \emph{sprint
+		      review}, il condividere continuamente la sua \emph{Vision} con gli altri e
+	      la capacità di fare \emph{grooming} sul \emph{Product Backlog};
+	\item Federica, pur non essendo il PO, ma in quanto mock artist, è riuscita a
+	      mostrare \emph{Transparency} nei confronti degli stakeholder;
+	\item Stefano è riuscito a risultare costantemente fedele agli \emph{Scrum
+		      Values}, ma è stato criticato per non ricordarsi sempre dei \emph{Daily
+		      Scrum}.
+\end{itemize}
 
 \includegraphics[width=\textwidth]{essence-3.jpg}
 
@@ -287,7 +369,19 @@ prolungamento.
 
 \subsection{Retrospettiva con \emph{Essence}}
 
+Anche il \emph{serious game} di questo sprint, \emph{Spotlight}, è molto usato.
+Le relazioni qui costruite hanno evidenziato che gli sviluppatori sono
+fermamente convinti nell'uso della \emph{velocity} (\emph{Yesterday's Weather})
+come strumento per capire le dimensioni ideali del prossimo \emph{Sprint
+	Backlog}, e che quindi il PO dovrebbe fare un po' di calcoli per assicurarsi di
+non creare \emph{Sprint Backlog} irragionevoli o di dimensioni troppo diverse
+fra loro.
+
 \includegraphics[width=\textwidth]{essence-4-0.jpg}
+\includegraphics[width=\textwidth]{essence-4-1.jpg}
+\includegraphics[width=\textwidth]{essence-4-2.jpg}
+\includegraphics[width=\textwidth]{essence-4-3.jpg}
+\includegraphics[width=\textwidth]{essence-4-4.jpg}
 
 \section{Qualità del codice}
 
@@ -330,20 +424,20 @@ circa cinque persone bilanciati per esperienza.
 
 \begin{table}[]
 	\begin{tabular}{cccccc}
-		\textbf{Q}                             & \textbf{Federica} & \textbf{Gabriele} & \textbf{Mattia} & \textbf{Paolo} & \textbf{Stefano} \\
-		\textbf{Q1}                            & \textbf{3}        & 3                 & 5               & 3              & 4                \\
-		\textbf{Q2}                            & \textbf{4}        & 4                 & 3               & 5              & 4                \\
-		\textbf{Q3}                            & \textbf{3}        & 3                 & 5               & 4              & 4                \\
-		\textbf{Q4}                            & 4                 & 4                 & 4               & 4              & 4                \\
-		\textbf{Q5}                            & 5                 & 5                 & 5               & 5              & 5                \\
-		\textbf{\begin{tabular}[c]{@{}c@{}}Q6\\  ONLY DEV TEAM\end{tabular}} & 4                 & 4                 &                 & 3              &                  \\
-		\textbf{Q7}                            & 4                 & 4                 & 4               & 3              & 3                \\
-		\textbf{Q8}                            & 4                 & 4                 & 5               & 3              & 5                \\
-		\textbf{Q9}                            & 3                 & 3                 & 5               & 3              & 5                \\
-		\textbf{Q10}                           & 4                 & 4                 & 5               & 4              & 5                \\
+		\textbf{Q}                              & \textbf{Federica} & \textbf{Gabriele} & \textbf{Mattia} & \textbf{Paolo} & \textbf{Stefano} \\
+		\textbf{Q1}                             & \textbf{3}        & 3                 & 5               & 3              & 4                \\
+		\textbf{Q2}                             & \textbf{4}        & 4                 & 3               & 5              & 4                \\
+		\textbf{Q3}                             & \textbf{3}        & 3                 & 5               & 4              & 4                \\
+		\textbf{Q4}                             & 4                 & 4                 & 4               & 4              & 4                \\
+		\textbf{Q5}                             & 5                 & 5                 & 5               & 5              & 5                \\
+		\textbf{\begin{tabular}[c]{@{}c@{}}Q6\\  ONLY DEV TEAM\end{tabular}}  & 4                 & 4                 &                 & 3              &                  \\
+		\textbf{Q7}                             & 4                 & 4                 & 4               & 3              & 3                \\
+		\textbf{Q8}                             & 4                 & 4                 & 5               & 3              & 5                \\
+		\textbf{Q9}                             & 3                 & 3                 & 5               & 3              & 5                \\
+		\textbf{Q10}                            & 4                 & 4                 & 5               & 4              & 5                \\
 		\textbf{\begin{tabular}[c]{@{}c@{}}Q11\\  ONLY FOR PO\end{tabular}} &                   &                   & 5               &                &                  \\
-		\textbf{Q12}                           & 3                 & 3                 & 4               & 5              & 3                \\
-		\textbf{Q13}                           & 5                 & 5                 & 5               & 5              & 5                \\
+		\textbf{Q12}                            & 3                 & 3                 & 4               & 5              & 3                \\
+		\textbf{Q13}                            & 5                 & 5                 & 5               & 5              & 5                \\
 		\textbf{\begin{tabular}[c]{@{}c@{}}Q14\\  ONLY DEV TEAM\end{tabular}} & 5                 & 5                 &                 & 5              &                  \\
 		\textbf{\begin{tabular}[c]{@{}c@{}}Q15\\  ONLY FOR PO\end{tabular}} &                   &                   & 5               &                &
 	\end{tabular}
@@ -352,51 +446,40 @@ circa cinque persone bilanciati per esperienza.
 \subsection{Definizione di fatto}
 
 \begin{quote}
-	An user story can be marked as “done” when:
+	A user story can be marked as “done” when:
 
-	All requested features are implemented
-	If the story requires back-end development, unit test are written and passed
-	If the story requires front-end development, ui test are written and passed
-	Documentation is written
-	It has been approved by the P.O.
+	\begin{enumerate}
+		\item All requested features are implemented
+		\item If the story requires back-end development, unit tests are written and passed
+		\item If the story requires utilities for front-end development, unit tests are written and passed
+		\item If the story requires API changes, correct documentation is written
+		\item It has been approved by the P.O.
+	\end{enumerate}
 \end{quote}
 
 \subsection{Sintesi dei dati del controllo della versione}
 
-Backend:
-
-\begin{itemize}
-	\item 218 commit di Stefano Volpe
-	\item 116 commit di Gabriele Crestanello
-	\item 32 commit di Mattia Girolimetto
-	\item 5 commit di Piffy@home
-	\item 5 commit di Mattia
-	\item 1 commit di Fedegri
-\end{itemize}
-
-Frontend:
-
-\begin{itemize}
-	\item 84 commit di Mattia
-	\item 78 commit di Stefano Volpe
-	\item 65 commit di Mattia Girolimetto
-	\item 54 commit di Paolo Ceroni
-	\item 44 commit di Fedegri
-	\item 5 commit di Piffy@home
-	\item 2 commit di Federica Grisendi
-\end{itemize}
-
+\includegraphics[width=\textwidth]{gitinspector.png}
 
 \subsection{Retrospettiva finale con \emph{Essence}}
 
-Come mostrato dalle seguenti foto, nella retrospettiva finale con Essence
-abbiamo collegato a mo' di grafo le carte Essence che ci siamo scambiati.
-L'intento era quello di comprendere le relazioni a cavallo fra esse.
+Dopo la retrospettiva dell'ultimo sprint, abbiamo effettuato una retrospettiva
+generale per l'intero processo scrum. Ancora una volta, abbiamo scelto
+\emph{Patience}, allo scopo di capire cosa ripetere e cosa evitare nei prossimi
+progetti.
 
-\includegraphics[width=\textwidth]{essence-4-1.jpg}
-\includegraphics[width=\textwidth]{essence-4-2.jpg}
-\includegraphics[width=\textwidth]{essence-4-3.jpg}
-\includegraphics[width=\textwidth]{essence-4-4.jpg}
+\includegraphics[width=\textwidth]{essence-final.jpg}
+
+Dopo il successo della definizione di ``fatto'', la scoperta di una carta chiamata
+\emph{Definition of Ready} è stata apprezzata in particolar modo dagli
+sviluppatori. Questi hanno sostenuto che aggiungere tale pratica assicurerebbe
+loro di inizare lo sprint solo con storie utente ragionevoli. Questo porterebbe
+anche a un rapporto più equo fra PO e sviluppatori: così come gli sviluppatori
+si sforzano di rispettare la definizione di fatto, il PO si sforza di
+rispettare quella di pronto.
+
+Se le carte Essence raccomandano team di sviluppo di 4 o 5 membri, è emerso il
+desiderio di tentare di orientarsi verso un gruppo di 4 persone.
 
 \subsection{Diagramma del \emph{deployment} del prodotto}
 
