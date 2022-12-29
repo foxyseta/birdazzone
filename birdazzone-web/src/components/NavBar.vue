@@ -43,8 +43,7 @@
         src="/logo.png"
         alt="Birdazzone's logo"
       />
-      <h1 class="text-lgreen font-black text-xl">IL</h1>
-      <h1 class="text-lgreen font-black text-xl">BIRDAZZONE</h1>
+      <h1 class="text-lgreen font-black text-xl">IL BIRDAZZONE</h1>
     </div>
     <div class="overflow-y-auto py-4 px-3 rounded">
       <ul class="my-5 space-y-2">

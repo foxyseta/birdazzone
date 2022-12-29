@@ -10,7 +10,12 @@
 
   const loading = ref<boolean>(false);
   const list = ref<Tweet[]>([]);
-  const props = defineProps<{ gameId: string; key: number; from: string | null; to: string | null }>();
+  const props = defineProps<{
+    gameId: string;
+    key: number;
+    from: string | null;
+    to: string | null;
+  }>();
   const max = ref<number>(0);
   const actualPage = ref<number>(1);
   const itemPerPage = ref<number>(5);

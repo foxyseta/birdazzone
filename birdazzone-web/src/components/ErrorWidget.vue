@@ -2,7 +2,11 @@
   import { ref } from 'vue';
   import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
 
-  const props = defineProps<{ open: boolean; title: string | undefined; text: string | undefined }>();
+  const props = defineProps<{
+    open: boolean;
+    title: string | undefined;
+    text: string | undefined;
+  }>();
   const open = ref<boolean>();
 </script>
 

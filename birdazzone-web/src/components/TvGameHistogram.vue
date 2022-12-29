@@ -3,9 +3,16 @@
   import ApiRepository from '../api/api-repository';
   import { onBeforeMount, ref } from 'vue';
 
-  const props = defineProps<{ gameId: string; key: number; from: string | null; to: string | null }>();
+  const props = defineProps<{
+    gameId: string;
+    key: number;
+    from: string | null;
+    to: string | null;
+  }>();
 
   const SERIE_NAME = 'attempts';
+  const MAX_COLS = 5;
+  const LOWER_BOUND = 1;
 
   const histogramValues = ref<HistogramValue[]>([]);
   const error = ref<boolean>(false);
@@ -18,8 +25,9 @@
     const response = await ApiRepository.getTvGameAttemptsStat(props.gameId, props.from, props.to);
     error.value = response.esit;
     if (response.esit) {
+      console.log(response.data!);
       histogramValues.value = response
-        .data!.filter(x => x.absoluteFrequency > 3)
+        .data!.filter(x => response.data!.length < MAX_COLS || x.absoluteFrequency > LOWER_BOUND)
         .map(
           x =>
             ({
@@ -51,12 +59,13 @@
       v-if="from && to"
       class="text-md text-white text-semibold mb-3"
     >
-      Data refere to the following date-time range: from {{ from.substring(0, 10) }}, {{ itaJetLagFrom() }} to
+      Data refere to the following date-time range: from
+      {{ from.substring(0, 10) }}, {{ itaJetLagFrom() }} to
       {{ itaJetLagTo() }}
     </div>
     <Histogram
       v-if="!loading"
-      :chart-title="'Played words with more than 3 tentatives'"
+      :chart-title="'Most played words'"
       :values="histogramValues"
       :serie-name="SERIE_NAME"
     />

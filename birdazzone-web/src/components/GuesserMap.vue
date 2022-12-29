@@ -10,7 +10,11 @@
   const error = ref<boolean>(false);
 
   const ROME = [12.706374170037495, 42.21140846575139];
-  const props = defineProps<{ gameId: string; from: string | null; to: string | null }>();
+  const props = defineProps<{
+    gameId: string;
+    from: string | null;
+    to: string | null;
+  }>();
 
   const loading = ref<boolean>(false);
   const center = ref<number[]>(ROME);

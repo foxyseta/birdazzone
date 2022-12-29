@@ -10,7 +10,12 @@
   const errorText = ref<string>();
 
   const loading = ref<boolean>(true);
-  const props = defineProps<{ id: string; key: number; from: string | null; to: string | null }>();
+  const props = defineProps<{
+    id: string;
+    key: number;
+    from: string | null;
+    to: string | null;
+  }>();
   const nFail = ref<number>(0);
   const nSucc = ref<number>(0);
   const fail = ref<number>(0);
